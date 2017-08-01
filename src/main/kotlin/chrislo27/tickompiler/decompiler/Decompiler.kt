@@ -2,6 +2,8 @@ package chrislo27.tickompiler.decompiler
 
 import chrislo27.tickompiler.Function
 import chrislo27.tickompiler.Functions
+import chrislo27.tickompiler.GITHUB
+import chrislo27.tickompiler.VERSION
 import java.io.ByteArrayInputStream
 import java.nio.ByteOrder
 
@@ -27,6 +29,10 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
         val nanoTime = System.nanoTime()
         val builder = StringBuilder()
         val state = DecompilerState()
+
+        run decompilerInfo@ {
+            builder.append("// Decompiled using Tickompiler $VERSION\n// $GITHUB\n")
+        }
 
         if (useMetadata) {
             builder.append("#index 0x${readInt().toString(16).toUpperCase()}\n")
