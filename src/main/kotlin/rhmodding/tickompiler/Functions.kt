@@ -108,9 +108,9 @@ object MegamixFunctions : Functions() {
                                     1..1),
             SpecificSpecialFunction(0x3E, 7, "remove_layout",
                                     1..1),
-            AsyncSubFunction("async_sub"),
-            OldMacroFunction("macro"),
-            alias(0x2, "async_call", 2..2),
+            OptionalArgumentsFunction(0, "async_sub", 3, 0, 2000),
+            OldMacroFunction(),
+            OptionalArgumentsFunction(2, "async_call", 2, 0),
             alias(0x4, "sub", 1..1),
             alias(0x6, "call", 1..1),
             alias(0x7, "return", 0..0),
@@ -217,38 +217,32 @@ class OpcodeFunction : Function(-1, "opcode", 0..Integer.MAX_VALUE) {
 
 }
 
-open class AsyncSubFunction(alias: String) : AliasedFunction(0x0, alias, 1..3) {
-
+open class OptionalArgumentsFunction(opcode: Long, alias: String, val numArgs: Int, vararg val defaultArgs: Long): AliasedFunction(opcode, alias, (numArgs - defaultArgs.size)..numArgs) {
     override fun acceptOp(op: Long): Boolean {
         val opcode = op and 0x3FF
         val args = (op and 0x3C00) ushr 10
-        return opcode == opCode && args == 3L
+        return opcode == opCode && args == numArgs.toLong()
     }
 
-    override fun produceTickflow(state: DecompilerState, opcode: Long, specialArg: Long, args: LongArray,
-                                 comments: Boolean, specialArgStrings: Map<Int, String>): String {
+    override fun produceTickflow(state: DecompilerState, opcode: Long, specialArg: Long, args: LongArray, comments: Boolean, specialArgStrings: Map<Int, String>): String {
         val newArgs = args.toMutableList()
-        if (newArgs.size > 2 && newArgs[2] == 0x7D0L) {
-            newArgs.removeAt(2)
-            if (newArgs[1] == 0L) {
-                newArgs.removeAt(1)
-            }
+        while (newArgs.size > argsNeeded.first && newArgs.last() == defaultArgs[newArgs.size - argsNeeded.first - 1]) {
+            newArgs.removeAt(newArgs.size-1)
         }
         return super.produceTickflow(state, opcode, specialArg, newArgs.toLongArray(), comments, specialArgStrings)
     }
 
     override fun produceBytecode(funcCall: FunctionCall): LongArray {
-        return super.produceBytecode(
-                FunctionCall(funcCall.func, funcCall.specialArg, listOf(
-                        funcCall.args.first(),
-                        if (funcCall.args.size > 1) funcCall.args[1] else 0x0,
-                        if (funcCall.args.size > 2) funcCall.args[2] else 0x7D0)))
+        val newArgs = funcCall.args.toMutableList()
+        while (newArgs.size < numArgs) {
+            newArgs.add(defaultArgs[newArgs.size - argsNeeded.first])
+        }
+        return super.produceBytecode(FunctionCall(funcCall.func, funcCall.specialArg, newArgs))
     }
-
 }
 
 @DeprecatedFunction("macro is deprecated, use async_sub instead")
-class OldMacroFunction(alias: String) : AsyncSubFunction(alias)
+class OldMacroFunction: OptionalArgumentsFunction(0, "macro", 3, 0, 2000)
 
 open class SpecialOnlyFunction(opcode: Long, alias: String) : Function(opcode, alias, 1..1) {
     override fun acceptOp(op: Long): Boolean {
