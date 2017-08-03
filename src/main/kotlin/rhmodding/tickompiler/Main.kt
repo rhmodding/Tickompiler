@@ -1,5 +1,9 @@
 package rhmodding.tickompiler
 
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.runBlocking
 import rhmodding.tickompiler.compiler.Compiler
 import rhmodding.tickompiler.decompiler.Decompiler
 import rhmodding.tickompiler.gameextractor.GameExtractor
@@ -7,10 +11,6 @@ import rhmodding.tickompiler.gameextractor.TABLE_OFFSET
 import rhmodding.tickompiler.gameextractor.TEMPO_TABLE
 import rhmodding.tickompiler.gameextractor.getName
 import rhmodding.tickompiler.gameputter.GamePutter
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.runBlocking
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -62,12 +62,12 @@ object Main {
 
                 val second: File? = if (indexOfFirstNotFlag + 1 < args.size) File(
                         args[indexOfFirstNotFlag + 1]) else null
-                if (second?.isFile ?: false) {
+                if (second?.isFile == true) {
                     if (input.size > 1 && !ignoreDir)
                         throw IllegalArgumentException(
                                 "Output option cannot be a file when the input is a directory!")
 
-                    output += second!!
+                    output += second
 
                 } else {
                     second?.mkdirs()
@@ -85,8 +85,8 @@ object Main {
             "help", "?" -> {
                 println("""
 Tickompiler: A RHM tickflow compiler/decompiler written by SneakySpook and chrislo27 in Kotlin
-${VERSION}
-${GITHUB}
+$VERSION
+$GITHUB
 
 Commands:
 help, ?
@@ -188,14 +188,9 @@ pack, p <input dir> <base file> [output file]
                 }
 
                 runBlocking {
-                    var successful = 0
-
-                    for (c in coroutines) {
-                        val result = c.await()
-                        if (result) {
-                            successful++
-                        }
-                    }
+                    val successful = coroutines
+                            .map { it.await() }
+                            .count { it }
 
                     println("""
 +======================+
@@ -249,14 +244,9 @@ $successful / ${dirs.input.size} compiled successfully in ${(System.nanoTime() -
                 }
 
                 runBlocking {
-                    var successful = 0
-
-                    for (c in coroutines) {
-                        val result = c.await()
-                        if (result) {
-                            successful++
-                        }
-                    }
+                    val successful = coroutines
+                            .map { it.await() }
+                            .count { it }
 
                     println("""
 +========================+

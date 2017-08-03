@@ -4,6 +4,10 @@ import rhmodding.tickompiler.compiler.FunctionCall
 import rhmodding.tickompiler.decompiler.DecompilerState
 import java.util.*
 
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+annotation class DeprecatedFunction(val value: String)
+
 abstract class Functions {
 
     val opcode = OpcodeFunction()
@@ -62,77 +66,78 @@ fun createInts(opcode: Long, special: Long, args: LongArray?): LongArray {
 }
 
 object MegamixFunctions : Functions() {
-    override val allFunctions = mutableListOf(opcode,
-                                              bytecode,
-                                              RestFunction(0xE),
-                                              SpecialOnlyFunction(0x14, "label"),
-                                              SpecialOnlyFunction(0x15, "goto"),
-                                              SpecialOnlyFunction(0x1A, "case"),
-                                              SpecialOnlyFunction(0xB8, "random"),
-                                              SpecificSpecialFunction(0x1, 0, "get_async", 2..2),
-                                              SpecificSpecialFunction(0x1, 1, "set_async", 2..2),
-                                              SpecificSpecialFunction(0xF, 0, "getrest", 1..1),
-                                              SpecificSpecialFunction(0xF, 1, "setrest", 2..2),
-                                              SpecificSpecialFunction(0x2A, 0, "game_model",
-                                                                                            2..2),
-                                              SpecificSpecialFunction(0x2A, 2, "game_cellanim",
-                                                                                            2..2),
-                                              SpecificSpecialFunction(0x2A, 3, "game_effect",
-                                                                                            2..2),
-                                              SpecificSpecialFunction(0x2A, 4, "game_layout",
-                                                                                            2..2),
-                                              SpecificSpecialFunction(0x31, 0, "set_model", 3..3),
-                                              SpecificSpecialFunction(0x31, 1, "remove_model",
-                                                                                            1..1),
-                                              SpecificSpecialFunction(0x31, 2, "has_model", 1..1),
-                                              SpecificSpecialFunction(0x35, 0, "set_cellanim",
-                                                                                            3..3),
-                                              SpecificSpecialFunction(0x35, 1, "cellanim_busy",
-                                                                                            1..1),
-                                              SpecificSpecialFunction(0x35, 3, "remove_cellanim",
-                                                                                            1..1),
-                                              SpecificSpecialFunction(0x39, 0, "set_effect",
-                                                                                            3..3),
-                                              SpecificSpecialFunction(0x39, 1, "effect_busy",
-                                                                                            1..1),
-                                              SpecificSpecialFunction(0x39, 7, "remove_effect",
-                                                                                            1..1),
-                                              SpecificSpecialFunction(0x3E, 0, "set_layout",
-                                                                                            3..3),
-                                              SpecificSpecialFunction(0x3E, 1, "layout_busy",
-                                                                                            1..1),
-                                              SpecificSpecialFunction(0x3E, 7, "remove_layout",
-                                                                                            1..1),
-                                              MacroFunction("async_sub"),
-                                              MacroFunction("macro"),
-                                              alias(0x2, "async_call", 2..2),
-                                              alias(0x4, "sub", 1..1),
-                                              alias(0x6, "call", 1..1),
-                                              alias(0x7, "return", 0..0),
-                                              alias(0x8, "stop", 0..0),
-                                              alias(0x16, "if", 1..1, 1),
-                                              alias(0x17, "else", 0..0, 0,
-                                                    -1), // current adjust pushes the else back an indent
-                                              alias(0x18, "endif", 0..0, -1, -1), // same here
-                                              alias(0x19, "switch", 0..0, 1),
-                                              alias(0x1B, "break", 0..0),
-                                              alias(0x1C, "default", 0..0),
-                                              alias(0x1D, "endswitch", 0..0, -1, -1),
-                                              alias(0x24, "speed", 1..1),
-                                              alias(0x28, "engine", 1..1),
-                                              alias(0x40, "play_sfx", 1..1),
-                                              alias(0x5D, "set_sfx", 2..2),
-                                              alias(0x5F, "remove_sfx", 1..1),
-                                              alias(0x6A, "input", 1..1),
-                                              alias(0xAE, "star", 1..1),
-                                              0x7DL alias "fade"
+    override val allFunctions = mutableListOf(
+            opcode,
+            bytecode,
+            RestFunction(0xE),
+            SpecialOnlyFunction(0x14, "label"),
+            SpecialOnlyFunction(0x15, "goto"),
+            SpecialOnlyFunction(0x1A, "case"),
+            SpecialOnlyFunction(0xB8, "random"),
+            SpecificSpecialFunction(0x1, 0, "get_async", 2..2),
+            SpecificSpecialFunction(0x1, 1, "set_async", 2..2),
+            SpecificSpecialFunction(0xF, 0, "getrest", 1..1),
+            SpecificSpecialFunction(0xF, 1, "setrest", 2..2),
+            SpecificSpecialFunction(0x2A, 0, "game_model",
+                                    2..2),
+            SpecificSpecialFunction(0x2A, 2, "game_cellanim",
+                                    2..2),
+            SpecificSpecialFunction(0x2A, 3, "game_effect",
+                                    2..2),
+            SpecificSpecialFunction(0x2A, 4, "game_layout",
+                                    2..2),
+            SpecificSpecialFunction(0x31, 0, "set_model", 3..3),
+            SpecificSpecialFunction(0x31, 1, "remove_model",
+                                    1..1),
+            SpecificSpecialFunction(0x31, 2, "has_model", 1..1),
+            SpecificSpecialFunction(0x35, 0, "set_cellanim",
+                                    3..3),
+            SpecificSpecialFunction(0x35, 1, "cellanim_busy",
+                                    1..1),
+            SpecificSpecialFunction(0x35, 3, "remove_cellanim",
+                                    1..1),
+            SpecificSpecialFunction(0x39, 0, "set_effect",
+                                    3..3),
+            SpecificSpecialFunction(0x39, 1, "effect_busy",
+                                    1..1),
+            SpecificSpecialFunction(0x39, 7, "remove_effect",
+                                    1..1),
+            SpecificSpecialFunction(0x3E, 0, "set_layout",
+                                    3..3),
+            SpecificSpecialFunction(0x3E, 1, "layout_busy",
+                                    1..1),
+            SpecificSpecialFunction(0x3E, 7, "remove_layout",
+                                    1..1),
+            AsyncSubFunction("async_sub"),
+            OldMacroFunction("macro"),
+            alias(0x2, "async_call", 2..2),
+            alias(0x4, "sub", 1..1),
+            alias(0x6, "call", 1..1),
+            alias(0x7, "return", 0..0),
+            alias(0x8, "stop", 0..0),
+            alias(0x16, "if", 1..1, 1),
+            alias(0x17, "else", 0..0, 0,
+                  -1), // current adjust pushes the else back an indent
+            alias(0x18, "endif", 0..0, -1, -1), // same here
+            alias(0x19, "switch", 0..0, 1),
+            alias(0x1B, "break", 0..0),
+            alias(0x1C, "default", 0..0),
+            alias(0x1D, "endswitch", 0..0, -1, -1),
+            alias(0x24, "speed", 1..1),
+            alias(0x28, "engine", 1..1),
+            alias(0x40, "play_sfx", 1..1),
+            alias(0x5D, "set_sfx", 2..2),
+            alias(0x5F, "remove_sfx", 1..1),
+            alias(0x6A, "input", 1..1),
+            alias(0xAE, "star", 1..1),
+            0x7DL alias "fade"
                                              )
 }
 
 object DSFunctions : Functions() {
     override val allFunctions = mutableListOf<Function>(
             RestFunction(1)
-                                                                             )
+                                                       )
 }
 
 abstract class Function(val opCode: Long, val name: String, val argsNeeded: IntRange) {
@@ -147,7 +152,7 @@ abstract class Function(val opCode: Long, val name: String, val argsNeeded: IntR
         val args = functionCall.args.size.toLong()
         if (args !in argsNeeded) {
             throw WrongArgumentsError(args, argsNeeded,
-                                                            "function " + functionCall.func + "<" + functionCall.specialArg + ">, got " + functionCall.args)
+                                      "function ${functionCall.func}<${functionCall.specialArg}>, got ${functionCall.args}")
         }
     }
 
@@ -212,7 +217,7 @@ class OpcodeFunction : Function(-1, "opcode", 0..Integer.MAX_VALUE) {
 
 }
 
-class MacroFunction(alias: String) : AliasedFunction(0x0, alias, 1..3) {
+open class AsyncSubFunction(alias: String) : AliasedFunction(0x0, alias, 1..3) {
 
     override fun acceptOp(op: Long): Boolean {
         val opcode = op and 0x3FF
@@ -241,6 +246,9 @@ class MacroFunction(alias: String) : AliasedFunction(0x0, alias, 1..3) {
     }
 
 }
+
+@DeprecatedFunction("macro is deprecated, use async_sub instead")
+class OldMacroFunction(alias: String) : AsyncSubFunction(alias)
 
 open class SpecialOnlyFunction(opcode: Long, alias: String) : Function(opcode, alias, 1..1) {
     override fun acceptOp(op: Long): Boolean {

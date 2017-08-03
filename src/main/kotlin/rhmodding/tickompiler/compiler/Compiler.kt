@@ -1,11 +1,9 @@
 package rhmodding.tickompiler.compiler
 
-import rhmodding.tickompiler.CompilerError
-import rhmodding.tickompiler.Function
-import rhmodding.tickompiler.Functions
-import rhmodding.tickompiler.MegamixFunctions
 import org.parboiled.Parboiled
 import org.parboiled.parserunners.RecoveringParseRunner
+import rhmodding.tickompiler.*
+import rhmodding.tickompiler.Function
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -25,12 +23,17 @@ class Compiler(val tickflow: String, val functions: Functions) {
         when (statement) {
             is FunctionCallNode -> {
                 val funcCall = FunctionCall(statement.func,
-                                                                           statement.special?.getValue(variables) ?: 0,
-                                                                           statement.args.map {
-                                                                               it.getValue(variables)
-                                                                           })
+                                            statement.special?.getValue(variables) ?: 0,
+                                            statement.args.map {
+                                                it.getValue(variables)
+                                            })
 
                 val function: Function = functions[funcCall.func]
+
+                if (function::class.java.isAnnotationPresent(DeprecatedFunction::class.java)) {
+                    println("DEPRECATION WARNING at ${statement.position.line}:${statement.position.column} -> " +
+                                    function::class.java.annotations.filterIsInstance<DeprecatedFunction>().first().value)
+                }
 
                 function.checkArgsNeeded(funcCall)
                 function.produceBytecode(funcCall).forEach { longs.add(it) }
@@ -50,6 +53,7 @@ class Compiler(val tickflow: String, val functions: Functions) {
 
     constructor(file: File) : this(preProcess(file),
                                    MegamixFunctions)
+
     constructor(file: File, functions: Functions) : this(
             preProcess(file), functions)
 
@@ -58,10 +62,9 @@ class Compiler(val tickflow: String, val functions: Functions) {
         startNanoTime = System.nanoTime()
 
         // Split tickflow into lines, stripping comments
-        val commentLess = tickflow.lines()
-                .map {
-                    it.replaceAfter("//", "").replace("//", "").trim()
-                }.joinToString("\n")
+        val commentLess = tickflow.lines().joinToString("\n") {
+            it.replaceAfter("//", "").replace("//", "").trim()
+        }
 
         val parser = Parboiled.createParser(TickflowParser::class.java)
         val result = RecoveringParseRunner<Any>(parser.TickflowCode()).run(commentLess)
@@ -81,7 +84,7 @@ class Compiler(val tickflow: String, val functions: Functions) {
                 is AliasAssignNode -> functions[it.expr.getValue(variables)] = it.alias
                 is FunctionCallNode -> {
                     val funcCall = FunctionCall(it.func, 0,
-                                                                               it.args.map { 0L })
+                                                it.args.map { 0L })
                     val function: Function = functions[funcCall.func]
                     val len = function.produceBytecode(funcCall).size
                     counter += len * 4
@@ -112,14 +115,14 @@ class Compiler(val tickflow: String, val functions: Functions) {
         longs.forEach { buffer.putInt(it.toInt()) }
 
         return CompileResult(result.matched,
-                                                            (System.nanoTime() - startNanoTime) / 1_000_000.0, buffer)
+                             (System.nanoTime() - startNanoTime) / 1_000_000.0, buffer)
     }
 
 }
 
 private fun preProcess(file: File): String {
     val tickflow = file.readText(Charset.forName("UTF-8"))
-    val newTickflow = tickflow.lines().map {
+    val newTickflow = tickflow.lines().joinToString("\n") {
         if (it.startsWith("#include")) {
             val filename = it.split(" ")[1]
             val otherfile = File(file.parentFile, filename)
@@ -129,7 +132,7 @@ private fun preProcess(file: File): String {
                 throw CompilerError("Included file $filename not found.")
             }
         } else it
-    }.joinToString("\n")
+    }
     return newTickflow
 }
 
