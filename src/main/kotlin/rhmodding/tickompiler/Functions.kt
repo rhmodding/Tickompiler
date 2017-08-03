@@ -103,7 +103,8 @@ object MegamixFunctions : Functions() {
                                                                                             1..1),
                                               SpecificSpecialFunction(0x3E, 7, "remove_layout",
                                                                                             1..1),
-                                              MacroFunction(),
+                                              MacroFunction("async_sub"),
+                                              MacroFunction("macro"),
                                               alias(0x2, "async_call", 2..2),
                                               alias(0x4, "sub", 1..1),
                                               alias(0x6, "call", 1..1),
@@ -211,7 +212,7 @@ class OpcodeFunction : Function(-1, "opcode", 0..Integer.MAX_VALUE) {
 
 }
 
-class MacroFunction : AliasedFunction(0x0, "macro", 1..3) {
+class MacroFunction(alias: String) : AliasedFunction(0x0, alias, 1..3) {
 
     override fun acceptOp(op: Long): Boolean {
         val opcode = op and 0x3FF
