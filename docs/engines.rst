@@ -6211,3 +6211,163 @@ The inspectors explode.
 Sets the sequence of positions the specified inspector will have when doing cues to the one at ``ptr``. This is a sequence
 of bytes, each representing a single jump. 0 means outside, 1 means inside, 2 means on the ground beside the see-saw, and
 5 ends the sequence.
+
+Packing Pests (0x32)
+--------------------
+
+0x100 - Spawn Object/Input
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x100 type
+
+Spawns an object, with corresponding input and sound effects. Input is 1 beat later. Values for ``type`` are:
+
+- 0: Candy
+
+- 1: Spider
+
+- 2: Paycheck
+
+0x101 - Background Objects
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x101 idx, type
+
+Spawns an object for the ``idx`` th background worker (from the front?) starting at 0. ``type`` is identical to the one in 0x100. ::
+
+   0x101<1> type
+
+Spawns an object for all background workers. ::
+
+   0x101<2> time, type
+
+Spawns an object of type ``type`` for all background workers, in random order and with random delays, over the next ``time`` ticks. ::
+
+   0x101<3> time
+
+Spawns a spider or candy randomly for all background workers, in random order and with random delays, over the next ``time`` ticks.
+
+0x102 - View Change
+~~~~~~~~~~~~~~~~~~~
+::
+
+   0x102<2> time
+
+The view shifts to the initial view over ``time`` ticks. ::
+
+   0x102<4> time
+
+The view shifts to view your worker's head over ``time`` ticks.
+
+0x103 - Clap
+~~~~~~~~~~~~
+::
+
+   0x103
+
+Your worker claps for a while. (used in practice)
+
+0x104 - Background Workers
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x104
+
+Spawns the background workers. ::
+
+   0x104<2> time
+
+The background workers shift into view over ``time`` ticks.
+
+0x105 - Worker Animations
+~~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x105
+
+Small beat/bob animation (used when a candy is spawned). ::
+
+   0x105<1>
+
+Double up! animation.
+
+0x106 - Curtain
+~~~~~~~~~~~~~~~
+::
+
+   0x106
+
+Spawns the curtain. ::
+
+   0x106<1>
+
+Removes the curtain by sliding to the left.
+
+0x107 -  Text
+~~~~~~~~~~~~~
+::
+
+   0x107 flag, type
+
+If ``flag`` is 1, text appears above your worker according to type. If 0, text is removed. Values for ``type`` are:
+
+- 0: Double up!
+
+- 1: !!
+
+List of macros/subs
+~~~~~~~~~~~~~~~~~~~
+All the following are asynchronous (macros).
+
+0x56
+   "Double up!" appears for 2 beats.
+
+0x57
+   "!!" appears for 1.5 beats.
+
+0x58
+   A candy is spawned, with a beat animation. Input after 1 beat.
+
+0x59
+   A spider is spawned, with a beat animation. Input after 1 beat.
+
+0x5A
+   A paycheck is spawned, with a beat animation. Input after 1 beat. (unused)
+
+0x5B
+   A regular pattern (candy then spider, 2 beats apart). First input after 1 beat.
+
+0x5C
+   A different pattern (candy then spider, 1.5 beats apart). First input after 1 beat. (unused)
+
+0x5D
+   The 0x5C pattern. First input after 1.5 beats. (unused)
+
+0x5E
+   A paycheck is spawned, with a beat animation. Input after 1 beat.
+
+0x5F
+   A full "Double up!" cue (candy, then spider after 1.5 beats, then another a beat later). First input after 1 beat.
+
+0x60
+   "!!" appears after 3.5 beats, along with a sound effect. (unused)
+
+0x61
+   A candy is spawned for all background workers. (unused)
+
+0x62
+   A spider is spawned for all background workers.
+
+0x63
+   A paycheck is spawned for all background workers.
+
+0x64
+   A regular pattern is spawned for all background workers (candy then spider after 2 beats).
+
+0x65
+   A "Double up!" pattern is spawned for all background workers.
+
+0x66
+   The different pattern is spawned for all background workers (candy after a half beat, then spider after 1.5 beats).
