@@ -1,9 +1,9 @@
-package chrislo27.tickompiler.decompiler
+package rhmodding.tickompiler.decompiler
 
-import chrislo27.tickompiler.Function
-import chrislo27.tickompiler.Functions
-import chrislo27.tickompiler.GITHUB
-import chrislo27.tickompiler.VERSION
+import rhmodding.tickompiler.Function
+import rhmodding.tickompiler.Functions
+import rhmodding.tickompiler.GITHUB
+import rhmodding.tickompiler.VERSION
 import java.io.ByteArrayInputStream
 import java.nio.ByteOrder
 
@@ -31,7 +31,7 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
         val state = DecompilerState()
 
         run decompilerInfo@ {
-            builder.append("// Decompiled using Tickompiler $VERSION\n// $GITHUB\n")
+            builder.append("// Decompiled using Tickompiler ${VERSION}\n// ${GITHUB}\n")
         }
 
         if (useMetadata) {

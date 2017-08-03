@@ -1,4 +1,4 @@
-package chrislo27.tickompiler
+package rhmodding.tickompiler
 
 val VERSION: String = "v1.3.0"
 

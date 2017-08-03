@@ -1,4 +1,4 @@
-package chrislo27.tickompiler.output
+package rhmodding.tickompiler.output
 
 
 object Outputter {

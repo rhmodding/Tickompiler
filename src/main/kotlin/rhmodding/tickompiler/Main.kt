@@ -1,12 +1,12 @@
-package chrislo27.tickompiler
+package rhmodding.tickompiler
 
-import chrislo27.tickompiler.compiler.Compiler
-import chrislo27.tickompiler.decompiler.Decompiler
-import chrislo27.tickompiler.gameextractor.GameExtractor
-import chrislo27.tickompiler.gameextractor.TABLE_OFFSET
-import chrislo27.tickompiler.gameextractor.TEMPO_TABLE
-import chrislo27.tickompiler.gameextractor.getName
-import chrislo27.tickompiler.gameputter.GamePutter
+import rhmodding.tickompiler.compiler.Compiler
+import rhmodding.tickompiler.decompiler.Decompiler
+import rhmodding.tickompiler.gameextractor.GameExtractor
+import rhmodding.tickompiler.gameextractor.TABLE_OFFSET
+import rhmodding.tickompiler.gameextractor.TEMPO_TABLE
+import rhmodding.tickompiler.gameextractor.getName
+import rhmodding.tickompiler.gameputter.GamePutter
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
@@ -85,8 +85,8 @@ object Main {
             "help", "?" -> {
                 println("""
 Tickompiler: A RHM tickflow compiler/decompiler written by SneakySpook and chrislo27 in Kotlin
-$VERSION
-$GITHUB
+${VERSION}
+${GITHUB}
 
 Commands:
 help, ?
@@ -220,7 +220,8 @@ $successful / ${dirs.input.size} compiled successfully in ${(System.nanoTime() -
                 println("Decompiling ${dirs.input.size} file(s)")
                 dirs.input.forEachIndexed { index, file ->
                     coroutines += async(CommonPool) {
-                        val decompiler = Decompiler(Files.readAllBytes(file.toPath()), ByteOrder.BIG_ENDIAN, functions)
+                        val decompiler = Decompiler(Files.readAllBytes(file.toPath()),
+                                                                                     ByteOrder.BIG_ENDIAN, functions)
 
                         try {
                             println("Decompiling ${file.path}")
@@ -282,7 +283,8 @@ $successful / ${dirs.input.size} decompiled successfully in ${(System.nanoTime()
                 }
                 for (i in 0 until 104) {
                     println("Extracting ${codeBuffer.getName(i)}")
-                    val result = GameExtractor(flags.contains("-a")).extractGame(codeBuffer, i)
+                    val result = GameExtractor(
+                            flags.contains("-a")).extractGame(codeBuffer, i)
                     val ints = result.second
                     val byteBuffer = ByteBuffer.allocate(ints.size * 4).order(ByteOrder.LITTLE_ENDIAN)
                     val intBuf = byteBuffer.asIntBuffer()
@@ -293,7 +295,8 @@ $successful / ${dirs.input.size} decompiled successfully in ${(System.nanoTime()
                     fos.write(arr)
                     fos.close()
                     if (flags.contains("-d")) {
-                        val decompiler = Decompiler(arr, ByteOrder.BIG_ENDIAN, MegamixFunctions)
+                        val decompiler = Decompiler(arr, ByteOrder.BIG_ENDIAN,
+                                                                                     MegamixFunctions)
                         println("Decompiling ${codeBuffer.getName(i)}")
                         val r = decompiler.decompile(true, true, "    ", result.first)
                         val f = FileOutputStream(File(decompiledFolder, codeBuffer.getName(i) + ".tickflow"))
@@ -303,10 +306,10 @@ $successful / ${dirs.input.size} decompiled successfully in ${(System.nanoTime()
                     }
                 }
                 val tableList = ByteArray(104*53)
-                codeBuffer.position(TABLE_OFFSET-0x100000)
+                codeBuffer.position(TABLE_OFFSET -0x100000)
                 codeBuffer.get(tableList, 0, 104*53)
                 val tempoList = ByteArray(16*0x1DD)
-                codeBuffer.position(TEMPO_TABLE-0x100000)
+                codeBuffer.position(TEMPO_TABLE -0x100000)
                 codeBuffer.get(tempoList, 0, 16*0x1DD)
                 val fos = FileOutputStream(File(folder, "base.bin"))
                 fos.write(tableList)

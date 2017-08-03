@@ -1,7 +1,7 @@
-package chrislo27.tickompiler
+package rhmodding.tickompiler
 
-import chrislo27.tickompiler.compiler.Compiler
-import chrislo27.tickompiler.output.Outputter
+import rhmodding.tickompiler.compiler.Compiler
+import rhmodding.tickompiler.output.Outputter
 import java.nio.ByteOrder
 
 fun main(args: Array<String>) {

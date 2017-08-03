@@ -1,4 +1,4 @@
-package chrislo27.tickompiler.gameputter
+package rhmodding.tickompiler.gameputter
 
 import java.nio.ByteBuffer
 

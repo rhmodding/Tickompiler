@@ -1,9 +1,9 @@
-package chrislo27.tickompiler.compiler
+package rhmodding.tickompiler.compiler
 
-import chrislo27.tickompiler.CompilerError
-import chrislo27.tickompiler.Function
-import chrislo27.tickompiler.Functions
-import chrislo27.tickompiler.MegamixFunctions
+import rhmodding.tickompiler.CompilerError
+import rhmodding.tickompiler.Function
+import rhmodding.tickompiler.Functions
+import rhmodding.tickompiler.MegamixFunctions
 import org.parboiled.Parboiled
 import org.parboiled.parserunners.RecoveringParseRunner
 import java.io.File
@@ -24,8 +24,11 @@ class Compiler(val tickflow: String, val functions: Functions) {
     fun compileStatement(statement: Any, longs: MutableList<Long>, variables: MutableMap<String, Long>) {
         when (statement) {
             is FunctionCallNode -> {
-                val funcCall = FunctionCall(statement.func, statement.special?.getValue(variables) ?: 0,
-                                            statement.args.map { it.getValue(variables) })
+                val funcCall = FunctionCall(statement.func,
+                                                                           statement.special?.getValue(variables) ?: 0,
+                                                                           statement.args.map {
+                                                                               it.getValue(variables)
+                                                                           })
 
                 val function: Function = functions[funcCall.func]
 
@@ -45,8 +48,10 @@ class Compiler(val tickflow: String, val functions: Functions) {
         }
     }
 
-    constructor(file: File) : this(preProcess(file), MegamixFunctions)
-    constructor(file: File, functions: Functions) : this(preProcess(file), functions)
+    constructor(file: File) : this(preProcess(file),
+                                   MegamixFunctions)
+    constructor(file: File, functions: Functions) : this(
+            preProcess(file), functions)
 
 
     fun compile(endianness: ByteOrder): CompileResult {
@@ -76,7 +81,7 @@ class Compiler(val tickflow: String, val functions: Functions) {
                 is AliasAssignNode -> functions[it.expr.getValue(variables)] = it.alias
                 is FunctionCallNode -> {
                     val funcCall = FunctionCall(it.func, 0,
-                                                it.args.map { 0L })
+                                                                               it.args.map { 0L })
                     val function: Function = functions[funcCall.func]
                     val len = function.produceBytecode(funcCall).size
                     counter += len * 4
@@ -106,7 +111,8 @@ class Compiler(val tickflow: String, val functions: Functions) {
         }
         longs.forEach { buffer.putInt(it.toInt()) }
 
-        return CompileResult(result.matched, (System.nanoTime() - startNanoTime) / 1_000_000.0, buffer)
+        return CompileResult(result.matched,
+                                                            (System.nanoTime() - startNanoTime) / 1_000_000.0, buffer)
     }
 
 }

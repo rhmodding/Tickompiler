@@ -1,6 +1,6 @@
-package chrislo27.tickompiler
+package rhmodding.tickompiler
 
-import chrislo27.tickompiler.decompiler.Decompiler
+import rhmodding.tickompiler.decompiler.Decompiler
 import java.nio.ByteOrder
 
 fun main(args: Array<String>) {
@@ -15,7 +15,8 @@ fun main(args: Array<String>) {
 
     println(byteArray.size)
 
-    val decompiler = Decompiler(byteArray, ByteOrder.LITTLE_ENDIAN, MegamixFunctions)
+    val decompiler = Decompiler(byteArray, ByteOrder.LITTLE_ENDIAN,
+                                                                 MegamixFunctions)
 
     val result = decompiler.decompile(addComments = true, useMetadata = true)
     println("Took ${result.first} ms\n${result.second}")

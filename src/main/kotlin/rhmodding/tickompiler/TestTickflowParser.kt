@@ -1,6 +1,6 @@
-package chrislo27.tickompiler
+package rhmodding.tickompiler
 
-import chrislo27.tickompiler.compiler.TickflowParser
+import rhmodding.tickompiler.compiler.TickflowParser
 import org.parboiled.Parboiled
 import org.parboiled.parserunners.TracingParseRunner
 import org.parboiled.support.ParseTreeUtils

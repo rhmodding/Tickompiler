@@ -1,7 +1,7 @@
-package chrislo27.tickompiler
+package rhmodding.tickompiler
 
-import chrislo27.tickompiler.compiler.FunctionCall
-import chrislo27.tickompiler.decompiler.DecompilerState
+import rhmodding.tickompiler.compiler.FunctionCall
+import rhmodding.tickompiler.decompiler.DecompilerState
 import java.util.*
 
 abstract class Functions {
@@ -73,22 +73,36 @@ object MegamixFunctions : Functions() {
                                               SpecificSpecialFunction(0x1, 1, "set_async", 2..2),
                                               SpecificSpecialFunction(0xF, 0, "getrest", 1..1),
                                               SpecificSpecialFunction(0xF, 1, "setrest", 2..2),
-                                              SpecificSpecialFunction(0x2A, 0, "game_model", 2..2),
-                                              SpecificSpecialFunction(0x2A, 2, "game_cellanim", 2..2),
-                                              SpecificSpecialFunction(0x2A, 3, "game_effect", 2..2),
-                                              SpecificSpecialFunction(0x2A, 4, "game_layout", 2..2),
+                                              SpecificSpecialFunction(0x2A, 0, "game_model",
+                                                                                            2..2),
+                                              SpecificSpecialFunction(0x2A, 2, "game_cellanim",
+                                                                                            2..2),
+                                              SpecificSpecialFunction(0x2A, 3, "game_effect",
+                                                                                            2..2),
+                                              SpecificSpecialFunction(0x2A, 4, "game_layout",
+                                                                                            2..2),
                                               SpecificSpecialFunction(0x31, 0, "set_model", 3..3),
-                                              SpecificSpecialFunction(0x31, 1, "remove_model", 1..1),
+                                              SpecificSpecialFunction(0x31, 1, "remove_model",
+                                                                                            1..1),
                                               SpecificSpecialFunction(0x31, 2, "has_model", 1..1),
-                                              SpecificSpecialFunction(0x35, 0, "set_cellanim", 3..3),
-                                              SpecificSpecialFunction(0x35, 1, "cellanim_busy", 1..1),
-                                              SpecificSpecialFunction(0x35, 3, "remove_cellanim", 1..1),
-                                              SpecificSpecialFunction(0x39, 0, "set_effect", 3..3),
-                                              SpecificSpecialFunction(0x39, 1, "effect_busy", 1..1),
-                                              SpecificSpecialFunction(0x39, 7, "remove_effect", 1..1),
-                                              SpecificSpecialFunction(0x3E, 0, "set_layout", 3..3),
-                                              SpecificSpecialFunction(0x3E, 1, "layout_busy", 1..1),
-                                              SpecificSpecialFunction(0x3E, 7, "remove_layout", 1..1),
+                                              SpecificSpecialFunction(0x35, 0, "set_cellanim",
+                                                                                            3..3),
+                                              SpecificSpecialFunction(0x35, 1, "cellanim_busy",
+                                                                                            1..1),
+                                              SpecificSpecialFunction(0x35, 3, "remove_cellanim",
+                                                                                            1..1),
+                                              SpecificSpecialFunction(0x39, 0, "set_effect",
+                                                                                            3..3),
+                                              SpecificSpecialFunction(0x39, 1, "effect_busy",
+                                                                                            1..1),
+                                              SpecificSpecialFunction(0x39, 7, "remove_effect",
+                                                                                            1..1),
+                                              SpecificSpecialFunction(0x3E, 0, "set_layout",
+                                                                                            3..3),
+                                              SpecificSpecialFunction(0x3E, 1, "layout_busy",
+                                                                                            1..1),
+                                              SpecificSpecialFunction(0x3E, 7, "remove_layout",
+                                                                                            1..1),
                                               MacroFunction(),
                                               alias(0x2, "async_call", 2..2),
                                               alias(0x4, "sub", 1..1),
@@ -117,7 +131,7 @@ object MegamixFunctions : Functions() {
 object DSFunctions : Functions() {
     override val allFunctions = mutableListOf<Function>(
             RestFunction(1)
-                                                       )
+                                                                             )
 }
 
 abstract class Function(val opCode: Long, val name: String, val argsNeeded: IntRange) {
@@ -132,7 +146,7 @@ abstract class Function(val opCode: Long, val name: String, val argsNeeded: IntR
         val args = functionCall.args.size.toLong()
         if (args !in argsNeeded) {
             throw WrongArgumentsError(args, argsNeeded,
-                                      "function " + functionCall.func + "<" + functionCall.specialArg + ">, got " + functionCall.args)
+                                                            "function " + functionCall.func + "<" + functionCall.specialArg + ">, got " + functionCall.args)
         }
     }
 

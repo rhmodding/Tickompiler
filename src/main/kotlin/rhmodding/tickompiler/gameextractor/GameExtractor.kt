@@ -1,4 +1,4 @@
-package chrislo27.tickompiler.gameextractor
+package rhmodding.tickompiler.gameextractor
 
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
@@ -104,7 +104,8 @@ class GameExtractor(val allSubs: Boolean) {
                 if (!isRemix && opcode == 0x28 && special == 0 && engine == -1) {
                     engine = args[0]
                     if (allSubs) {
-                        q.addAll(LOCATIONS[engine].filter { it > 0x100000 })
+                        q.addAll(
+                                LOCATIONS[engine].filter { it > 0x100000 })
                     }
                 }
 

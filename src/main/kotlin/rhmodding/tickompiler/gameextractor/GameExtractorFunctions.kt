@@ -1,4 +1,4 @@
-package chrislo27.tickompiler.gameextractor
+package rhmodding.tickompiler.gameextractor
 
 import java.nio.ByteBuffer
 

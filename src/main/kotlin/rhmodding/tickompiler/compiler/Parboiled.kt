@@ -1,6 +1,6 @@
-package chrislo27.tickompiler.compiler
+package rhmodding.tickompiler.compiler
 
-import chrislo27.tickompiler.CompilerError
+import rhmodding.tickompiler.CompilerError
 import org.parboiled.Action
 import org.parboiled.BaseParser
 import org.parboiled.Rule
@@ -136,13 +136,16 @@ open class TickflowParser : BaseParser<Any>() {
     open fun Directive(): Rule {
         return Sequence(Ch('#'), VariableIdentifier(),
                         Optional(Whitespace()), IntegerLiteral(),
-                        push(DirectiveNode(pop(1) as String, (pop() as ExpressionNode).getValue(emptyMap())))
+                        push(DirectiveNode(pop(1) as String,
+                                                                          (pop() as ExpressionNode).getValue(
+                                                                                  emptyMap())))
                        )
     }
 
     open fun AliasAssignment(): Rule {
         return Sequence("#alias", Optional(Whitespace()), VariableIdentifier(), Optional(Whitespace()), Expression(),
-                        push(AliasAssignNode(pop(1) as String, pop() as ExpressionNode)))
+                        push(AliasAssignNode(pop(1) as String,
+                                                                            pop() as ExpressionNode)))
     }
 
     @SuppressNode
@@ -176,7 +179,8 @@ open class TickflowParser : BaseParser<Any>() {
     @SuppressSubnodes
     open fun IntegerLiteral(): Rule {
         return FirstOf(
-                Sequence(FirstOf(HexInteger(), BinaryInteger(), DecimalInteger()), push(ExpressionNode(pop() as Long))),
+                Sequence(FirstOf(HexInteger(), BinaryInteger(), DecimalInteger()), push(
+                        ExpressionNode(pop() as Long))),
                 Sequence('-', FirstOf(HexInteger(), BinaryInteger(), DecimalInteger()),
                          push(ExpressionNode(-(pop() as Long)))))
     }
@@ -213,7 +217,8 @@ open class TickflowParser : BaseParser<Any>() {
                         Ch('='),
                         Optional(Whitespace()).suppressNode(),
                         Expression(),
-                        push(VarAssignNode(pop(1) as String, pop() as ExpressionNode)))
+                        push(VarAssignNode(pop(1) as String,
+                                                                          pop() as ExpressionNode)))
     }
 
     @SuppressSubnodes
@@ -263,7 +268,8 @@ open class TickflowParser : BaseParser<Any>() {
                                        ),
                                 Action<Any> { pop(1); true }
                                 ),
-                        push(FunctionCallNode(name.get(), special.get(), pop() as List<ExpressionNode>))
+                        push(FunctionCallNode(name.get(), special.get(),
+                                                                             pop() as List<ExpressionNode>))
                        )
     }
 
@@ -276,8 +282,9 @@ open class TickflowParser : BaseParser<Any>() {
                                                  Optional(Whitespace()).suppressNode()),
                                         op.set(match()),
                                         subRule,
-                                        push(ExpressionNode(op.get(), pop(1) as ExpressionNode,
-                                                            pop() as ExpressionNode))
+                                        push(ExpressionNode(op.get(),
+                                                                                           pop(1) as ExpressionNode,
+                                                                                           pop() as ExpressionNode))
                                         )
                                   )
                        )
@@ -339,7 +346,8 @@ open class TickflowParser : BaseParser<Any>() {
                 Optional(Ch('\n')),
                 Statements(),
                 Ch('}'),
-                push(LoopNode(pop() as List<ImmutableTreeNode<*>>, pop() as ExpressionNode))
+                push(LoopNode(pop() as List<ImmutableTreeNode<*>>,
+                                                             pop() as ExpressionNode))
                        )
     }
 
