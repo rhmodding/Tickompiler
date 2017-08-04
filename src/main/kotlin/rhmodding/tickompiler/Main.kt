@@ -312,7 +312,7 @@ $successful / ${dirs.input.size} decompiled successfully in ${(System.nanoTime()
                 var index = base.size
                 val baseBuffer = ByteBuffer.wrap(base).order(ByteOrder.LITTLE_ENDIAN)
                 val out = ByteArrayOutputStream()
-                val putter = GamePutter()
+                val putter = GamePutter
                 for (file in dirs) {
                     println("Packing ${file.name}")
                     val contents = Files.readAllBytes(file.toPath())
@@ -336,6 +336,7 @@ $successful / ${dirs.input.size} decompiled successfully in ${(System.nanoTime()
                 val fos = FileOutputStream(file)
                 fos.write(baseBuffer.array())
                 fos.write(out.toByteArray())
+                fos.close()
             }
         }
     }

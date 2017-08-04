@@ -2,7 +2,7 @@ package rhmodding.tickompiler.gameputter
 
 import java.nio.ByteBuffer
 
-class GamePutter {
+object GamePutter {
 
 	fun putGame(base: ByteBuffer, gameContents: ByteBuffer, s: Int): List<Int> {
 		val tableIndex = gameContents.getInt(0)
