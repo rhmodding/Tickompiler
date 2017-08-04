@@ -2,7 +2,7 @@ Game Engines
 ============
 
 This page contains documentation for game engines. Game engines have sets of game-specific Tickflow operations starting at ``0x100``,
-as well as subroutines/macros. Game engines can be loaded in remixes and rhythm games using the ``engine`` operation.
+as well as subroutines. Game engines can be loaded in remixes and rhythm games using the ``engine`` operation.
 
 .. contents:: Table of Contents
    :depth: 2
@@ -11,7 +11,7 @@ Spaceball (0)
 -------------
 
 Spaceball is the first game engine, with the ID 0. It has several ``0x100`` series operations, which are used for cues,
-but no macros/subs that would be useful in remixes.
+but no subs that would be useful in remixes.
 
 0x100 - Bat object
 ~~~~~~~~~~~~~~~~~~
@@ -68,7 +68,7 @@ of its ship, while ``0x103<1>`` makes it return to its ship.
 Clappy Trio (1)
 ---------------
 
-Clappy Trio uses ``0x100`` series operations for the basic building blocks, but bundles them together into macros for
+Clappy Trio uses ``0x100`` series operations for the basic building blocks, but bundles them together into subs for
 convenience.
 
 0x100 - Clap cue
@@ -110,25 +110,25 @@ If ``type`` is 1, the animation is the "determined" ready stance.
 ``0x103`` does the clap animation and sound effects for a single member of the trio. ``num`` is the number of the member
 to do the clap animation for, from left to right starting at 0. Note that the player's member is unaffected by this operation.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-0x56 (macro)
+0x56 (async)
    Does a full clap cue, with the claps spaced two beats apart. (no ready stance)
 
-0x57 (macro)
+0x57 (async)
    Does a full clap cue, with the claps spaced one beat apart. (no ready stance)
 
-0x58 (macro)
+0x58 (async)
    Does a full clap cue, with the claps spaced a half beat apart. (no ready stance)
 
-0x59 (macro)
+0x59 (async)
    Does a full clap cue, with the claps spaced a quarter beat apart. (no ready stance)
 
-0x5A (macro)
+0x5A (async)
    Does a full clap cue, with the claps spaced an eighth beat apart. (no ready stance)
 
-0x5B (macro)
+0x5B (async)
    Does a full clap cue, with the claps spaced two thirds of a beat apart. (no ready stance)
 
 Sneaky Spirits (2)
@@ -193,8 +193,8 @@ if it's 0 it's in the hitzone.
 
 ``0x107`` resets the game speed after a spirit was hit.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
 These are all synchronous subroutines.
 
@@ -240,7 +240,7 @@ These are all synchronous subroutines.
 Rhythm Tweezers (3)
 -------------------
 
-Rhythm Tweezers does not pack cues into macros or subs, likely because of the large variety of patterns. It uses
+Rhythm Tweezers does not pack cues into subs, likely because of the large variety of patterns. It uses
 ``0x100`` series operations.
 
 0x100 - Spawn Hair
@@ -317,7 +317,7 @@ Note as well that input is usually disabled using ``input`` at the start of a pa
 Bouncy Road (4)
 ---------------
 
-Bouncy Road groups ``0x100`` series operations into macros. It is necessary to do so, since only one ball can be managed
+Bouncy Road groups ``0x100`` series operations into subs. It is necessary to do so, since only one ball can be managed
 per Tickflow thread.
 
 0x100 - Spawn/Bounce Ball
@@ -334,10 +334,10 @@ per Tickflow thread.
 
 ``0x100<1>`` bounces the ball.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-These are all asynchronous subroutines (macros).
+These are all asynchronous subroutines.
 
 0x56
    Spawns a ball with half-beat bounces.
@@ -354,7 +354,7 @@ These are all asynchronous subroutines (macros).
 Marching Orders (5)
 -------------------
 
-Marching Orders groups ``0x100`` series operations into macros.
+Marching Orders groups ``0x100`` series operations into subs.
 
 0x100 - Cue Input
 ~~~~~~~~~~~~~~~~~
@@ -444,10 +444,10 @@ The commander moves his mouth.
 
 The conveyor belt activates.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-These are all asynchronous subroutines (macros).
+These are all asynchronous subroutines.
 
 0x56
    The sound effect for the commander saying "TURN!", followed by the right turn cue. Does not include "Right face..."
@@ -464,7 +464,7 @@ These are all asynchronous subroutines (macros).
 Night Walk (6)
 --------------
 
-Night Walk only has one useful macro, and uses ``0x100`` series operations for everything else.
+Night Walk only has one useful sub, and uses ``0x100`` series operations for everything else.
 
 0x100 - Spawn Platform
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -521,10 +521,10 @@ what pops up when the player successfully jumps on the platform. Legal values fo
 
 Sets the conditional variable to 1 if Play-Yan has fallen into a pit, 0 otherwise.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-0x56 (macro)
+0x56 (async)
    Pops Play-Yan's balloons one after another, making a count-in.
 
 Quiz Show (7)
@@ -661,8 +661,8 @@ Unknown. ::
 Sets the conditional variable to 1 if the player has reached a score of 90 (?), 0 otherwise. This is used to determine
 whether to award the skill star at the end of the rhythm game.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
 These are all synchronous subroutines.
 
@@ -704,7 +704,7 @@ These are all synchronous subroutines.
 Bunny Hop (8)
 -------------
 
-Bunny Hop does not use any macros/subs for cues.
+Bunny Hop does not use any subs for cues.
 
 0x100 - Spawn Animal
 ~~~~~~~~~~~~~~~~~~~~
@@ -740,7 +740,7 @@ The bunny hops on the ground. The argument is unknown, but always 0.
 Rat Race (9)
 ------------
 
-Rat Race makes use of macros for some cues.
+Rat Race makes use of subs for some cues.
 
 0x100 - Cue
 ~~~~~~~~~~~
@@ -865,22 +865,22 @@ Turns all lights on the stoplight off. ::
 
 The front rat drops the stoplight.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-These are all asynchronous subroutines (macros).
+These are all asynchronous subroutines.
 
 0x56
-   Sets up a hold cue for 4 beats after the start of the macro, including cat animations.
+   Sets up a hold cue for 4 beats after the start of the sub, including cat animations.
 
 0x57
-   Sets up a release cue for 4 beats after the start of the macro, including cat animations.
+   Sets up a release cue for 4 beats after the start of the sub, including cat animations.
 
 0x58
-   Stoplight count for hold cue; timed such that the input should be 3 beats after the start of the macro.
+   Stoplight count for hold cue; timed such that the input should be 3 beats after the start of the sub.
 
 0x59
-   Stoplight count for release cue; timed such that the input should be 3 beats after the start of the macro.
+   Stoplight count for release cue; timed such that the input should be 3 beats after the start of the sub.
 
 Power Calligraphy (0xA)
 -----------------------
@@ -1011,10 +1011,10 @@ Sets the animation for the dancers on the sides of the page. Values for ``type``
 
 - 4: Sitting animation
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-These are all synchronous subroutines (subs).
+These are all synchronous subroutines.
 
 0x56
    Ready 力 page
@@ -1199,9 +1199,9 @@ Sets background movement. Sets horizontal speed to ``hspeed`` (unit unknown), ho
 is 0, left if ``hdir`` is 1. Sets vertical speed to ``vspeed``, vertical direction to down if ``vdir`` is 0, up if
 ``vdir`` is 1.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-All the following are asynchronous subroutines (macros). Note that these assume that ``getrest 0`` and ``getrest 1``
+List of subs
+~~~~~~~~~~~~
+All the following are asynchronous subroutines. Note that these assume that ``getrest 0`` and ``getrest 1``
 are set to appropriate values that add up to one beat. In Space Dance, both are a half-beat, ``0x18`` ticks. In Cosmic
 Dance, ``getrest 0`` is ``0x20`` ticks and ``getrest 1`` is ``0x10`` ticks.
 
@@ -1233,7 +1233,7 @@ Dance, ``getrest 0`` is ``0x20`` ticks and ``getrest 1`` is ``0x10`` ticks.
    A full sit, with both regular and Space Gramps voice SFX.
 
 0x5F
-   Space Gramps punch animation, including preparation. This is a macro because the timing depends on the values of
+   Space Gramps punch animation, including preparation. This is a sub because the timing depends on the values of
    ``getrest 0`` and ``getrest 1``.
 
 Tap Trial (0xC)
@@ -1351,9 +1351,9 @@ Turns off background acceleration.
 
 Unknown purpose, appears at the end of Tap Trial, but not Tap Trial 2.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-All the following are synchronous subroutines (subs).
+List of subs
+~~~~~~~~~~~~
+All the following are synchronous subroutines.
 
 0x56
    Full single tap
@@ -1505,10 +1505,10 @@ The ``pos`` th airboarder from the front, starting from 0, jumps.
 Sets whether the airboarders are charging up for a jump. If ``flag`` is 1, it will be possible to charge and jump, otherwise
 not.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-All the following are asynchronous subroutines (macros).
+All the following are asynchronous subroutines.
 
 0x56
     Beat animations every beat, forever.
@@ -1597,9 +1597,9 @@ Sets the color of the background. Values for ``color`` are:
 
 - 1, 3, 5, 7: Purple
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-All the following are asynchronous subroutines (macros).
+List of subs
+~~~~~~~~~~~~
+All the following are asynchronous subroutines.
 
 0x56
    On-beat marching for 4 beats, starting the next beat.
@@ -1754,10 +1754,10 @@ The memory fades away.
 
 The text "Fin." appears.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-All the following are asynchronous subroutines (macros).
+All the following are asynchronous subroutines.
 
 0x57
    A full "peck your beak" cue, such that the first input is two and a half beats after the start.
@@ -1882,10 +1882,10 @@ Sets which visual effect occurs when the player successfully poses for a cue. Va
 
 The specified Dazzle's yellow square shrinks over ``time`` ticks.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-All the following are asynchronous subroutines (macros). Posing patterns are described in a 2x6 grid of numbers, the numbers
+All the following are asynchronous subroutines. Posing patterns are described in a 2x6 grid of numbers, the numbers
 representing the order in which the Dazzles pose. Identical numbers are simultaneous.
 
 0x56
@@ -2063,10 +2063,10 @@ of people in lower slots. Used values for ``type`` are:
 
 - 4: Man wearing blue shirt walking right.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-All the following are asynchronous subroutines (macros).
+All the following are asynchronous subroutines.
 
 0x56
    One yellow car cue; photograph disappears quickly. (unused)
@@ -2181,8 +2181,8 @@ The conductor snaps his baton.
 
 Often appears one beat after the player's Chorus Kid stops singing.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 Only one relevant subroutine exists. It is synchronous.
 
 0x56
@@ -2251,246 +2251,246 @@ The frog at position ``pos`` moves their mouths depending on ``type``. Values of
 
 - 3: Open mouth wide horizontally.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
 Frog Hop has nearly 100 different useful subroutines. Some are synchronous, and some are asynchronous.
 
 0x56
-   Beat animation for all frogs. (sub)
+   Beat animation for all frogs. (sync)
 
 0x57
-   Hip shake for foreground frogs. (sub)
+   Hip shake for foreground frogs. (sync)
 
 0x58
-   Hip shake for background frogs. (sub)
+   Hip shake for background frogs. (sync)
 
 0x59
-   Long hip shake for foreground frogs. (sub)
+   Long hip shake for foreground frogs. (sync)
 
 0x5A
-   Long hip shake for background frogs. (sub)
+   Long hip shake for background frogs. (sync)
 
 0x5B
-   Spin part 1 for foreground frogs. (sub)
+   Spin part 1 for foreground frogs. (sync)
 
 0x5C
-   Spin part 1 for background frogs. (sub)
+   Spin part 1 for background frogs. (sync)
 
 0x5D
-   Spin part 2 for foreground frogs. (sub)
+   Spin part 2 for foreground frogs. (sync)
 
 0x5E
-   Spin part 2 for background frogs. (sub)
+   Spin part 2 for background frogs. (sync)
 
 0x5F
-   Unknown. (macro)
+   Unknown. (async)
 
 0x60
-   Hip shake SFX. (sub)
+   Hip shake SFX. (sync)
 
 0x61
-   "Yeah" voice clip, along with mouth movement for the orange frog. (macro)
+   "Yeah" voice clip, along with mouth movement for the orange frog. (async)
 
 0x62
-   "Ya-" voice clip, along with mouth movement for the orange frog. (macro)
+   "Ya-" voice clip, along with mouth movement for the orange frog. (async)
 
 0x63
-   "-Hoo!" voice clip, along with mouth movement for the orange frog. (macro)
+   "-Hoo!" voice clip, along with mouth movement for the orange frog. (async)
 
 0x64
-   "-Hoo!" voice clip; mouth stays open longer. (macro)
+   "-Hoo!" voice clip; mouth stays open longer. (async)
 
 0x65
-   "Yeah-yeah-yeah" voice clip, along with mouth movement for orange frog; mouth stays open throughout. (macro)
+   "Yeah-yeah-yeah" voice clip, along with mouth movement for orange frog; mouth stays open throughout. (async)
 
 0x66
-   "Spin it" voice clip, along with speech bubble and mouth movement for orange frog. (macro)
+   "Spin it" voice clip, along with speech bubble and mouth movement for orange frog. (async)
 
 0x67
-   "Boys!" voice clip, along with mouth movement for orange frog. (macro)
+   "Boys!" voice clip, along with mouth movement for orange frog. (async)
 
 0x68
-   "Yeah" voice clip, along with mouth movement for background frogs. (macro)
+   "Yeah" voice clip, along with mouth movement for background frogs. (async)
 
 0x69
-   "Ya-" voice clip, along with mouth movement for background frogs. (macro)
+   "Ya-" voice clip, along with mouth movement for background frogs. (async)
 
 0x6A
-   "-Hoo!" voice clip, along with mouth movement for background frogs. (macro)
+   "-Hoo!" voice clip, along with mouth movement for background frogs. (async)
 
 0x6B
-   "-Hoo!" voice clip; mouths stay open longer. (macro)
+   "-Hoo!" voice clip; mouths stay open longer. (async)
 
 0x6C
-   "Yeah-yeah-yeah" voice clip, along with mouth movement for background frogs; mouths stay open throughout. (macro)
+   "Yeah-yeah-yeah" voice clip, along with mouth movement for background frogs; mouths stay open throughout. (async)
 
 0x6D
-   "Spin it" voice clip, along with mouth movement for background frogs. (macro)
+   "Spin it" voice clip, along with mouth movement for background frogs. (async)
 
 0x6E
-   "Spin it" voice clip; alternate mouth movement. (macro)
+   "Spin it" voice clip; alternate mouth movement. (async)
 
 0x6F
-   "Boys!" voice clip, along with mouth movement for background frogs. (macro)
+   "Boys!" voice clip, along with mouth movement for background frogs. (async)
 
 0x70
-   Four hip shake animations in a row for foreground frogs; uses sub 0x57. (macro)
+   Four hip shake animations in a row for foreground frogs; uses sub 0x57. (async)
 
 0x71
-   Four hip shake animations in a row for background frogs; uses sub 0x58. (macro)
+   Four hip shake animations in a row for background frogs; uses sub 0x58. (async)
 
 0x72
-   Four A press inputs in a row, starting one beat after the start of the macro. (macro)
+   Four A press inputs in a row, starting one beat after the start of the sub. (async)
 
 0x73
-   Hip shake SFX four times in a row; uses sub 0x60. (macro)
+   Hip shake SFX four times in a row; uses sub 0x60. (async)
 
 0x74
-   Four full hip shake cues in a row; combines the previous four macros as well as 0x5F. (macro)
+   Four full hip shake cues in a row; combines the previous four subs as well as 0x5F. (async)
 
 0x75
-   Two hip shake animations in a row for foreground frogs; uses sub 0x57. (macro)
+   Two hip shake animations in a row for foreground frogs; uses sub 0x57. (async)
 
 0x76
-   Two hip shake animations in a row for background frogs; uses sub 0x58. (macro)
+   Two hip shake animations in a row for background frogs; uses sub 0x58. (async)
 
 0x77
-   Two A press inputs in a row, starting one beat after the start of the macro. (macro)
+   Two A press inputs in a row, starting one beat after the start of the sub. (async)
 
 0x78
-   Hip shake SFX two times in a row; uses sub 0x60. (macro)
+   Hip shake SFX two times in a row; uses sub 0x60. (async)
 
 0x79
-   Two full hip shake cues in a row; combines the previous four macros as well as 0x5F. (macro)
+   Two full hip shake cues in a row; combines the previous four subs as well as 0x5F. (async)
 
 0x7A
-   One hip shake animation, followed by a triple hip shake animation, for foreground frogs; uses subs 0x57 and 0x59. (macro)
+   One hip shake animation, followed by a triple hip shake animation, for foreground frogs; uses subs 0x57 and 0x59. (async)
 
 0x7B
-   Three hip shake animations, followed by a triple hip shake animation, for background frogs; uses subs 0x58 and 0x5A. (macro)
+   Three hip shake animations, followed by a triple hip shake animation, for background frogs; uses subs 0x58 and 0x5A. (async)
 
 0x7C
    Three A press inputs one beat apart, followed by three A press inputs a half-beat apart, starting one beat after the
-   start of the macro. Also includes player's "yeah-yeah-yeah" voice clips. (macro)
+   start of the sub. Also includes player's "yeah-yeah-yeah" voice clips. (async)
 
 0x7D
    One hip shake SFX, followed by "yeah-yeah-yeah" voice clips for both the orange frog and background frogs; uses sub
-   0x60, and macros 0x61 and 0x68. (macro)
+   0x60, and subs 0x61 and 0x68. (async)
 
 0x7E
    One hip shake SFX, followed by "yeah-yeah-yeah" voice clips for both the orange frog and background frogs; uses sub
-   0x60, and macros 0x65 and 0x6C. (macro)
+   0x60, and subs 0x65 and 0x6C. (async)
 
 0x7F
-   A full "yeah-yeah-yeah" cue; combines macros 0x7A through 0x7D, as well as 0x5F. (macro)
+   A full "yeah-yeah-yeah" cue; combines subs 0x7A through 0x7D, as well as 0x5F. (async)
 
 0x80
-   A full "yeah-yeah-yeah" cue; combines macros 0x7A, 0x7B, 0x7C, 0x7E, and 0x5F. (macro; unused)
+   A full "yeah-yeah-yeah" cue; combines subs 0x7A, 0x7B, 0x7C, 0x7E, and 0x5F. (sync; unused)
 
 0x81-0x84
-   Identical to 0x7A-0x7D, except there is no preceding hip shake. (macros)
+   Identical to 0x7A-0x7D, except there is no preceding hip shake. (async)
 
 0x85
-   A full "yeah-yeah-yeah" cue; combines the previous four macros, as well as 0x5F.
+   A full "yeah-yeah-yeah" cue; combines the previous four subs, as well as 0x5F.
 
 0x86
-   Identical to 0x7E, except there is no preceding hip shake. (macro)
+   Identical to 0x7E, except there is no preceding hip shake. (async)
 
 0x87
-   A full "yeah-yeah-yeah" cue; combines macros 0x81-0x83, 0x86 and 0x5F. (macro; unused)
+   A full "yeah-yeah-yeah" cue; combines subs 0x81-0x83, 0x86 and 0x5F. (sync; unused)
 
 0x88
-   One hip shake animation, followed by a "ya-hoo!" pattern animation, for foreground frogs; uses subs 0x57 and 0x59. (macro)
+   One hip shake animation, followed by a "ya-hoo!" pattern animation, for foreground frogs; uses subs 0x57 and 0x59. (async)
 
 0x89
-   Three hip shake animations, followed by a "ya-hoo!" pattern animation, for background frogs; uses subs 0x58 and 0x5A. (macro)
+   Three hip shake animations, followed by a "ya-hoo!" pattern animation, for background frogs; uses subs 0x58 and 0x5A. (async)
 
 0x8A
    Three A press inputs one beat apart, followed by A press inputs in a "ya-hoo!" pattern (two a half-beat apart), starting
-   one beat after the start of the macro. Also includes the player's "Ya-hoo!" voice clips. (macro)
+   one beat after the start of the sub. Also includes the player's "Ya-hoo!" voice clips. (async)
 
 0x8B
    One hip shake SFX, followed by "Ya-hoo!" voice clips for both the orange frog and background frogs; uses sub 0x60,
-   and macros 0x62, 0x63, 0x69, and 0x6A. (macro)
+   and subs 0x62, 0x63, 0x69, and 0x6A. (async)
 
 0x8C
    One hip shake SFX, followed by "Ya-hoo!" voice clips for both the orange frog and background frogs. Mouths stay
-   open longer; uses sub 0x60, and macros 0x62, 0x64, 0x69, and 0x6B. (macro)
+   open longer; uses sub 0x60, and subs 0x62, 0x64, 0x69, and 0x6B. (async)
 
 0x8D
-   A full "Ya-hoo!" cue; combines macro 0x88-0x8B, as well as 0x5F. (macro)
+   A full "Ya-hoo!" cue; combines sub 0x88-0x8B, as well as 0x5F. (async)
 
 0x8E
-   A full "Ya-hoo!" cue. Mouths stay open longer; combines macros 0x88-0x8A, 0x8C, and 0x5F. (macro)
+   A full "Ya-hoo!" cue. Mouths stay open longer; combines subs 0x88-0x8A, 0x8C, and 0x5F. (async)
 
 0x8F-0x92
-   Identical to 0x88-0x8B, except there is no preceding hip shake. (macros)
+   Identical to 0x88-0x8B, except there is no preceding hip shake. (async)
 
 0x93
-   A full "Ya-hoo!" cue without preceding hip shake; combines the previous four macros, as well as 0x5F. (macro)
+   A full "Ya-hoo!" cue without preceding hip shake; combines the previous four subs, as well as 0x5F. (async)
 
 0x94
-   Identical to 0x8C, except there is no preceding hip shake. (macro)
+   Identical to 0x8C, except there is no preceding hip shake. (async)
 
 0x95
-   A full "Ya-hoo!" cue without preceding hip shake. Mouths stay open longer; combines macros 0x8F-0x91, 0x94, and 0x5F. (macro)
+   A full "Ya-hoo!" cue without preceding hip shake. Mouths stay open longer; combines subs 0x8F-0x91, 0x94, and 0x5F. (async)
 
 0x96
-   Three hip shake animations in a row for foreground frogs, starting one beat after the start of the macro. Uses sub 0x57. (macro)
+   Three hip shake animations in a row for foreground frogs, starting one beat after the start of the sub. Uses sub 0x57. (async)
 
 0x97
-   Three hip shake animations in a row for background frogs, starting one beat after the start of the macro. Uses sub 0x58. (macro)
+   Three hip shake animations in a row for background frogs, starting one beat after the start of the sub. Uses sub 0x58. (async)
 
 0x98
-   Three A press inputs in a row one beat apart, starting two beats after the start of the macro. (macro)
+   Three A press inputs in a row one beat apart, starting two beats after the start of the sub. (async)
 
 0x99
-   Three hip shake sound effects in a row, starting one beat after the start of the macro. Uses sub 0x60. (macro)
+   Three hip shake sound effects in a row, starting one beat after the start of the sub. Uses sub 0x60. (async)
 
 0x9A
-   Three full hip shake cues, starting two beats after the start of the macro; combines the previous four macros. (macro)
+   Three full hip shake cues, starting two beats after the start of the sub; combines the previous four subs. (async)
 
 0x9B-0x9F
-   Identical to 0x96-0x9A, except there is only one hip shake instead of three. (macros)
+   Identical to 0x96-0x9A, except there is only one hip shake instead of three. (async)
 
 0xA0
-   A full spin animation for foreground frogs. Uses subs 0x5B and 0x5D. (macro)
+   A full spin animation for foreground frogs. Uses subs 0x5B and 0x5D. (async)
 
 0xA1
-   Two hip shake animations, followed by a full spin animation for background frogs. Uses subs 0x5C and 0x5E. (macro)
+   Two hip shake animations, followed by a full spin animation for background frogs. Uses subs 0x5C and 0x5E. (async)
 
 0xA2
-   Two A press inputs one beat after the start of the macro, followed by a B hold-and-release. Also includes
-   player's "Spin it, boys!" voice clips. (macro)
+   Two A press inputs one beat after the start of the sub, followed by a B hold-and-release. Also includes
+   player's "Spin it, boys!" voice clips. (async)
 
 0xA3
-   "Spin it, boys!" voice clips for both the orange frog and background frogs; uses macros 0x66, 0x67, 0x6D and 0x6F. (macro)
+   "Spin it, boys!" voice clips for both the orange frog and background frogs; uses subs 0x66, 0x67, 0x6D and 0x6F. (async)
 
 0xA4
-   A full "Spin it, boys!" cue; combines the previous four macros, as well as 0x5F. (macro)
+   A full "Spin it, boys!" cue; combines the previous four subs, as well as 0x5F. (async)
 
 0xA5
    "Spin it, boys!" voice clips for both the orange frog and background frogs; alternate mouth movement for background frogs.
-   Uses macros 0x66, 0x67, 0x6D and 0x6E. (macro)
+   Uses subs 0x66, 0x67, 0x6D and 0x6E. (async)
 
 0xA6
-   A full "Spin it, boys!" cue; combines macros 0xA0-0xA3, 0xA5 and 0x5F. (macro; unused)
+   A full "Spin it, boys!" cue; combines subs 0xA0-0xA3, 0xA5 and 0x5F. (sub; unused)
 
 0xA7-0xAA
-   Identical to 0xA0-0xA3, except there is only one preceding hip shake. (macros)
+   Identical to 0xA0-0xA3, except there is only one preceding hip shake. (async)
 
 0xAB
-   A full "Spin it, boys!" cue with only one preceding hip shake; combines the previous four macros, as well as 0x5F. (macro)
+   A full "Spin it, boys!" cue with only one preceding hip shake; combines the previous four subs, as well as 0x5F. (async)
 
 0xAC
-   Identical to 0xA5. (macro)
+   Identical to 0xA5. (async)
 
 0xAD
-   Identical to 0xA6, but with only one preceding hip shake. Combines macros 0xA7-0xA9, 0xAC and 0x5F. (macro)
+   Identical to 0xA6, but with only one preceding hip shake. Combines subs 0xA7-0xA9, 0xAC and 0x5F. (async)
 
 0xAE
-   "One, two, three, four!" count-in with mouth movements for the orange frog. (macro)
+   "One, two, three, four!" count-in with mouth movements for the orange frog. (async)
 
 Fan Club (0x15)
 ---------------
@@ -2632,15 +2632,15 @@ Background darkens if ``flag`` is 1, lightens if 0.
 
 Confetti pops out.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-All the following are asynchronous subroutines (macros).
+List of subs
+~~~~~~~~~~~~
+All the following are asynchronous subroutines.
 
 0x57
    A full 4-clap cue, including animations and inputs.
 
 0x58
-   Inputs for a 4-clap cue, starting one beat after the start of the macro.
+   Inputs for a 4-clap cue, starting one beat after the start of the sub.
 
 0x59
    A full "I suppose" cue, including animations and inputs.
@@ -2779,10 +2779,10 @@ A paddler corresponding to ``i`` hits the ball. ::
 
 A paddler corresponding to ``i`` throws their arms up in victory.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-All the following are asynchronous subroutines (macros).
+All the following are asynchronous subroutines.
 
 0x56
    A single regular, 1-beat rally.
@@ -2797,7 +2797,7 @@ All the following are asynchronous subroutines (macros).
    A single half-beat rally, where the player hits the ball as though it were a 1-beat rally. (fast rally)
 
 0x5A
-   Fast rally cue sound, two beats after the start of the macro.
+   Fast rally cue sound, two beats after the start of the sub.
 
 0x5B
    Turbo rally cue sound.
@@ -2865,9 +2865,9 @@ Beat animation for robot.
 
 Takes the name of a ``.bflyt`` file and shows the factory screen (?).
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-All the following are asynchronous subroutines (macros).
+List of subs
+~~~~~~~~~~~~
+All the following are asynchronous subroutines.
 
 0x5D
    Beat animations every beat for 4 beats.
@@ -2987,9 +2987,9 @@ Beat animation for radio lady. ::
 
 The radio lady opens her mouth ``num`` times, simulating speech.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-All the following are asynchronous subroutines (macros).
+List of subs
+~~~~~~~~~~~~
+All the following are asynchronous subroutines.
 
 0x56-0x66
     An alien is spawned at position 0-0x10 respectively a half beat later, along with a sound effect, to be shot 4 beats
@@ -3100,9 +3100,9 @@ Right tom animation. ::
 
 Left tom animation.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-All the following are asynchronous subroutines (macros) unless noted otherwise.
+List of subs
+~~~~~~~~~~~~
+All the following are asynchronous subroutines unless noted otherwise.
 
 0x57
    Player and green ghost animations for a regular guitar cue.
@@ -3238,11 +3238,11 @@ The Monk's hands slide forward.
 The background starts moving if ``flag`` is 1. The second argument is unknown, possibly speed or time it takes to start
 moving at full speed.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-All the following are asynchronous subroutines (macros). All are such that the first dumpling will be placed into the
-Monk's hand one beat after the start of the macro.
+All the following are asynchronous subroutines. All are such that the first dumpling will be placed into the
+Monk's hand one beat after the start of the sub.
 
 0x56
    "One, go!" cue.
@@ -3314,10 +3314,10 @@ Combines widget in ``slot`` if the player shoots them correctly the next beat. :
 
 Sets the conditional variable to the number of slots which are active.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-All the following are asynchronous subroutines (macros). (???) indicates a macro that doesn't make sense within
+All the following are asynchronous subroutines. (???) indicates a sub that doesn't make sense within
 the rules of the rhythm game.
 
 0x56
@@ -3603,10 +3603,10 @@ Baxter to Forthington to ``time2``. Affects inputs.
 
 Forthington moves his mouth.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-All the following are macros unless otherwise noted.
+All the following are asynchronous unless otherwise noted.
 
 0x56
     Forthington speaks for a while.
@@ -3654,16 +3654,16 @@ All the following are macros unless otherwise noted.
     A high hit that doesn't respawn the shuttle. The shuttle returns to Forthington in one beat instead of two.
 
 0x65
-    Removes any color overlay (makes it white). (sub)
+    Removes any color overlay (makes it white). (sync)
 
 0x66
-    Adds an "evening" overlay (orange; characters are black). (sub)
+    Adds an "evening" overlay (orange; characters are black). (sync)
 
 0x67
-    Adds a dark overlay. (sub)
+    Adds a dark overlay. (sync)
 
 0x68
-    "evening" overlay, but without characters being silhouettes. (sub)
+    "evening" overlay, but without characters being silhouettes. (sync)
 
 Exhibition Match (0x1E)
 -----------------------
@@ -3766,10 +3766,10 @@ Adds ``zoom`` to the zoom level over ``time`` ticks.
 
 Flashes the lights (only visible when very zoomed out; most zoomed-out view used is 0x139C).
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-All the following are macros.
+All the following are asynchronous.
 
 0x56
     Four beat animations in a row for all characters.
@@ -3918,9 +3918,9 @@ An image of the Earth appears in the eye of the player's bird. ::
 
 Removes the image.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-All the following are macros.
+List of subs
+~~~~~~~~~~~~
+All the following are asynchronous.
 
 0x56
    Count-in with cowbells.
@@ -4069,9 +4069,9 @@ it stays open? Values for ``type`` are:
 
 - 2: Everybody speaks.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-The following are all macros.
+List of subs
+~~~~~~~~~~~~
+The following are all synchronous.
 
 0x56
    Clears the subtitles of the top row after 3.5 beats.
@@ -4215,9 +4215,9 @@ Beat animation for the girl. ::
 
 Beat animation for the weasels.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-All the following are macros. Note that these assume ``getrest 2`` and ``getrest 3`` are set to appropriate values
+List of subs
+~~~~~~~~~~~~
+All the following are asynchronous. Note that these assume ``getrest 2`` and ``getrest 3`` are set to appropriate values
 that sum to half a beat. They are ``0xE`` and ``0xA`` respectively in the standard game.
 
 0x56
@@ -4308,10 +4308,10 @@ A scene transition. Values for ``type`` are:
 
 - 2: School of fish in foreground.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-All the following are macros. Note that these assume ``getrest 2`` and ``getrest 3`` are set to appropriate values
+All the following are asynchronous. Note that these assume ``getrest 2`` and ``getrest 3`` are set to appropriate values
 that sum to half a beat. They will determine how long before the cue fish will bite onto the hook. They are ``0xD`` and
 ``0xB`` respectively in the standard game.
 
@@ -4385,10 +4385,10 @@ All microbes do the double-step flash. ::
 
 All microbes prepare for a triple-step.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-All the following are macros.
+All the following are asynchronous.
 
 0x57
    Regular one-step cue, with "GO!" voice clip. Input is 1.5 beats after start.
@@ -4524,10 +4524,10 @@ Mandrill does a part of his throwing animation. Values for ``type`` are:
 
 Beat animation for Mandrill.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-All the following are macros.
+All the following are asynchronous.
 
 0x56
    Monkey cue.
@@ -4609,10 +4609,10 @@ The captain moves his mouth. Values for ``type`` are:
 The captain does a beat animation according to the animation name at ``str1`` and a face animation according to the
 animation name at ``str2``, or none if 0.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-All the following are macros.
+All the following are asynchronous.
 
 0x59
    Count-in, including cowbells and "Attention, company!"
@@ -4789,9 +4789,9 @@ The Rhythm Arena overlay's opacity changes from ``alpha1`` to ``alpha2`` over ``
 
 The lights dim.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-All the following are macros.
+List of subs
+~~~~~~~~~~~~
+All the following are asynchronous.
 
 0x56
    A standard "Wubbadubbadub is that true?" cue. Input is three beats after start.
@@ -4957,16 +4957,16 @@ Does a background effect, like the flashing radial patterns in Karate Man and Ka
 
 Disables background effect.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
+List of subs
+~~~~~~~~~~~~
 
-All the following are macros.
+All the following are asynchronous.
 
 0x56
    Objects appear for a combo. First input one beat after start.
 
 0x57
-   5 beats after the start of the macro, does a happy or sad animation depending on player performance (``0x102<1> 0``)
+   5 beats after the start of the sub, does a happy or sad animation depending on player performance (``0x102<1> 0``)
 
 0x58
    Identical to 0x57, but the delay is 7 beats instead of 5.
@@ -5191,9 +5191,9 @@ Background guy handles the lever. ::
 
 Background guy walks away.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-Both are macros.
+List of subs
+~~~~~~~~~~~~
+Both are asynchronous.
 
 0x56
    Close gates on the right side after 1 beat.
@@ -5340,9 +5340,9 @@ Turns off the specified spotlights. ::
 
 Flashes the specified spotlights.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-All the following are macros.
+List of subs
+~~~~~~~~~~~~
+All the following are asynchronous.
 
 0x56
     Calls ``0x109<2>`` after one beat.
@@ -5461,15 +5461,15 @@ Does a beat animation depending on ``type``. Values for ``type`` are:
 
 Changes all rappers' pose. Values for ``type`` are identical to those in ``0x100``.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-All the following are subs, unless otherwise noted.
+List of subs
+~~~~~~~~~~~~
+All the following are synchronous, unless otherwise noted.
 
 0x6E
-   4 car beat animations in a row. (macro)
+   4 car beat animations in a row. (async)
 
 0x6F
-   8 car beat animations in a row. (macro; unused)
+   8 car beat animations in a row. (async; unused)
 
 0x70
    "Into you" cue (variant 0). Input 1 beat after start.
@@ -5573,9 +5573,9 @@ Sets the variant of the female voice to ``variant``. There are two variants, 1 a
 
 Sets the variant of the male voice to ``variant``.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-All the following are macros.
+List of subs
+~~~~~~~~~~~~
+All the following are asynchronous.
 
 0x5E
     The regular Bossa Nova cue pattern, with male voice clips. (used for right side)
@@ -5693,9 +5693,9 @@ Enables the spotlights. Values for ``type`` are:
 
 Disables the spotlights.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-All the following are macros.
+List of subs
+~~~~~~~~~~~~
+All the following are asynchronous.
 
 0x56
     White robot cue. Input at 4 beats after start.
@@ -5864,9 +5864,9 @@ Turns on the box's engine; high thrust.
 
 If ``flag`` is 1, enables light blue rings around stars, if 0, disables. Used in star flurries.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-All the following are macros.
+List of subs
+~~~~~~~~~~~~
+All the following are asynchronous.
 
 0x56
    White countdown (using ``0x101``). Unused, as ``0x100`` incorporates this.
@@ -5947,9 +5947,9 @@ The secretary moves her mouth ``num`` times. ::
 
 "One-two-three" cue animation.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-All the following are macros.
+List of subs
+~~~~~~~~~~~~
+All the following are asynchronous.
 
 0x56
    "One-two-three" voice clip and mouth movements, variant 1.
@@ -6142,9 +6142,9 @@ A demon flies onto the screen from the top. ::
 
 The demon flies into the house.
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-All the following are macros.
+List of subs
+~~~~~~~~~~~~
+All the following are asynchronous.
 
 0x56
    ``0x100 0``.
@@ -6317,9 +6317,9 @@ If ``flag`` is 1, text appears above your worker according to type. If 0, text i
 
 - 1: !!
 
-List of macros/subs
-~~~~~~~~~~~~~~~~~~~
-All the following are asynchronous (macros).
+List of subs
+~~~~~~~~~~~~
+All the following are asynchronous.
 
 0x56
    "Double up!" appears for 2 beats.
@@ -6371,3 +6371,87 @@ All the following are asynchronous (macros).
 
 0x66
    The different pattern is spawned for all background workers (candy after a half beat, then spider after 1.5 beats).
+
+Monkey Watch (0x33)
+-------------------
+
+0x100 - Input
+~~~~~~~~~~~~~
+::
+
+   0x100 time
+
+Cues up an input for after ``time`` ticks.
+
+0x101 - Camera Movement
+~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x101<3> angle, time
+
+The camera moves ``angle`` degrees around the clock in ``time`` ticks.
+
+0x102 - View Change
+~~~~~~~~~~~~~~~~~~~
+::
+
+   0x102 type, flag
+
+Changes the view. If ``flag`` is not 0, the change is instantaneous. Values for ``type`` are:
+
+- 0: Default view (following your monkey).
+
+- 1: Zoomed-out view of wrist.
+
+0x103 - Watch Monkey Doors
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x103 pos, flag
+
+The ``pos`` th monkey's (from the top of the watch, starting from 0) door opens and the monkey comes out. If ``flag`` is 1,
+this is instantaneous.
+
+0x104 - Watch Monkeys
+~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x104<1>
+
+The next monkey after your position on the clock stretches its arm out. ::
+
+   0x104<2>
+
+The next monkey after your position on the clock stretches its arm back in preparation for a high-five. ::
+
+   0x104<3> n
+
+The ``n`` th monkey after your position, starting at 0, becomes purple.
+
+0x106 - Watch Beat Animation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x106
+
+Beat animation for the monkey head in the center of the watch.
+
+0x107 - Balloon Control
+~~~~~~~~~~~~~~~~~~~~~~~
+The exact workings of this operation are as of yet unknown.
+
+List of subs
+~~~~~~~~~~~~
+All the following are asynchronous.
+
+0x57
+   The 3rd and 4th monkeys from your position are purple (Starting at 0).
+
+0x58
+   The 4th and 5th monkeys from your position are purple.
+
+0x59
+   Sound effects for purple monkeys ("Oo-kii ooki-ki")
+
+0x5C
+   Monkeys stretch back their arms every 2 beats forever.

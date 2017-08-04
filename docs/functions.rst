@@ -5,22 +5,22 @@ This is a list of all Tickflow operations which have known functions and have be
 
 .. _macro:
 
-Macro (0)
----------
+Asynchronous Subroutine (0)
+---------------------------
 
-The macro (aka. asynchronous subroutine) function finds a subroutine corresponding to an argument, then
+The async_sub function finds a subroutine corresponding to an argument, then
 calls it asynchronously (i.e. the code runs simultaneously to the Tickflow code already running).
-Macro calls have the following form::
+Async_sub calls have the following form::
 
-    macro id, delay, ???
+    async_sub id, delay, ???
 
 The ``id`` argument is the ID number assigned to the subroutine. It is first taken from a lookup table of
 rhythm game-specific IDs, usually starting at ``0x56``, and then from a global list of subroutines, which starts at 0.
 ``delay`` represents the delay in ticks before the macro is executed.
-The third argument is unknown, but is very often ``0x7D0`` for unknown reasons.
+The third argument is unknown, but is very often ``0x7D0`` (2000) for unknown reasons.
 The second and third arguments can be omitted, and default to 0 and ``0x7D0`` respectively.
 
-If the location called by the macro is within the Tickflow file it's called in, ``macro`` is replaced with a corresponding
+If the location called by the sub is within the Tickflow file it's called in, ``async_sub`` is replaced with a corresponding
 `async_call`_ call.
 
 .. _get_set_async:
