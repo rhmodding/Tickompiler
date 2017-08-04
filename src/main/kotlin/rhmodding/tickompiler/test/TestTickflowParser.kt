@@ -1,4 +1,4 @@
-package rhmodding.tickompiler
+package rhmodding.tickompiler.test
 
 import rhmodding.tickompiler.compiler.TickflowParser
 import org.parboiled.Parboiled

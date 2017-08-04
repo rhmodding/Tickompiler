@@ -1,5 +1,6 @@
-package rhmodding.tickompiler
+package rhmodding.tickompiler.test
 
+import rhmodding.tickompiler.MegamixFunctions
 import rhmodding.tickompiler.compiler.Compiler
 import rhmodding.tickompiler.output.Outputter
 import java.nio.ByteOrder
