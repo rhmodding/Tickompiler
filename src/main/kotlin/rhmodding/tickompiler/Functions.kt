@@ -1,6 +1,7 @@
 package rhmodding.tickompiler
 
 import rhmodding.tickompiler.compiler.FunctionCall
+import rhmodding.tickompiler.decompiler.CommentType
 import rhmodding.tickompiler.decompiler.DecompilerState
 import java.util.*
 
@@ -159,7 +160,7 @@ abstract class Function(val opCode: Long, val name: String, val argsNeeded: IntR
     abstract fun produceBytecode(funcCall: FunctionCall): LongArray
 
     abstract fun produceTickflow(state: DecompilerState, opcode: Long, specialArg: Long, args: LongArray,
-                                 comments: Boolean, specialArgStrings: Map<Int, String>): String
+                                 comments: CommentType, specialArgStrings: Map<Int, String>): String
 
     fun argsToTickflowArgs(args: LongArray, specialArgStrings: Map<Int, String>, radix: Int = 16): String {
         return args.mapIndexed { index, it ->
@@ -188,7 +189,7 @@ abstract class Function(val opCode: Long, val name: String, val argsNeeded: IntR
 
 class BytecodeFunction : Function(-1, "bytecode", 1..1) {
     override fun produceTickflow(state: DecompilerState, opcode: Long, specialArg: Long, args: LongArray,
-                                 comments: Boolean, specialArgStrings: Map<Int, String>): String {
+                                 comments: CommentType, specialArgStrings: Map<Int, String>): String {
         throw NotImplementedError()
     }
 
@@ -200,7 +201,7 @@ class BytecodeFunction : Function(-1, "bytecode", 1..1) {
 
 class OpcodeFunction : Function(-1, "opcode", 0..Integer.MAX_VALUE) {
     override fun produceTickflow(state: DecompilerState, opcode: Long, specialArg: Long, args: LongArray,
-                                 comments: Boolean, specialArgStrings: Map<Int, String>): String {
+                                 comments: CommentType, specialArgStrings: Map<Int, String>): String {
         return getHex(opcode) +
                 addSpecialArg(specialArg) +
                 " " + argsToTickflowArgs(args, specialArgStrings)
@@ -224,7 +225,7 @@ open class OptionalArgumentsFunction(opcode: Long, alias: String, val numArgs: I
         return opcode == opCode && args == numArgs.toLong()
     }
 
-    override fun produceTickflow(state: DecompilerState, opcode: Long, specialArg: Long, args: LongArray, comments: Boolean, specialArgStrings: Map<Int, String>): String {
+    override fun produceTickflow(state: DecompilerState, opcode: Long, specialArg: Long, args: LongArray, comments: CommentType, specialArgStrings: Map<Int, String>): String {
         val newArgs = args.toMutableList()
         while (newArgs.size > argsNeeded.first && newArgs.last() == defaultArgs[newArgs.size - argsNeeded.first - 1]) {
             newArgs.removeAt(newArgs.size-1)
@@ -252,7 +253,7 @@ open class SpecialOnlyFunction(opcode: Long, alias: String) : Function(opcode, a
     }
 
     override fun produceTickflow(state: DecompilerState, opcode: Long, specialArg: Long, args: LongArray,
-                                 comments: Boolean, specialArgStrings: Map<Int, String>): String {
+                                 comments: CommentType, specialArgStrings: Map<Int, String>): String {
         return "${this.name} 0x${Integer.toUnsignedString(specialArg.toInt(), 16)}"
     }
 
@@ -269,7 +270,7 @@ open class SpecialOnlyFunction(opcode: Long, alias: String) : Function(opcode, a
 open class SpecificSpecialFunction(opcode: Long, val special: Long, alias: String,
                                    argsNeeded: IntRange = 0..0b1111) : AliasedFunction(opcode, alias, argsNeeded) {
     override fun produceTickflow(state: DecompilerState, opcode: Long, specialArg: Long, args: LongArray,
-                                 comments: Boolean, specialArgStrings: Map<Int, String>): String {
+                                 comments: CommentType, specialArgStrings: Map<Int, String>): String {
         return super.produceTickflow(state, opcode, 0, args, comments, specialArgStrings)
     }
 
@@ -288,15 +289,15 @@ open class SpecificSpecialFunction(opcode: Long, val special: Long, alias: Strin
 
 open class RestFunction(opcode: Long) : SpecialOnlyFunction(opcode, "rest") {
     override fun produceTickflow(state: DecompilerState, opcode: Long, specialArg: Long, args: LongArray,
-                                 comments: Boolean, specialArgStrings: Map<Int, String>): String {
-        return "rest " + getHex(specialArg) + if (comments) "\t// ${specialArg / 48f} beats" else ""
+                                 comments: CommentType, specialArgStrings: Map<Int, String>): String {
+        return "rest " + getHex(specialArg) + if (comments != CommentType.NONE) "\t// ${specialArg / 48f} beats" else ""
     }
 }
 
 open class AliasedFunction(opcode: Long, alias: String, argsNeeded: IntRange, val indentChange: Int = 0,
                            val currentAdjust: Int = 0) : Function(opcode, alias, argsNeeded) {
     override fun produceTickflow(state: DecompilerState, opcode: Long, specialArg: Long, args: LongArray,
-                                 comments: Boolean, specialArgStrings: Map<Int, String>): String {
+                                 comments: CommentType, specialArgStrings: Map<Int, String>): String {
         state.nextIndentLevel += indentChange
         state.currentAdjust = currentAdjust
         return this.name + addSpecialArg(specialArg) + " " + argsToTickflowArgs(args, specialArgStrings)

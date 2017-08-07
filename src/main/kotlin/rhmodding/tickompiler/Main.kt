@@ -5,6 +5,7 @@ import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import rhmodding.tickompiler.compiler.Compiler
+import rhmodding.tickompiler.decompiler.CommentType
 import rhmodding.tickompiler.decompiler.Decompiler
 import rhmodding.tickompiler.gameextractor.GameExtractor
 import rhmodding.tickompiler.gameextractor.TABLE_OFFSET
@@ -112,9 +113,11 @@ decompile, d [flags] <input file or dir> [output file or dir]
   - If the output is not specified, the file will be a .tickflow file with the same name.
   - Flags:
 	- -c
-	  - Continue even with errors
+      - Continue even with errors
 	- -nc
  	  - No comments
+    - -bytecode
+      - Have a comment with the bytecode - no comments overrides this
 	- -nm
 	  - No metadata (use when decompiling snippets instead of full files)
     - -m
@@ -142,7 +145,7 @@ pack, p <input dir> <base file> [output file]
   - Files must be with the file extension .bin (little-endian) or .tempo
   - Output file will be overwritten without warning.
   - If the output is not specified, it will default to "C00.bin".
-""")
+""".replace("\t", "    "))
             }
             "c", "compile" -> {
                 val nanoStart: Long = System.nanoTime()
@@ -216,11 +219,12 @@ $successful / ${dirs.input.size} compiled successfully in ${(System.nanoTime() -
                 dirs.input.forEachIndexed { index, file ->
                     coroutines += async(CommonPool) {
                         val decompiler = Decompiler(Files.readAllBytes(file.toPath()),
-                                                                                     ByteOrder.BIG_ENDIAN, functions)
+                                                    ByteOrder.BIG_ENDIAN, functions)
 
                         try {
                             println("Decompiling ${file.path}")
-                            val result = decompiler.decompile(!flags.contains("-nc"),
+                            val result = decompiler.decompile(if (flags.contains(
+                                    "-nc")) CommentType.NONE else if ("-bytecode" in flags) CommentType.BYTECODE else CommentType.NORMAL,
                                                               !flags.contains("-nm") && functions == MegamixFunctions)
 
                             dirs.output[index].createNewFile()
@@ -288,7 +292,7 @@ $successful / ${dirs.input.size} decompiled successfully in ${(System.nanoTime()
                         val decompiler = Decompiler(arr, ByteOrder.BIG_ENDIAN,
                                                                                      MegamixFunctions)
                         println("Decompiling ${codeBuffer.getName(i)}")
-                        val r = decompiler.decompile(true, true, "    ", result.first)
+                        val r = decompiler.decompile(CommentType.NORMAL, true, "    ", result.first)
                         val f = FileOutputStream(File(decompiledFolder, codeBuffer.getName(i) + ".tickflow"))
                         f.write(r.second.toByteArray(Charset.forName("UTF-8")))
                         f.close()

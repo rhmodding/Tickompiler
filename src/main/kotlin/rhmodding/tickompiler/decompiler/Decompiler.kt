@@ -6,6 +6,7 @@ import rhmodding.tickompiler.GITHUB
 import rhmodding.tickompiler.VERSION
 import java.io.ByteArrayInputStream
 import java.nio.ByteOrder
+import java.util.*
 
 class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Functions) {
     var input = ByteArrayInputStream(array)
@@ -25,7 +26,7 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
         }
     }
 
-    fun decompile(addComments: Boolean, useMetadata: Boolean, indent: String = "    ", macros: Map<Int, Int> = mapOf()): Pair<Double, String> {
+    fun decompile(addComments: CommentType, useMetadata: Boolean, indent: String = "    ", macros: Map<Int, Int> = mapOf()): Pair<Double, String> {
         val nanoTime = System.nanoTime()
         val builder = StringBuilder()
         val state = DecompilerState()
@@ -115,7 +116,18 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
                 builder.append(indent)
             }
 
-            builder.append(tickFlow).append("\n")
+            builder.append(tickFlow)
+            if (addComments == CommentType.BYTECODE) {
+                fun Int.toLittleEndianHex(): String {
+                    val str = this.toString(16).padStart(8, '0').toUpperCase(Locale.ROOT)
+
+                    return str
+//                    return str.substring(6, 8) + str.substring(4, 6) + str.substring(2, 4) + str.substring(0, 2)
+                }
+
+                builder.append(" // bytecode: ${opint.toInt().toLittleEndianHex()} ${args.joinToString(" "){it.toInt().toLittleEndianHex()}}")
+            }
+            builder.append('\n')
             state.currentAdjust = 0
             state.nextIndentLevel = Math.max(state.nextIndentLevel, 0)
             counter += 4 * (1 + argCount)
@@ -127,3 +139,7 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
 }
 
 data class DecompilerState(var nextIndentLevel: Int = 0, var currentAdjust: Int = 0)
+
+enum class CommentType {
+    NONE, NORMAL, BYTECODE
+}

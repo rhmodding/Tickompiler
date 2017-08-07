@@ -1,6 +1,7 @@
 package rhmodding.tickompiler.test
 
 import rhmodding.tickompiler.MegamixFunctions
+import rhmodding.tickompiler.decompiler.CommentType
 import rhmodding.tickompiler.decompiler.Decompiler
 import java.nio.ByteOrder
 
@@ -19,7 +20,7 @@ fun main(args: Array<String>) {
     val decompiler = Decompiler(byteArray, ByteOrder.LITTLE_ENDIAN,
                                 MegamixFunctions)
 
-    val result = decompiler.decompile(addComments = true, useMetadata = true)
+    val result = decompiler.decompile(addComments = CommentType.NORMAL, useMetadata = true)
     println("Took ${result.first} ms\n${result.second}")
 
 }
