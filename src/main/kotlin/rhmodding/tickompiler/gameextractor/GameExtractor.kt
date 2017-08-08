@@ -64,9 +64,11 @@ class GameExtractor(val allSubs: Boolean) {
                 val args = l.slice(i+1..i+argCount).toMutableList()
                 i += argCount + 1
                 if (opcode == 2 || opcode == 6) {
+                    result.addAll(listOf(-1, 1, 1))
                     args[0] = map[args[0]] ?: 0
                 }
                 if (opcode == 1) {
+                    result.addAll(listOf(-1, 1, 0x101))
                     args[1] = map[args[1]] ?: 0
                 }
                 result.add(opint)
