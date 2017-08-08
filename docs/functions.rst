@@ -84,6 +84,20 @@ Stop (8)
 
 .. _rest:
 
+Set Conditional Variable (0xA)
+------------------------------
+
+``set_condvar`` sets the value of the conditional variable to its first argument. ::
+
+    set_condvar val
+
+Add Conditional Variable (0xB)
+------------------------------
+
+``add_condvar`` adds its first argument to the value of the conditional variable. ::
+
+    add_condvar val
+
 Rest (0xE)
 ----------
 
