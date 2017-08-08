@@ -15,25 +15,39 @@ object GamePutter {
 		val result = mutableListOf<Int>()
 		gameContents.position(12)
 		while (gameContents.hasRemaining()) {
-			val opint = gameContents.int
+			var opint = gameContents.int
+			if (opint == -2) {
+				break
+			}
+			val adjArgs = mutableListOf<Int>()
+			if (opint == -1) {
+				val amount = gameContents.int
+				for (i in 1..amount) {
+					val ann = gameContents.int
+					val anncode = ann and 0b11111111
+					val annArg = ann ushr 8
+					if (anncode == 0 || anncode == 1) {
+						adjArgs.add(annArg)
+					}
+				}
+				opint = gameContents.int
+			}
 			result.add(opint)
 			val opcode = opint and 0b1111111111
 			val special = (opint ushr 14)
 			val argCount = (opint ushr 10) and 0b1111
-			val args: MutableList<Int> = (1..argCount).map {
-				gameContents.int
+			val args: MutableList<Int> = (0 until argCount).map {
+				val arg = gameContents.int
+				if (it in adjArgs) {
+					arg + 0xC000000 + s
+				} else {
+					arg
+				}
 			}.toMutableList()
-			if ((opcode == 2 || opcode == 6) && special == 0) {
-				if (args[0] < 0x100000) {
-					args[0] += 0xC000000 + s
-				}
-			}
-			if (opcode == 1 && special == 1) {
-				if (args[1] < 0x100000) {
-					args[1] += 0xC000000 + s
-				}
-			}
 			result.addAll(args)
+		}
+		while (gameContents.hasRemaining()) {
+			result.add(gameContents.int)
 		}
 		return result
 	}

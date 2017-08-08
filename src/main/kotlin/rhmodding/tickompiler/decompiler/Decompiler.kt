@@ -80,7 +80,6 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
                 for (i in 1..amount) {
                     readInt()
                 }
-                counter += 4 * (2 + amount)
                 opint = readInt()
             }
             val opcode: Long = opint and 0b1111111111
@@ -137,7 +136,6 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
                 for (i in 1..amount) {
                     anns.add(readInt())
                 }
-                counter += 4 * (2 + amount)
                 opint = readInt()
             }
             val opcode: Long = opint and 0b1111111111

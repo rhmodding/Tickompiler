@@ -120,18 +120,11 @@ class Compiler(val tickflow: String, val functions: Functions) {
                     var annotationSize = 0
                     val funcCall = FunctionCall(it.func, 0,
                                                 it.args.map {
-                                                    if (it.id != null) {
-                                                        annotationSize++
-                                                    }
                                                     if (it.string != null) {
-                                                        annotationSize++
                                                         strings.add(it.string as String)
                                                     }
                                                     0L
                                                 })
-                    if (annotationSize > 0) {
-                        counter += annotationSize * 4 + 8
-                    }
                     val function: Function = functions[funcCall.func]
                     val len = function.produceBytecode(funcCall).size
                     counter += len * 4
