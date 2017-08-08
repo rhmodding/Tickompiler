@@ -79,6 +79,12 @@ object MegamixFunctions : Functions() {
             SpecificSpecialFunction(0x1, 1, "set_async", 2..2),
             SpecificSpecialFunction(0xF, 0, "getrest", 1..1),
             SpecificSpecialFunction(0xF, 1, "setrest", 2..2),
+            SpecificSpecialFunction(0x16, 0, "if", 1..1, 1),
+            SpecificSpecialFunction(0x16, 1, "if_neq", 1..1, 1),
+            SpecificSpecialFunction(0x16, 2, "if_lt", 1..1, 1),
+            SpecificSpecialFunction(0x16, 3, "if_leq", 1..1, 1),
+            SpecificSpecialFunction(0x16, 4, "if_gt", 1..1, 1),
+            SpecificSpecialFunction(0x16, 5, "if_geq", 1..1, 1),
             SpecificSpecialFunction(0x2A, 0, "game_model",
                                     2..2),
             SpecificSpecialFunction(0x2A, 2, "game_cellanim",
@@ -120,7 +126,6 @@ object MegamixFunctions : Functions() {
             alias(0xB, "add_condvar", 1..1),
             alias(0xC, "push_condvar", 0..0),
             alias(0xD, "pop_condvar", 0..0),
-            alias(0x16, "if", 1..1, 1),
             alias(0x17, "else", 0..0, 0,
                   -1), // current adjust pushes the else back an indent
             alias(0x18, "endif", 0..0, -1, -1), // same here
@@ -272,7 +277,9 @@ open class SpecialOnlyFunction(opcode: Long, alias: String) : Function(opcode, a
 }
 
 open class SpecificSpecialFunction(opcode: Long, val special: Long, alias: String,
-                                   argsNeeded: IntRange = 0..0b1111) : AliasedFunction(opcode, alias, argsNeeded) {
+                                   argsNeeded: IntRange = 0..0b1111,
+                                   indentChange: Int = 0, currentAdjust: Int = 0)
+    : AliasedFunction(opcode, alias, argsNeeded, indentChange, currentAdjust) {
     override fun produceTickflow(state: DecompilerState, opcode: Long, specialArg: Long, args: LongArray,
                                  comments: CommentType, specialArgStrings: Map<Int, String>): String {
         return super.produceTickflow(state, opcode, 0, args, comments, specialArgStrings)

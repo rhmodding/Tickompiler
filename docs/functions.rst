@@ -178,6 +178,17 @@ If the value of the conditional variable is equal to ``arg``, then the first blo
 Otherwise, the second block of Tickflow code is executed. The ``else`` block can be omitted entirely, in which case
 it is assumed to be empty.
 
+There are also several different variants on ``if``::
+
+    if_neq arg
+    if_lt arg
+    if_leq arg
+    if_gt arg
+    if_geq arg
+
+These execute the code if the conditional variable is
+not equal, less than, less than or equal, greater than, and greater than or equal to ``arg``, respectively.
+
 Switch, Case, Break, Default, Endswitch (0x19...0x1D)
 -----------------------------------------------------
 
