@@ -19,7 +19,7 @@ macro 0x56
 rest 48
 stop
 async1:
-macro 0x57
+macro "0x57\\\""
 rest 48
 stop
 """

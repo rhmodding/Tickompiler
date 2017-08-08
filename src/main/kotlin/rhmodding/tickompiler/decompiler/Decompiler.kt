@@ -26,6 +26,26 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
         }
     }
 
+    private fun readString(): Pair<String, Int> {
+        var result = ""
+        var i = 1
+        var r = read()
+        while (r != 0L) {
+            result += r.toChar()
+            r = read()
+            i++
+        }
+        while (i % 4 != 0) {
+            read()
+            i++
+        }
+        return Pair(result, i)
+    }
+
+    private fun escapeString(str: String): String {
+        return str.replace("\\", "\\\\").replace("\"", "\\\"")
+    }
+
     fun decompile(addComments: CommentType, useMetadata: Boolean, indent: String = "    ", macros: Map<Int, Int> = mapOf()): Pair<Double, String> {
         val nanoTime = System.nanoTime()
         val builder = StringBuilder()
@@ -46,10 +66,23 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
             markers[key.toLong()] = "sub${value.toString(16).toUpperCase()}"
         }
         var markerC = 0
+        val strings = mutableMapOf<Long, String>()
 
+        var counter = 0L
         // first pass is to construct a list of markers:
         while (input.available() > 0) {
-            val opint: Long = readInt()
+            var opint: Long = readInt()
+            if (opint == 0xFFFFFFFE) {
+                break
+            }
+            if (opint == 0xFFFFFFFF) {
+                val amount = readInt()
+                for (i in 1..amount) {
+                    readInt()
+                }
+                counter += 4 * (2 + amount)
+                opint = readInt()
+            }
             val opcode: Long = opint and 0b1111111111
             val special: Long = (opint ushr 14)
             val argCount: Long = (opint ushr 10) and 0b1111
@@ -69,6 +102,14 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
                     markers[args[n]] = "loc${markerC++}"
                 }
             }
+            counter += 4 * (1 + argCount)
+        }
+
+        // and also strings
+        while (input.available() > 0) {
+            val p = readString()
+            strings[counter] = escapeString(p.first)
+            counter += p.second
         }
 
         // reset input stream for the second pass:
@@ -77,13 +118,28 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
             input.skip(12)
         }
 
-        var counter = 0L
+        counter = 0L
 
         while (input.available() > 0) {
             if (markers.contains(counter)) {
                 builder.append("${markers[counter]}:\n")
             }
-            val opint: Long = readInt()
+
+            val specialArgStrings: MutableMap<Int, String> = mutableMapOf()
+
+            val anns = mutableListOf<Long>()
+            var opint: Long = readInt()
+            if (opint == 0xFFFFFFFE) {
+                break
+            }
+            if (opint == 0xFFFFFFFF) {
+                val amount = readInt()
+                for (i in 1..amount) {
+                    anns.add(readInt())
+                }
+                counter += 4 * (2 + amount)
+                opint = readInt()
+            }
             val opcode: Long = opint and 0b1111111111
             val special: Long = (opint ushr 14)
             val argCount: Long = (opint ushr 10) and 0b1111
@@ -97,7 +153,16 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
                 }
             }
 
-            val specialArgStrings: MutableMap<Int, String> = mutableMapOf()
+            anns.forEach {
+                val anncode = it and 0b11111111
+                val annArg = (it ushr 8).toInt()
+                if (anncode == 0L) {
+                    specialArgStrings[annArg] = markers[args[annArg]] ?: args[annArg].toString()
+                }
+                if (anncode == 1L) {
+                    specialArgStrings[annArg] = '"' + (strings[args[annArg]] ?: "") + '"'
+                }
+            }
 
             if ((opcode == 2L && argCount == 2L) ||
                     (opcode == 6L && argCount == 1L) ||

@@ -225,7 +225,7 @@ open class TickflowParser : BaseParser<Any>() {
                 ZeroOrMore(NoneOf("\\\"")),
                 name.append(match()),
                 ZeroOrMore("\\", FirstOf("\"", "\\"), ZeroOrMore(NoneOf("\\\""))),
-                Action<Any> {name.append(match().replace("\\\\(.)".toRegex(), {it.groupValues[0]}))},
+                Action<Any> {name.append(match().replace("\\\\(.)".toRegex(), {it.groupValues[1]}))},
                 push(name.get())
                 )
     }

@@ -19,19 +19,19 @@ class Compiler(val tickflow: String, val functions: Functions) {
             }
         }
 
-    fun stringToInts(str: String): List<Long> {
+    fun stringToInts(str: String, ordering: ByteOrder): List<Long> {
         val result = mutableListOf<Long>()
         var i = 0
         while (i <= str.length) {
             var int = 0
             if (i < str.length)
-                int += str[i].toByte()
+                int += str[i].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 24 else 0)
             if (i+1 < str.length)
-                int += str[i+1].toByte().toInt() shl 8
+                int += str[i+1].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 16 else 8)
             if (i+2 < str.length)
-                int += str[i+2].toByte().toInt() shl 16
+                int += str[i+2].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 8 else 16)
             if (i+3 < str.length)
-                int += str[i+3].toByte().toInt() shl 24
+                int += str[i+3].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 0 else 24)
             i += 4
             result.add(int.toLong())
         }
@@ -41,13 +41,26 @@ class Compiler(val tickflow: String, val functions: Functions) {
     fun compileStatement(statement: Any, longs: MutableList<Long>, variables: MutableMap<String, Long>) {
         when (statement) {
             is FunctionCallNode -> {
+                val argAnnotations = mutableListOf<Pair<Int, Int>>()
                 val funcCall = FunctionCall(statement.func,
                                             statement.special?.getValue(variables) ?: 0,
-                                            statement.args.map {
-
+                                            statement.args.mapIndexed { index, it ->
+                                                if (it.id != null) {
+                                                    argAnnotations.add(Pair(index, 0))
+                                                }
+                                                if (it.string != null) {
+                                                    argAnnotations.add(Pair(index, 1))
+                                                }
                                                 it.getValue(variables)
                                             })
 
+                if (argAnnotations.size > 0) {
+                    longs.add(0xFFFFFFFF)
+                    longs.add(argAnnotations.size.toLong())
+                    argAnnotations.forEach {
+                        longs.add((it.second + (it.first shl 8)).toLong())
+                    }
+                }
                 val function: Function = functions[funcCall.func]
 
                 if (function::class.java.isAnnotationPresent(DeprecatedFunction::class.java)) {
@@ -104,13 +117,21 @@ class Compiler(val tickflow: String, val functions: Functions) {
             when (it) {
                 is AliasAssignNode -> functions[it.expr.getValue(variables)] = it.alias
                 is FunctionCallNode -> {
+                    var annotationSize = 0
                     val funcCall = FunctionCall(it.func, 0,
                                                 it.args.map {
+                                                    if (it.id != null) {
+                                                        annotationSize++
+                                                    }
                                                     if (it.string != null) {
+                                                        annotationSize++
                                                         strings.add(it.string as String)
                                                     }
                                                     0L
                                                 })
+                    if (annotationSize > 0) {
+                        counter += annotationSize * 4 + 8
+                    }
                     val function: Function = functions[funcCall.func]
                     val len = function.produceBytecode(funcCall).size
                     counter += len * 4
@@ -131,14 +152,15 @@ class Compiler(val tickflow: String, val functions: Functions) {
 
         strings.forEach {
             variables[it] = counter
-            counter += stringToInts(it).size * 4
+            counter += stringToInts(it, endianness).size * 4
         }
 
         result.valueStack.reversed().forEach {
             compileStatement(it, longs, variables)
         }
+        longs.add(0xFFFFFFFE)
         strings.forEach {
-            longs.addAll(stringToInts(it))
+            longs.addAll(stringToInts(it, endianness))
         }
         val buffer = ByteBuffer.allocate(longs.size * 4 + (if (hasMetadata) 12 else 0))
         // invert because java is big endian or something like that
