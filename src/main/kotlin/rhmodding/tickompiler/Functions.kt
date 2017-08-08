@@ -118,6 +118,8 @@ object MegamixFunctions : Functions() {
             alias(0x8, "stop", 0..0),
             alias(0xA, "set_condvar", 1..1),
             alias(0xB, "add_condvar", 1..1),
+            alias(0xC, "push_condvar", 0..0),
+            alias(0xD, "pop_condvar", 0..0),
             alias(0x16, "if", 1..1, 1),
             alias(0x17, "else", 0..0, 0,
                   -1), // current adjust pushes the else back an indent

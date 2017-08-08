@@ -98,6 +98,25 @@ Add Conditional Variable (0xB)
 
     add_condvar val
 
+Push Conditional Variable (0xC)
+-------------------------------
+
+The conditional variable is pushed to a stack containing at most 16 values. For more information about stacks, see
+Wikipedia_.
+
+.. _Wikipedia: https://en.wikipedia.org/wiki/Stack_(abstract_data_type)
+
+::
+
+    push_condvar
+
+Pop Conditional Variable (0xD)
+------------------------------
+
+The conditional variable is popped from the previously mentioned stack. ::
+
+    pop_condvar
+
 Rest (0xE)
 ----------
 
