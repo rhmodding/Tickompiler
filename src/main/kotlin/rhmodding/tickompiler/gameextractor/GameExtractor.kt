@@ -3,6 +3,7 @@ package rhmodding.tickompiler.gameextractor
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.util.*
 
 
@@ -10,12 +11,41 @@ class GameExtractor(val allSubs: Boolean) {
 
     private var engine = -1
     private var isRemix = false
+    private var strings = mutableListOf<Pair<Int, String>>()
+
+    private val STRING_OPS = mutableMapOf(
+            0x31 to 0 to 1,
+            0x35 to 0 to 1,
+            0x39 to 0 to 1,
+            0x3E to 0 to 1,
+            0x5D to 0 to 1,
+            0x5D to 2 to 0
+    )
 
     companion object {
         val LOCATIONS: List<List<Int>> by lazy {
             Gson().fromJson<List<List<Int>>>(
                     GameExtractor::class.java.getResource("/locations.json").readText())
         }
+    }
+
+    fun stringToInts(str: String): List<Int> {
+        val result = mutableListOf<Int>()
+        var i = 0
+        while (i <= str.length) {
+            var int = 0
+            if (i < str.length)
+                int += str[i].toByte().toInt() shl 0
+            if (i+1 < str.length)
+                int += str[i+1].toByte().toInt() shl 8
+            if (i+2 < str.length)
+                int += str[i+2].toByte().toInt() shl 16
+            if (i+3 < str.length)
+                int += str[i+3].toByte().toInt() shl 24
+            i += 4
+            result.add(int)
+        }
+        return result
     }
 
     fun extractGame(buffer: ByteBuffer, index: Int): Pair<Map<Int, Int>, List<Int>> {
@@ -37,6 +67,7 @@ class GameExtractor(val allSubs: Boolean) {
         }
         val returnMap = mutableMapOf<Int, Int>()
         val map = mutableMapOf<Int, Int>()
+        val stringMap = mutableMapOf<String, Int>()
         var i = 0
         for ((first, second) in sorted) {
             map[first] = i
@@ -44,6 +75,10 @@ class GameExtractor(val allSubs: Boolean) {
                 returnMap[i] = LOCATIONS[engine].indexOf(first) + 0x56
             }
             i += second.size * 4
+        }
+        for ((first, second) in strings) {
+            map[first] = i
+            i += stringToInts(second).size * 4
         }
         val meta = mutableListOf<Int>()
         meta.add(index)
@@ -64,22 +99,30 @@ class GameExtractor(val allSubs: Boolean) {
                 val args = l.slice(i+1..i+argCount).toMutableList()
                 i += argCount + 1
                 if (opcode == 2 || opcode == 6) {
-                    result.addAll(listOf(-1, 1, 1))
+                    result.addAll(listOf(-1, 1, 0))
                     args[0] = map[args[0]] ?: 0
                 }
                 if (opcode == 1) {
-                    result.addAll(listOf(-1, 1, 0x101))
+                    result.addAll(listOf(-1, 1, 0x100))
                     args[1] = map[args[1]] ?: 0
+                }
+                if (opcode to special in STRING_OPS) {
+                    val n = STRING_OPS[opcode to special]?:0
+                    result.addAll(listOf(-1, 1, 1 or (n shl 8)))
+                    args[n] = map[args[n]] ?: 0
                 }
                 result.add(opint)
                 result.addAll(args)
             }
         }
+        result.add(-2)
+        result.addAll(strings.map {stringToInts(it.second)}.flatten())
         return result
     }
 
     fun firstPass(buf: ByteBuffer, start: Int): List<Pair<Int, List<Int>>> {
         val result = mutableListOf<Pair<Int, List<Int>>>()
+        strings = mutableListOf()
 
         isRemix = buf.getIntAdj(start) and 0b1111111111 == 1
         val q = ArrayDeque<Int>()
@@ -101,6 +144,13 @@ class GameExtractor(val allSubs: Boolean) {
                 for (i in 1..argCount) {
                     args.add(buf.getIntAdj(pc))
                     pc += 4
+                }
+
+                if (opcode to special in STRING_OPS) {
+                    val arg = STRING_OPS[opcode to special] ?: 0
+                    if (args[arg] > 0x100000) {
+                        strings.add(args[arg] to buf.getString(args[arg]))
+                    }
                 }
 
                 if (!isRemix && opcode == 0x28 && special == 0 && engine == -1) {
