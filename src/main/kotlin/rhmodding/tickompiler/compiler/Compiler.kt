@@ -19,12 +19,32 @@ class Compiler(val tickflow: String, val functions: Functions) {
             }
         }
 
+    fun stringToInts(str: String): List<Long> {
+        val result = mutableListOf<Long>()
+        var i = 0
+        while (i <= str.length) {
+            var int = 0
+            if (i < str.length)
+                int += str[i].toByte()
+            if (i+1 < str.length)
+                int += str[i+1].toByte().toInt() shl 8
+            if (i+2 < str.length)
+                int += str[i+2].toByte().toInt() shl 16
+            if (i+3 < str.length)
+                int += str[i+3].toByte().toInt() shl 24
+            i += 4
+            result.add(int.toLong())
+        }
+        return result
+    }
+
     fun compileStatement(statement: Any, longs: MutableList<Long>, variables: MutableMap<String, Long>) {
         when (statement) {
             is FunctionCallNode -> {
                 val funcCall = FunctionCall(statement.func,
                                             statement.special?.getValue(variables) ?: 0,
                                             statement.args.map {
+
                                                 it.getValue(variables)
                                             })
 
@@ -79,12 +99,18 @@ class Compiler(val tickflow: String, val functions: Functions) {
         var counter = 0L
         val startMetadata = MutableList<Long>(3, { 0 })
         var hasMetadata = false
+        val strings = mutableListOf<String>()
         result.valueStack.reversed().forEach {
             when (it) {
                 is AliasAssignNode -> functions[it.expr.getValue(variables)] = it.alias
                 is FunctionCallNode -> {
                     val funcCall = FunctionCall(it.func, 0,
-                                                it.args.map { 0L })
+                                                it.args.map {
+                                                    if (it.string != null) {
+                                                        strings.add(it.string as String)
+                                                    }
+                                                    0L
+                                                })
                     val function: Function = functions[funcCall.func]
                     val len = function.produceBytecode(funcCall).size
                     counter += len * 4
@@ -103,8 +129,16 @@ class Compiler(val tickflow: String, val functions: Functions) {
             }
         }
 
+        strings.forEach {
+            variables[it] = counter
+            counter += stringToInts(it).size * 4
+        }
+
         result.valueStack.reversed().forEach {
             compileStatement(it, longs, variables)
+        }
+        strings.forEach {
+            longs.addAll(stringToInts(it))
         }
         val buffer = ByteBuffer.allocate(longs.size * 4 + (if (hasMetadata) 12 else 0))
         // invert because java is big endian or something like that

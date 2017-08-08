@@ -73,10 +73,15 @@ class ExpressionNode constructor(val position: Position, rawop: String, left: Ex
                                  right: ExpressionNode?) : ImmutableBinaryTreeNode<ExpressionNode>(left, right) {
     val op = rawop.replace("[ \\t\\n]".toRegex(), "")
     var id: String? = null
+    var string: String? = null
     var num: Long? = null
 
-    constructor(position: Position, id: String) : this(position, "", null, null) {
-        this.id = id
+    constructor(position: Position, str: String, variable: Boolean = true) : this(position, "", null, null) {
+        if (variable) {
+            this.id = str
+        } else {
+            this.string = str
+        }
     }
 
     constructor(position: Position, num: Long) : this(position, "", null, null) {
@@ -89,6 +94,9 @@ class ExpressionNode constructor(val position: Position, rawop: String, left: Ex
         }
         if (id != null) {
             return variables[id as String] ?: throw CompilerError("Variable $id not initialized")
+        }
+        if (string != null) {
+            return variables[string as String] ?: throw CompilerError("String $string not properly handled. This should never happen.")
         }
         return when (op) {
             "+" -> left().getValue(variables) + right().getValue(variables)
@@ -211,6 +219,22 @@ open class TickflowParser : BaseParser<Any>() {
                        )
     }
 
+    open fun StringContents(): Rule {
+        val name = StringVar()
+        return Sequence(
+                ZeroOrMore(NoneOf("\\\"")),
+                name.append(match()),
+                ZeroOrMore("\\", FirstOf("\"", "\\"), ZeroOrMore(NoneOf("\\\""))),
+                Action<Any> {name.append(match().replace("\\\\(.)".toRegex(), {it.groupValues[0]}))},
+                push(name.get())
+                )
+    }
+
+    open fun DoubleQuoteString(): Rule {
+        return Sequence('"', StringContents(), '"',
+                        push(ExpressionNode(position(), pop() as String, false)))
+    }
+
     open fun VariableAssignment(): Rule {
         return Sequence(VariableIdentifier(),
                         Optional(Whitespace()).suppressNode(),
@@ -315,7 +339,7 @@ open class TickflowParser : BaseParser<Any>() {
     }
 
     open fun Factor(): Rule {
-        return FirstOf(IntegerLiteral(), VariableReference(), Sequence(
+        return FirstOf(IntegerLiteral(), VariableReference(), DoubleQuoteString(), Sequence(
                 Ch('('),
                 Expression(),
                 Ch(')')
