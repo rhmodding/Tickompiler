@@ -212,6 +212,36 @@ condition variable is equal to ``arg2``, then the ``case arg2`` block runs, etc.
 of the condition variable, the ``default`` block runs. If any ``break`` is omitted, then after running the corresponding
 code block, the next case will also be run.
 
+Countdown (0x1E)
+----------------
+
+``countdown`` operations implement a countdown using two internal variables; the initial value of the countdown, and the
+"progress" of the countdown, which is subtracted from the initial value. ::
+
+    set_countdown num
+
+Sets the initial value to ``num`` and sets the progress to 0. Equivalent to ``0x1E<0>``. ::
+
+    set_countdown_condvar
+
+Sets the initial value to the value of the conditional variable, and sets progress to 0. Equivalent to ``0x1E<1>``. ::
+
+    get_countdown_init
+
+Sets the conditional variable to the initial value of the countdown. Equivalent to ``0x1E<2>``. ::
+
+    get_countdown_prog
+
+Sets the conditional variable to the progress of the countdown. Equivalent to ``0x1E<3>``. ::
+
+    get_countdown
+
+Sets the conditional variable to the countdown value: ``initial - progress``. Equivalent to ``0x1E<4>``. ::
+
+    dec_countdown
+
+Increments the progress variable by 1, therefore decrementing the countdown value by 1. Equivalent to ``0x1E<5>``.
+
 Speed (0x24)
 ------------
 
