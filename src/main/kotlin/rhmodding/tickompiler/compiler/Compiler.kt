@@ -19,6 +19,12 @@ class Compiler(val tickflow: String, val functions: Functions) {
             }
         }
 
+    enum class VariableType {
+        VARIABLE,
+        MARKER,
+        STRING
+    }
+
     fun stringToInts(str: String, ordering: ByteOrder): List<Long> {
         val result = mutableListOf<Long>()
         var i = 0
@@ -38,14 +44,14 @@ class Compiler(val tickflow: String, val functions: Functions) {
         return result
     }
 
-    fun compileStatement(statement: Any, longs: MutableList<Long>, variables: MutableMap<String, Long>) {
+    fun compileStatement(statement: Any, longs: MutableList<Long>, variables: MutableMap<String, Pair<Long, VariableType>>) {
         when (statement) {
             is FunctionCallNode -> {
                 val argAnnotations = mutableListOf<Pair<Int, Int>>()
                 val funcCall = FunctionCall(statement.func,
                                             statement.special?.getValue(variables) ?: 0,
                                             statement.args.mapIndexed { index, it ->
-                                                if (it.id != null) {
+                                                if (it.id != null && variables[it.id as String]?.second == VariableType.MARKER) {
                                                     argAnnotations.add(Pair(index, 0))
                                                 }
                                                 if (it.string != null) {
@@ -72,7 +78,7 @@ class Compiler(val tickflow: String, val functions: Functions) {
                 function.produceBytecode(funcCall).forEach { longs.add(it) }
             }
             is VarAssignNode -> {
-                variables[statement.variable] = statement.expr.getValue(variables)
+                variables[statement.variable] = statement.expr.getValue(variables) to VariableType.VARIABLE
             }
         /*is LoopNode -> {
             (1..statement.expr.getValue(variables)).forEach {
@@ -106,7 +112,7 @@ class Compiler(val tickflow: String, val functions: Functions) {
 
         // TODO optimize primitives?
         val longs: MutableList<Long> = mutableListOf()
-        val variables: MutableMap<String, Long> = mutableMapOf()
+        val variables: MutableMap<String, Pair<Long, VariableType>> = mutableMapOf()
 
 //		result.valueStack.reversed().forEach(::println)
         var counter = 0L
@@ -130,7 +136,7 @@ class Compiler(val tickflow: String, val functions: Functions) {
                     counter += len * 4
                 }
                 is MarkerNode -> {
-                    variables[it.name] = counter
+                    variables[it.name] = counter to VariableType.MARKER
                 }
                 is DirectiveNode -> {
                     hasMetadata = true
@@ -144,7 +150,7 @@ class Compiler(val tickflow: String, val functions: Functions) {
         }
 
         strings.forEach {
-            variables[it] = counter
+            variables[it] = counter to VariableType.STRING
             counter += stringToInts(it, endianness).size * 4
         }
 

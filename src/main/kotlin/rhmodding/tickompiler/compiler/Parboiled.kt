@@ -88,15 +88,15 @@ class ExpressionNode constructor(val position: Position, rawop: String, left: Ex
         this.num = num
     }
 
-    fun getValue(variables: Map<String, Long>): Long {
+    fun getValue(variables: Map<String, Pair<Long, Compiler.VariableType>>): Long {
         if (num != null) {
             return num as Long
         }
         if (id != null) {
-            return variables[id as String] ?: throw CompilerError("Variable $id not initialized")
+            return variables[id as String]?.first ?: throw CompilerError("Variable $id not initialized")
         }
         if (string != null) {
-            return variables[string as String] ?: throw CompilerError("String $string not properly handled. This should never happen.")
+            return variables[string as String]?.first ?: throw CompilerError("String $string not properly handled. This should never happen.")
         }
         return when (op) {
             "+" -> left().getValue(variables) + right().getValue(variables)
