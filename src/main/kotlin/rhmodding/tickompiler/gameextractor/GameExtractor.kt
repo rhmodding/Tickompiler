@@ -37,12 +37,8 @@ class GameExtractor(val allSubs: Boolean) {
             if (i < str.length)
                 int += str[i].toByte().toInt() shl 0
             if (i+1 < str.length)
-                int += str[i+1].toByte().toInt() shl 8
-            if (i+2 < str.length)
-                int += str[i+2].toByte().toInt() shl 16
-            if (i+3 < str.length)
-                int += str[i+3].toByte().toInt() shl 24
-            i += 4
+                int += str[i+1].toByte().toInt() shl 16
+            i += 2
             result.add(int)
         }
         return result

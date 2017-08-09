@@ -31,14 +31,10 @@ class Compiler(val tickflow: String, val functions: Functions) {
         while (i <= str.length) {
             var int = 0
             if (i < str.length)
-                int += str[i].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 24 else 0)
+                int += str[i].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 16 else 0)
             if (i+1 < str.length)
-                int += str[i+1].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 16 else 8)
-            if (i+2 < str.length)
-                int += str[i+2].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 8 else 16)
-            if (i+3 < str.length)
-                int += str[i+3].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 0 else 24)
-            i += 4
+                int += str[i+1].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 0 else 16)
+            i += 2
             result.add(int.toLong())
         }
         return result

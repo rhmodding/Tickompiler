@@ -28,12 +28,14 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
 
     private fun readString(): Pair<String, Int> {
         var result = ""
-        var i = 1
+        var i = 2
         var r = read()
+        read()
         while (r != 0L) {
             result += r.toChar()
             r = read()
-            i++
+            read()
+            i += 2
         }
         while (i % 4 != 0) {
             read()
