@@ -8,6 +8,7 @@ object Commands {
     val commands: List<Command> =
             listOf(
                     HelpCommand,
+                    DaemonCommand,
                     CompileCommand,
                     DecompileCommand,
                     ExtractCommand,
