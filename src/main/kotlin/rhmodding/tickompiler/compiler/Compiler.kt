@@ -25,16 +25,35 @@ class Compiler(val tickflow: String, val functions: Functions) {
         STRING
     }
 
-    fun stringToInts(str: String, ordering: ByteOrder): List<Long> {
+    fun unicodeStringToInts(str: String, ordering: ByteOrder): List<Long> {
         val result = mutableListOf<Long>()
         var i = 0
         while (i <= str.length) {
             var int = 0
             if (i < str.length)
                 int += str[i].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 16 else 0)
-            if (i+1 < str.length)
-                int += str[i+1].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 0 else 16)
+            if (i + 1 < str.length)
+                int += str[i + 1].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 0 else 16)
             i += 2
+            result.add(int.toLong())
+        }
+        return result
+    }
+
+    fun stringToInts(str: String, ordering: ByteOrder): List<Long> {
+        val result = mutableListOf<Long>()
+        var i = 0
+        while (i <= str.length) {
+            var int = 0
+            if (i < str.length)
+                int += str[i].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 24 else 0)
+            if (i + 1 < str.length)
+                int += str[i + 1].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 16 else 8)
+            if (i + 2 < str.length)
+                int += str[i + 2].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 8 else 16)
+            if (i + 3 < str.length)
+                int += str[i + 3].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 0 else 24)
+            i += 4
             result.add(int.toLong())
         }
         return result
@@ -47,11 +66,14 @@ class Compiler(val tickflow: String, val functions: Functions) {
                 val funcCall = FunctionCall(statement.func,
                                             statement.special?.getValue(variables) ?: 0,
                                             statement.args.mapIndexed { index, it ->
-                                                if (it.id != null && variables[it.id as String]?.second == VariableType.MARKER) {
+                                                if (it.type == ExpType.VARIABLE && variables[it.id as String]?.second == VariableType.MARKER) {
                                                     argAnnotations.add(Pair(index, 0))
                                                 }
-                                                if (it.string != null) {
+                                                if (it.type == ExpType.USTRING) {
                                                     argAnnotations.add(Pair(index, 1))
+                                                }
+                                                if (it.type == ExpType.STRING) {
+                                                    argAnnotations.add(Pair(index, 2))
                                                 }
                                                 it.getValue(variables)
                                             })
@@ -114,16 +136,19 @@ class Compiler(val tickflow: String, val functions: Functions) {
         var counter = 0L
         val startMetadata = MutableList<Long>(3, { 0 })
         var hasMetadata = false
+        val ustrings = mutableListOf<String>()
         val strings = mutableListOf<String>()
         result.valueStack.reversed().forEach {
             when (it) {
                 is AliasAssignNode -> functions[it.expr.getValue(variables)] = it.alias
                 is FunctionCallNode -> {
-                    var annotationSize = 0
                     val funcCall = FunctionCall(it.func, 0,
                                                 it.args.map {
-                                                    if (it.string != null) {
+                                                    if (it.type == ExpType.STRING) {
                                                         strings.add(it.string as String)
+                                                    }
+                                                    if (it.type == ExpType.USTRING) {
+                                                        ustrings.add(it.string as String)
                                                     }
                                                     0L
                                                 })
@@ -145,6 +170,10 @@ class Compiler(val tickflow: String, val functions: Functions) {
             }
         }
 
+        ustrings.forEach {
+            variables[it] = counter to VariableType.STRING
+            counter += unicodeStringToInts(it, endianness).size * 4
+        }
         strings.forEach {
             variables[it] = counter to VariableType.STRING
             counter += stringToInts(it, endianness).size * 4
@@ -154,6 +183,9 @@ class Compiler(val tickflow: String, val functions: Functions) {
             compileStatement(it, longs, variables)
         }
         longs.add(0xFFFFFFFE)
+        ustrings.forEach {
+            longs.addAll(unicodeStringToInts(it, endianness))
+        }
         strings.forEach {
             longs.addAll(stringToInts(it, endianness))
         }

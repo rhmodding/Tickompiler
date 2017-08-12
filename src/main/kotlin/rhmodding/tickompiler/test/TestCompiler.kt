@@ -34,7 +34,7 @@ stop
 
     val compiler = Compiler(tickflow, MegamixFunctions)
 
-    val bo = ByteOrder.LITTLE_ENDIAN
+    val bo = ByteOrder.BIG_ENDIAN
     val out = compiler.compile(bo)
     println(out)
 

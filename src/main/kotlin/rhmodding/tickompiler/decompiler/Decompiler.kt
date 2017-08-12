@@ -26,16 +26,30 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
         }
     }
 
-    private fun readString(): Pair<String, Int> {
+    private fun readStringAuto(): Pair<String, Int> {
         var result = ""
         var i = 2
         var r = read()
-        read()
-        while (r != 0L) {
-            result += r.toChar()
+        if (r == 0L) {
+            return "" to 1
+        }
+        var u = false
+        result += r.toChar()
+        r = read()
+        if (r == 0L) {
+            u = true
             r = read()
             read()
             i += 2
+        }
+        while (r != 0L) {
+            result += r.toChar()
+            r = read()
+            i++
+            if (u) {
+                read()
+                i++
+            }
         }
         while (i % 4 != 0) {
             read()
@@ -108,7 +122,7 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
 
         // and also strings
         while (input.available() > 0) {
-            val p = readString()
+            val p = readStringAuto()
             strings[counter] = escapeString(p.first)
             counter += p.second
         }
@@ -160,6 +174,9 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
                     specialArgStrings[annArg] = markers[args[annArg]] ?: args[annArg].toString()
                 }
                 if (anncode == 1L) {
+                    specialArgStrings[annArg] = "u\"" + (strings[args[annArg]] ?: "") + '"'
+                }
+                if (anncode == 2L) {
                     specialArgStrings[annArg] = '"' + (strings[args[annArg]] ?: "") + '"'
                 }
             }

@@ -24,17 +24,15 @@ object GamePutter {
 				val amount = gameContents.int
 				for (i in 1..amount) {
 					val ann = gameContents.int
-					val anncode = ann and 0b11111111
+					val anncode = ann and 0xFF
 					val annArg = ann ushr 8
-					if (anncode == 0 || anncode == 1) {
+					if (anncode == 0 || anncode == 1 || anncode == 2) {
 						adjArgs.add(annArg)
 					}
 				}
 				opint = gameContents.int
 			}
 			result.add(opint)
-			val opcode = opint and 0b1111111111
-			val special = (opint ushr 14)
 			val argCount = (opint ushr 10) and 0b1111
 			val args: MutableList<Int> = (0 until argCount).map {
 				val arg = gameContents.int

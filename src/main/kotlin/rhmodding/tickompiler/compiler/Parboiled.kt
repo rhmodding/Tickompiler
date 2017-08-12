@@ -69,23 +69,34 @@ class StatementsNode(val position: Position, val list: MutableList<StatementNode
 
 class ArgsNode(val position: Position, val list: MutableList<ExpressionNode> = mutableListOf()) : MutableTreeNodeImpl<ArgsNode>()
 
+enum class ExpType {
+    OPERATION,
+    NUMBER,
+    VARIABLE,
+    STRING,
+    USTRING
+}
+
 class ExpressionNode constructor(val position: Position, rawop: String, left: ExpressionNode?,
                                  right: ExpressionNode?) : ImmutableBinaryTreeNode<ExpressionNode>(left, right) {
     val op = rawop.replace("[ \\t\\n]".toRegex(), "")
     var id: String? = null
     var string: String? = null
     var num: Long? = null
+    var type: ExpType = ExpType.OPERATION
 
-    constructor(position: Position, str: String, variable: Boolean = true) : this(position, "", null, null) {
-        if (variable) {
+    constructor(position: Position, str: String, type: ExpType = ExpType.VARIABLE) : this(position, "", null, null) {
+        if (type == ExpType.VARIABLE) {
             this.id = str
         } else {
             this.string = str
         }
+        this.type = type
     }
 
     constructor(position: Position, num: Long) : this(position, "", null, null) {
         this.num = num
+        type = ExpType.NUMBER
     }
 
     fun getValue(variables: Map<String, Pair<Long, Compiler.VariableType>>): Long {
@@ -232,7 +243,12 @@ open class TickflowParser : BaseParser<Any>() {
 
     open fun DoubleQuoteString(): Rule {
         return Sequence('"', StringContents(), '"',
-                        push(ExpressionNode(position(), pop() as String, false)))
+                        push(ExpressionNode(position(), pop() as String, ExpType.STRING)))
+    }
+
+    open fun UnicodeString(): Rule {
+        return Sequence('u', '"', StringContents(), '"',
+                        push(ExpressionNode(position(), pop() as String, ExpType.USTRING)))
     }
 
     open fun VariableAssignment(): Rule {
@@ -339,7 +355,7 @@ open class TickflowParser : BaseParser<Any>() {
     }
 
     open fun Factor(): Rule {
-        return FirstOf(IntegerLiteral(), VariableReference(), DoubleQuoteString(), Sequence(
+        return FirstOf(IntegerLiteral(), UnicodeString(), VariableReference(), DoubleQuoteString(), Sequence(
                 Ch('('),
                 Expression(),
                 Ch(')')

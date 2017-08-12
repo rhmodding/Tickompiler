@@ -10,16 +10,28 @@ class GameExtractor(val allSubs: Boolean) {
 
     private var engine = -1
     private var isRemix = false
-    private var strings = mutableListOf<Pair<Int, String>>()
+    private var ustrings = mutableListOf<Pair<Int, String>>()
+	private var astrings = mutableListOf<Pair<Int, String>>()
 
-    private val STRING_OPS = mutableMapOf(
-            0x31 to 0 to 1,
-            0x35 to 0 to 1,
-            0x39 to 0 to 1,
-            0x3E to 0 to 1,
-            0x5D to 0 to 1,
-            0x5D to 2 to 0
-                                         )
+    private val USTRING_OPS = mutableMapOf(
+            0x31 to 0 to arrayOf(1),
+            0x35 to 0 to arrayOf(1),
+            0x39 to 0 to arrayOf(1),
+            0x3E to 0 to arrayOf(1),
+            0x5D to 0 to arrayOf(1),
+            0x5D to 2 to arrayOf(0),
+			0x61 to 2 to arrayOf(0)
+	)
+
+	private val ASTRING_OPS = mutableMapOf(
+			0x67 to 1 to arrayOf(1),
+            0x93 to 0 to arrayOf(2, 3),
+            0x94 to 0 to arrayOf(1, 2, 3),
+            0x95 to 0 to arrayOf(1),
+            0xB0 to 4 to arrayOf(1),
+            0xB0 to 5 to arrayOf(1),
+            0x66 to 0 to arrayOf(1)
+	)
 
     companion object {
         val LOCATIONS: List<List<Int>> by lazy {
@@ -49,7 +61,7 @@ class GameExtractor(val allSubs: Boolean) {
         }
     }
 
-    fun stringToInts(str: String): List<Int> {
+    fun unicodeStringToInts(str: String): List<Int> {
         val result = mutableListOf<Int>()
         var i = 0
         while (i <= str.length) {
@@ -63,6 +75,25 @@ class GameExtractor(val allSubs: Boolean) {
         }
         return result
     }
+
+	fun stringToInts(str: String): List<Int> {
+		val result = mutableListOf<Int>()
+		var i = 0
+		while (i <= str.length) {
+			var int = 0
+			if (i < str.length)
+				int += str[i].toByte().toInt() shl 0
+			if (i + 1 < str.length)
+				int += str[i + 1].toByte().toInt() shl 8
+			if (i + 2 < str.length)
+				int += str[i + 2].toByte().toInt() shl 16
+			if (i + 3 < str.length)
+				int += str[i + 3].toByte().toInt() shl 24
+			i += 4
+			result.add(int)
+		}
+		return result
+	}
 
     fun extractGame(buffer: ByteBuffer, index: Int): Pair<Map<Int, Int>, List<Int>> {
         val start = buffer.getStart(index)
@@ -83,7 +114,6 @@ class GameExtractor(val allSubs: Boolean) {
         }
         val returnMap = mutableMapOf<Int, Int>()
         val map = mutableMapOf<Int, Int>()
-        val stringMap = mutableMapOf<String, Int>()
         var i = 0
         for ((first, second) in sorted) {
             map[first] = i
@@ -92,10 +122,14 @@ class GameExtractor(val allSubs: Boolean) {
             }
             i += second.size * 4
         }
-        for ((first, second) in strings) {
+        for ((first, second) in ustrings) {
             map[first] = i
-            i += stringToInts(second).size * 4
+            i += unicodeStringToInts(second).size * 4
         }
+		for ((first, second) in astrings) {
+			map[first] = i
+			i += stringToInts(second).size * 4
+		}
         val meta = mutableListOf<Int>()
         meta.add(index)
         meta.add(0)
@@ -113,32 +147,48 @@ class GameExtractor(val allSubs: Boolean) {
                 val special = (opint ushr 14)
                 val argCount = (opint ushr 10) and 0b1111
                 val args = l.slice(i + 1..i + argCount).toMutableList()
+                val annotations = mutableListOf<Int>()
                 i += argCount + 1
                 if (opcode == 2 || opcode == 6) {
-                    result.addAll(listOf(-1, 1, 0))
+                    annotations.add(0)
                     args[0] = map[args[0]] ?: 0
                 }
                 if (opcode == 1) {
-                    result.addAll(listOf(-1, 1, 0x100))
+                    annotations.add(0x100)
                     args[1] = map[args[1]] ?: 0
                 }
-                if (opcode to special in STRING_OPS) {
-                    val n = STRING_OPS[opcode to special] ?: 0
-                    result.addAll(listOf(-1, 1, 1 or (n shl 8)))
-                    args[n] = map[args[n]] ?: 0
+                if (opcode to special in USTRING_OPS) {
+                    val n = USTRING_OPS[opcode to special] ?: arrayOf()
+                    for (arg in n) {
+                        annotations.add(1 or (arg shl 8))
+                        args[arg] = map[args[arg]] ?: args[arg]
+                    }
+                }
+				if (opcode to special in ASTRING_OPS) {
+					val n = ASTRING_OPS[opcode to special] ?: arrayOf()
+                    for (arg in n) {
+                        annotations.add(2 or (arg shl 8))
+                        args[arg] = map[args[arg]] ?: args[arg]
+                    }
+				}
+                if (annotations.size > 0) {
+                    result.add(-1)
+                    result.add(annotations.size)
+                    result.addAll(annotations)
                 }
                 result.add(opint)
                 result.addAll(args)
             }
         }
         result.add(-2)
-        result.addAll(strings.map { stringToInts(it.second) }.flatten())
+        result.addAll(ustrings.map { unicodeStringToInts(it.second) }.flatten())
+		result.addAll(astrings.map { stringToInts(it.second) }.flatten())
         return result
     }
 
     fun firstPass(buf: ByteBuffer, start: Int): List<Pair<Int, List<Int>>> {
         val result = mutableListOf<Pair<Int, List<Int>>>()
-        strings = mutableListOf()
+        ustrings = mutableListOf()
 
         isRemix = buf.getIntAdj(start) and 0b1111111111 == 1
         val q = ArrayDeque<Int>()
@@ -162,12 +212,19 @@ class GameExtractor(val allSubs: Boolean) {
                     pc += 4
                 }
 
-                if (opcode to special in STRING_OPS) {
-                    val arg = STRING_OPS[opcode to special] ?: 0
-                    if (args[arg] > 0x100000) {
-                        strings.add(args[arg] to buf.getString(args[arg]))
-                    }
+                if (opcode to special in USTRING_OPS) {
+                    val n = USTRING_OPS[opcode to special] ?: arrayOf()
+                    n
+                            .filter { args[it] > 0x100000 }
+                            .forEach { ustrings.add(args[it] to buf.getUnicodeString(args[it])) }
                 }
+
+				if (opcode to special in ASTRING_OPS) {
+					val n = ASTRING_OPS[opcode to special] ?: arrayOf()
+                    n
+                            .filter { args[it] > 0x100000 }
+                            .forEach { astrings.add(args[it] to buf.getASCIIString(args[it])) }
+				}
 
                 if (!isRemix && opcode == 0x28 && special == 0 && engine == -1) {
                     engine = args[0]
