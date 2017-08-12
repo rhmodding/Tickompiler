@@ -3,7 +3,6 @@ package rhmodding.tickompiler.gameextractor
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import java.nio.ByteBuffer
-import java.nio.ByteOrder
 import java.util.*
 
 
@@ -20,12 +19,33 @@ class GameExtractor(val allSubs: Boolean) {
             0x3E to 0 to 1,
             0x5D to 0 to 1,
             0x5D to 2 to 0
-    )
+                                         )
 
     companion object {
         val LOCATIONS: List<List<Int>> by lazy {
             Gson().fromJson<List<List<Int>>>(
                     GameExtractor::class.java.getResource("/locations.json").readText())
+        }
+
+        private const val TEMPO_TABLE = 0x53EF54
+
+        fun extractTempo(buffer: ByteBuffer, index: Int): Pair<String, String> {
+            val ids = mutableListOf(buffer.getIntAdj(TEMPO_TABLE + 16 * index),
+                                    buffer.getIntAdj(TEMPO_TABLE + 16 * index + 4))
+                    .filter { it != -1 }
+            val name = (if (ids[0] != -1) ids[0] else ids[1]).toString(16)
+            var s: String = ids.joinToString(" ") { it.toString(16) } + "\n"
+            var addr = buffer.getIntAdj(TEMPO_TABLE + 16 * index + 12)
+            while (true) {
+                val beats = buffer.getFloat(addr - 0x100000)
+                val seconds = buffer.getInt(addr - 0x100000 + 4) / 32000.0 // will not work with unsigned but not important
+                val bpm = 60 * beats / seconds
+                s += "$bpm $beats\n"
+                if (buffer.getIntAdj(addr + 8) != 0)
+                    break
+                addr += 12
+            }
+            return name.toUpperCase(Locale.ROOT) to s.toUpperCase(Locale.ROOT)
         }
     }
 
@@ -36,8 +56,8 @@ class GameExtractor(val allSubs: Boolean) {
             var int = 0
             if (i < str.length)
                 int += str[i].toByte().toInt() shl 0
-            if (i+1 < str.length)
-                int += str[i+1].toByte().toInt() shl 16
+            if (i + 1 < str.length)
+                int += str[i + 1].toByte().toInt() shl 16
             i += 2
             result.add(int)
         }
@@ -92,7 +112,7 @@ class GameExtractor(val allSubs: Boolean) {
                 val opcode = opint and 0b1111111111
                 val special = (opint ushr 14)
                 val argCount = (opint ushr 10) and 0b1111
-                val args = l.slice(i+1..i+argCount).toMutableList()
+                val args = l.slice(i + 1..i + argCount).toMutableList()
                 i += argCount + 1
                 if (opcode == 2 || opcode == 6) {
                     result.addAll(listOf(-1, 1, 0))
@@ -103,7 +123,7 @@ class GameExtractor(val allSubs: Boolean) {
                     args[1] = map[args[1]] ?: 0
                 }
                 if (opcode to special in STRING_OPS) {
-                    val n = STRING_OPS[opcode to special]?:0
+                    val n = STRING_OPS[opcode to special] ?: 0
                     result.addAll(listOf(-1, 1, 1 or (n shl 8)))
                     args[n] = map[args[n]] ?: 0
                 }
@@ -112,7 +132,7 @@ class GameExtractor(val allSubs: Boolean) {
             }
         }
         result.add(-2)
-        result.addAll(strings.map {stringToInts(it.second)}.flatten())
+        result.addAll(strings.map { stringToInts(it.second) }.flatten())
         return result
     }
 

@@ -27,8 +27,10 @@ object Main {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        if (args.isEmpty())
-            throw IllegalArgumentException("Requires at least one argument!")
+        var args = args
+        if (args.isEmpty()) {
+            args = arrayOf("?")
+        }
 
         var indexOfFirstNotFlag: Int = -1
         val flags: List<String> = run {
@@ -138,6 +140,8 @@ extract, e [flags] <code file> [output dir]
     - -d
       - Immediately decompile all extracted games, with enhanced features such as meaningful marker names.
       - Will be extracted into a "decompiled" directory in the output directory.
+    - -t
+      - Extract tempo files. These will be written as .tempo files in a "tempo" folder in the output directory.
 
 pack, p <input dir> <base file> [output file]
   - Pack binary and tempo files from a specified directory into the output file, using the specified base file.
@@ -289,14 +293,24 @@ $successful / ${dirs.input.size} decompiled successfully in ${(System.nanoTime()
                     fos.write(arr)
                     fos.close()
                     if (flags.contains("-d")) {
-                        val decompiler = Decompiler(arr, ByteOrder.BIG_ENDIAN,
-                                                                                     MegamixFunctions)
+                        val decompiler = Decompiler(arr, ByteOrder.BIG_ENDIAN, MegamixFunctions)
                         println("Decompiling ${codeBuffer.getName(i)}")
                         val r = decompiler.decompile(CommentType.NORMAL, true, "    ", result.first)
                         val f = FileOutputStream(File(decompiledFolder, codeBuffer.getName(i) + ".tickflow"))
                         f.write(r.second.toByteArray(Charset.forName("UTF-8")))
                         f.close()
                         println("Decompiled ${codeBuffer.getName(i)} -> ${r.first} ms")
+                    }
+                }
+                if (flags.contains("-t")) {
+                    val tempoFolder = File(folder, "tempo")
+                    tempoFolder.mkdirs()
+                    for (i in 0 until 0x1DD) {
+                        val tempoPair = GameExtractor.extractTempo(codeBuffer, i)
+                        val f = FileOutputStream(File(tempoFolder, tempoPair.first + ".tempo"))
+                        f.write(tempoPair.second.toByteArray(Charset.forName("UTF-8")))
+                        f.close()
+                        println("Extracted tempo file ${tempoPair.first}")
                     }
                 }
                 val tableList = ByteArray(104*53)
