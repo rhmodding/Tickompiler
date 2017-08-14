@@ -3,10 +3,7 @@ package rhmodding.tickompiler.api
 import rhmodding.tickompiler.MegamixFunctions
 import rhmodding.tickompiler.decompiler.CommentType
 import rhmodding.tickompiler.decompiler.Decompiler
-import rhmodding.tickompiler.gameextractor.GameExtractor
-import rhmodding.tickompiler.gameextractor.TABLE_OFFSET
-import rhmodding.tickompiler.gameextractor.TEMPO_TABLE
-import rhmodding.tickompiler.gameextractor.getName
+import rhmodding.tickompiler.gameextractor.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
@@ -76,6 +73,28 @@ object ExtractCommand : Command("extract", "e") {
                 output.println("Decompiled ${codeBuffer.getName(i)} -> ${r.first} ms")
             }
         }
+        for (i in 0 until 16) {
+            println("Extracting ${codeBuffer.getGateName(i)}")
+            val result = GameExtractor(flags.contains("-a")).extractGateGame(codeBuffer, i)
+            val ints = result.second
+            val byteBuffer = ByteBuffer.allocate(ints.size * 4).order(ByteOrder.LITTLE_ENDIAN)
+            val intBuf = byteBuffer.asIntBuffer()
+            intBuf.put(ints.toIntArray())
+            val arr = ByteArray(ints.size * 4)
+            byteBuffer[arr, 0, ints.size * 4]
+            val fos = FileOutputStream(File(folder, codeBuffer.getGateName(i) + ".bin"))
+            fos.write(arr)
+            fos.close()
+            if (flags.contains("-d")) {
+                val decompiler = Decompiler(arr, ByteOrder.BIG_ENDIAN, MegamixFunctions)
+                output.println("Decompiling ${codeBuffer.getGateName(i)}")
+                val r = decompiler.decompile(CommentType.NORMAL, true, "    ", result.first)
+                val f = FileOutputStream(File(decompiledFolder, codeBuffer.getGateName(i) + ".tickflow"))
+                f.write(r.second.toByteArray(Charset.forName("UTF-8")))
+                f.close()
+                output.println("Decompiled ${codeBuffer.getGateName(i)} -> ${r.first} ms")
+            }
+        }
         if (flags.contains("-t")) {
             val tempoFolder = File(folder, "tempo")
             tempoFolder.mkdirs()
@@ -93,9 +112,13 @@ object ExtractCommand : Command("extract", "e") {
         val tempoList = ByteArray(16 * 0x1DD)
         codeBuffer.position(TEMPO_TABLE - 0x100000)
         codeBuffer.get(tempoList, 0, 16 * 0x1DD)
+        val gateList = ByteArray(16 * 36 + 16 * 4)
+        codeBuffer.position(GATE_TABLE - 0x100000)
+        codeBuffer.get(gateList, 0, 16 * 36 + 16 * 4)
         val fos = FileOutputStream(File(folder, "base.bin"))
         fos.write(tableList)
         fos.write(tempoList)
+        fos.write(gateList)
         fos.close()
     }
 

@@ -30,7 +30,8 @@ class GameExtractor(val allSubs: Boolean) {
             0x95 to 0 to arrayOf(1),
             0xB0 to 4 to arrayOf(1),
             0xB0 to 5 to arrayOf(1),
-            0x66 to 0 to arrayOf(1)
+            0x66 to 0 to arrayOf(1),
+            0x65 to 1 to arrayOf(1)
 	)
 
     companion object {
@@ -95,23 +96,41 @@ class GameExtractor(val allSubs: Boolean) {
 		return result
 	}
 
+    fun extractGateGame(buffer: ByteBuffer, index: Int): Pair<Map<Int, Int>, List<Int>> {
+        val start = buffer.getGateStart(index)
+        engine = -1
+        val funcs = firstPass(buffer, start, buffer.getIntAdj(GATE_TABLE + 36 * index + 8))
+        val sorted = listOf(funcs[0]) + funcs.drop(1).sortedBy { it.first }
+        val returnMap = mutableMapOf<Int, Int>()
+        val map = mutableMapOf<Int, Int>()
+        var i = 0
+        for ((first, second) in sorted) {
+            map[first] = i
+            if (!isRemix && first in LOCATIONS[engine]) {
+                returnMap[i] = LOCATIONS[engine].indexOf(first) + 0x56
+            }
+            i += second.size * 4
+        }
+        for ((first, second) in ustrings) {
+            map[first] = i
+            i += unicodeStringToInts(second).size * 4
+        }
+        for ((first, second) in astrings) {
+            map[first] = i
+            i += stringToInts(second).size * 4
+        }
+        val meta = mutableListOf<Int>()
+        meta.add(index + 0x100)
+        meta.add(0)
+        meta.add(map[buffer.getIntAdj(GATE_TABLE + 36 * index + 8)] ?: 0)
+        return returnMap to (meta + secondPass(sorted.map { it.second }, map))
+    }
+
     fun extractGame(buffer: ByteBuffer, index: Int): Pair<Map<Int, Int>, List<Int>> {
         val start = buffer.getStart(index)
         engine = -1
         val funcs = firstPass(buffer, start)
-        val sorted: List<Pair<Int, List<Int>>>
-        if (!isRemix) {
-            sorted = mutableListOf(funcs[0])
-            sorted.addAll(funcs.drop(1).sortedBy {
-                if (it.first in LOCATIONS[engine]) {
-                    LOCATIONS[engine].indexOf(it.first)
-                } else {
-                    1000
-                }
-            })
-        } else {
-            sorted = funcs
-        }
+        val sorted = listOf(funcs[0]) + funcs.drop(1).sortedBy { it.first }
         val returnMap = mutableMapOf<Int, Int>()
         val map = mutableMapOf<Int, Int>()
         var i = 0
@@ -153,7 +172,7 @@ class GameExtractor(val allSubs: Boolean) {
                     annotations.add(0)
                     args[0] = map[args[0]] ?: 0
                 }
-                if (opcode == 1) {
+                if (opcode == 1 && special == 1) {
                     annotations.add(0x100)
                     args[1] = map[args[1]] ?: 0
                 }
@@ -186,13 +205,16 @@ class GameExtractor(val allSubs: Boolean) {
         return result
     }
 
-    fun firstPass(buf: ByteBuffer, start: Int): List<Pair<Int, List<Int>>> {
+    fun firstPass(buf: ByteBuffer, start: Int, assets: Int? = null): List<Pair<Int, List<Int>>> {
         val result = mutableListOf<Pair<Int, List<Int>>>()
         ustrings = mutableListOf()
 
         isRemix = buf.getIntAdj(start) and 0b1111111111 == 1
         val q = ArrayDeque<Int>()
         q.add(start)
+        if (assets != null) {
+            q.add(assets)
+        }
         while (q.isNotEmpty()) {
             // compute the size of the function.
             val s = q.remove()

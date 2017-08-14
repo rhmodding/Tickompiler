@@ -8,9 +8,13 @@ object GamePutter {
 		val tableIndex = gameContents.getInt(0)
 		val start = gameContents.getInt(4)
 		val assets = gameContents.getInt(8)
-
-		base.putInt(52*tableIndex + 4, 0xC000000 + start + s)
-		base.putInt(52*tableIndex + 8, 0xC000000 + assets + s)
+		if (tableIndex >= 0x100) {
+			base.putInt(0x3358 + 36*(tableIndex-0x100) + 4, 0xC000000 + start + s)
+			base.putInt(0x3358 + 36*(tableIndex-0x100) + 8, 0xC000000 + assets + s)
+		} else {
+			base.putInt(52 * tableIndex + 4, 0xC000000 + start + s)
+			base.putInt(52 * tableIndex + 8, 0xC000000 + assets + s)
+		}
 
 		val result = mutableListOf<Int>()
 		gameContents.position(12)

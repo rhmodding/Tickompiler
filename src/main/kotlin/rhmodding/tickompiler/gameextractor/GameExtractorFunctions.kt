@@ -4,6 +4,7 @@ import java.nio.ByteBuffer
 
 const val TABLE_OFFSET = 0x52B498
 const val TEMPO_TABLE = 0x53EF54
+const val GATE_TABLE = 0x52E488
 
 fun ByteBuffer.getIntAdj(index: Int): Int =
         this.getInt(index - 0x100000)
@@ -25,7 +26,7 @@ fun ByteBuffer.getASCIIString(index: Int): String {
     var i: Int = index - 0x100000
     val str: StringBuilder = StringBuilder()
     while (true) {
-        val char: Char = this.getChar(i)
+        val char: Char = this.get(i).toChar()
         if (char.toByte().toInt() == 0) {
             return str.toString()
         }
@@ -42,3 +43,12 @@ fun ByteBuffer.getName(index: Int): String {
 
 fun ByteBuffer.getStart(index: Int): Int =
         getIntAdj(TABLE_OFFSET + 52 * index + 4)
+
+fun ByteBuffer.getGateStart(index: Int): Int =
+        getIntAdj(GATE_TABLE + 36 * index + 4)
+
+fun ByteBuffer.getGateName(index: Int): String {
+    val pointer: Int = getIntAdj(GATE_TABLE + 36 * index + 16)
+    val str: String = getASCIIString(pointer)
+    return str.slice(str.indexOf('_') + 1 until str.lastIndexOf('_'))
+}

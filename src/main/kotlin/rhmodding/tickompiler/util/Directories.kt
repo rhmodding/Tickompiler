@@ -32,7 +32,7 @@ fun getDirectories(flags: Commands.Flags, args: List<String>, firstFilter: (Stri
         } else {
             second?.mkdirs()
             input.mapTo(output) { file ->
-                File(second, file.nameWithoutExtension + "" + outputExtension)
+                File(second, file.nameWithoutExtension + "." + outputExtension)
             }
         }
 

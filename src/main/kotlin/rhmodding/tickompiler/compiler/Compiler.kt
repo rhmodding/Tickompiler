@@ -158,6 +158,12 @@ class Compiler(val tickflow: String, val functions: Functions) {
                 }
                 is MarkerNode -> {
                     variables[it.name] = counter to VariableType.MARKER
+                    if (it.name == "start") {
+                        startMetadata[1] = counter
+                    }
+                    if (it.name == "assets") {
+                        startMetadata[2] = counter
+                    }
                 }
                 is DirectiveNode -> {
                     hasMetadata = true

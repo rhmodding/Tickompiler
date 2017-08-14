@@ -70,14 +70,14 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
         run decompilerInfo@ {
             builder.append("// Decompiled using Tickompiler ${VERSION}\n// ${GITHUB}\n")
         }
+        val markers = mutableMapOf<Long, String>()
 
         if (useMetadata) {
             builder.append("#index 0x${readInt().toString(16).toUpperCase()}\n")
-            builder.append("#start 0x${readInt().toString(16).toUpperCase()}\n")
-            builder.append("#assets 0x${readInt().toString(16).toUpperCase()}\n")
+            markers[readInt()] = "start"
+            markers[readInt()] = "assets"
         }
 
-        val markers = mutableMapOf<Long, String>()
         for ((key, value) in macros) {
             markers[key.toLong()] = "sub${value.toString(16).toUpperCase()}"
         }
