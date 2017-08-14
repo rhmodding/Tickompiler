@@ -38,7 +38,7 @@ object HelpCommand : Command("help", "?") {
         if (indexOfFirstArgument != -1) {
             val cmd = Commands.commandMap[args[indexOfFirstArgument].toLowerCase(Locale.ROOT)]
             if (cmd == null) {
-                output.println("Could not display help: command ${args.first()} not found")
+                output.println("Could not display help: command ${args[1]} not found")
                 return
             }
 
