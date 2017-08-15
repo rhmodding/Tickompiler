@@ -1,6 +1,6 @@
 package rhmodding.tickompiler
 
-val VERSION: String = "v1.5.0-SNAPSHOT"
+val VERSION: String = "v1.5.0"
 
 val GITHUB: String = "https://github.com/SneakySpook/Tickompiler"
 
