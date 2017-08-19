@@ -18,7 +18,7 @@ object DaemonCommand : Command("daemon") {
     override fun execute(args: List<String>, flagsObj: Commands.Flags, flags: List<String>, indexOfFirstArgument: Int,
                 output: PrintStream) {
 
-        output.println("Running in daemon mode: CTRL+C or stop or exit to finish\n$VERSION\n$GITHUB\n")
+        output.println("Running in daemon mode: CTRL+C or type 'stop' or 'exit' to terminate\n$VERSION\n$GITHUB\n")
 
         var input: String = (if (indexOfFirstArgument != -1) {
             // we have a first command to immediately execute
