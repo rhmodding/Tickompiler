@@ -1,7 +1,6 @@
 package rhmodding.tickompiler.api
 
-import rhmodding.tickompiler.GITHUB
-import rhmodding.tickompiler.VERSION
+import rhmodding.tickompiler.INFO_TEXT
 import java.io.PrintStream
 import java.util.*
 
@@ -45,9 +44,7 @@ object HelpCommand : Command("help", "?") {
             spitOutInfo(cmd)
         } else {
             builder.append("""
-Tickompiler: A RHM tickflow compiler/decompiler written by SneakySpook and chrislo27 in Kotlin
-$VERSION
-$GITHUB
+$INFO_TEXT
 
 Commands:
 """)
