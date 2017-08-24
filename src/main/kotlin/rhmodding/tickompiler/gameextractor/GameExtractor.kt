@@ -41,6 +41,20 @@ class GameExtractor(val allSubs: Boolean) {
         }
 
         private const val TEMPO_TABLE = 0x53EF54
+        private const val DECIMALS: Int = 3
+
+        private fun correctlyRoundDouble(value: Double, places: Int): String {
+            if (places < 0)
+                error("Places $places cannot be negative")
+            if (places == 0)
+                return "$value"
+            val long: Long = Math.round(value * Math.pow(10.0, places.toDouble()))
+            val longString = long.toString()
+
+            val str = longString.substring(0, longString.length - places) + "." + longString.substring(longString.length - places).trimEnd('0')
+
+            return if (str.endsWith('.')) "${str}0" else str
+        }
 
         fun extractTempo(buffer: ByteBuffer, index: Int): Pair<String, String> {
             val ids = mutableListOf(buffer.getIntAdj(TEMPO_TABLE + 16 * index),
@@ -53,7 +67,7 @@ class GameExtractor(val allSubs: Boolean) {
                 val beats = buffer.getFloat(addr - 0x100000)
                 val seconds = buffer.getInt(addr - 0x100000 + 4) / 32000.0 // will not work with unsigned but not important
                 val bpm = 60 * beats / seconds
-                s += "${String.format("%.2f", bpm)} ${String.format("%.2f", beats)}\n"
+                s += "${correctlyRoundDouble(bpm, DECIMALS)} ${correctlyRoundDouble(beats.toDouble(), DECIMALS)}\n"
                 if (buffer.getIntAdj(addr + 8) != 0)
                     break
                 addr += 12
