@@ -272,7 +272,7 @@ open class SpecialOnlyFunction(opcode: Long, alias: String) : Function(opcode, a
 
     override fun produceTickflow(state: DecompilerState, opcode: Long, specialArg: Long, args: LongArray,
                                  comments: CommentType, specialArgStrings: Map<Int, String>): String {
-        return "${this.name} 0x${Integer.toUnsignedString(specialArg.toInt(), 16)}"
+        return "${this.name} ${getHex(specialArg)}"
     }
 
     override fun produceBytecode(funcCall: FunctionCall): LongArray {
