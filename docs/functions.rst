@@ -119,12 +119,12 @@ The conditional variable is popped from the previously mentioned stack. ::
 
 Rest (0xE)
 ----------
-
-``rest`` pauses execution for a specified number of ticks. ::
+::
 
     rest duration
 
-Tickflow execution is paused for ``duration`` ticks. 48, or ``0x30``, ticks make one beat.
+``duration`` is added to the rest counter. If the rest counter is now greater than zero, it will decrement at a rate
+of 48 per beat, pausing Tickflow execution until it reaches zero again.
 Note that ``duration`` is actually the special argument for ``rest``, but the syntax is like a regular argument here
 for convenience.
 
@@ -132,7 +132,7 @@ Get/Set Rest (0xF)
 ------------------
 
 ``getrest`` and ``setrest`` work similarly to :ref:`get_set_async`: ``setrest`` stores a duration in a slot, to later
-be used by ``getrest`` to rest for that duration. ::
+be used by ``getrest`` to add to the rest counter. ::
 
     setrest slot, duration
 
@@ -140,7 +140,25 @@ The duration ``duration`` is stored in slot ``slot``. ::
 
     getrest slot
 
-Execution is paused for the duration previously stored in ``slot``.
+The duration previously stored in ``slot`` is added to the rest counter.
+
+Reset Rest Counter (0x11)
+-------------------------
+::
+
+    rest_reset
+
+The rest counter is set to 0.
+
+Unrest (0x12)
+-------------
+::
+
+    unrest duration
+
+``duration`` is subtracted from the rest counter. If the rest counter is negative, no action is undertaken. This effectively
+functions as a sort of buffer to subtract a duration from succeeding rests. Like in ``rest``, ``duration`` is actually
+a special argument, but the syntax is adjusted for convenience.
 
 Label (0x14)
 ------------
@@ -252,6 +270,18 @@ of the music. An example of ``speed`` usage can be found in Karate Man Senior, w
 
 The speed is set to ``val/256`` of the original speed. For example, ``speed 0x100`` sets the speed to the original speed,
 while ``speed 0x120`` sets the speed to 288/256, or 112.5% of the original speed.
+
+Relative Speed (0x25)
+---------------------
+
+This operation operates on the same speed value as ``speed`` (0x24) does, but instead of setting it, it multiplies,
+resulting in a relative speed change from the current speed. A lower and upper bound on the resulting overall speed
+can also be set. ::
+
+    speed_relative val, lb, ub
+
+The game speed is multiplied by ``val/256``. The resulting value cannot fall below ``lb/256`` or rise above ``ub/256``
+of the original speed.
 
 Engine (0x28)
 -------------

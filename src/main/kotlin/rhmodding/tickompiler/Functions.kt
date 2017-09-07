@@ -71,6 +71,7 @@ object MegamixFunctions : Functions() {
             opcode,
             bytecode,
             RestFunction(0xE),
+            SpecialOnlyFunction(0x12, "unrest"),
             SpecialOnlyFunction(0x14, "label"),
             SpecialOnlyFunction(0x15, "goto"),
             SpecialOnlyFunction(0x1A, "case"),
@@ -132,6 +133,7 @@ object MegamixFunctions : Functions() {
             alias(0xB, "add_condvar", 1..1),
             alias(0xC, "push_condvar", 0..0),
             alias(0xD, "pop_condvar", 0..0),
+            alias(0x11, "rest_reset", 0..0),
             alias(0x17, "else", 0..0, 0,
                   -1), // current adjust pushes the else back an indent
             alias(0x18, "endif", 0..0, -1, -1), // same here
@@ -140,6 +142,7 @@ object MegamixFunctions : Functions() {
             alias(0x1C, "default", 0..0),
             alias(0x1D, "endswitch", 0..0, -1, -1),
             alias(0x24, "speed", 1..1),
+            alias(0x25, "speed_relative", 3..3),
             alias(0x28, "engine", 1..1),
             alias(0x40, "play_sfx", 1..1),
             alias(0x5D, "set_sfx", 2..2),
