@@ -14,7 +14,7 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
     private fun read(): Long {
         val r = input.read()
         if (r == -1)
-            throw IllegalStateException()
+            throw IllegalStateException("End of stream reached")
         return r.toLong()
     }
 
