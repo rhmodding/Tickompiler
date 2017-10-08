@@ -7,7 +7,6 @@ import rhmodding.tickompiler.gameextractor.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
-import java.io.PrintWriter
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.charset.Charset
@@ -122,4 +121,11 @@ object ExtractCommand : Command("extract", "e") {
         fos.close()
     }
 
+    override fun onThrowable(throwable: Throwable, output: PrintStream) {
+        if (throwable is IndexOutOfBoundsException) {
+            output.println("Did you verify that your code.bin is decrypted?\n")
+        }
+
+        super.onThrowable(throwable, output)
+    }
 }

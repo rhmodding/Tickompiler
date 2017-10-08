@@ -1,5 +1,6 @@
 package rhmodding.tickompiler.api
 
+import rhmodding.tickompiler.VERSION
 import java.io.PrintStream
 import java.util.*
 
@@ -60,8 +61,12 @@ object Commands {
                     return
                 }
 
-        command.execute(args, flagsObj, flags, indexOfFirstArgument, printer)
-        // TODO daemon mode
+        try {
+            command.execute(args, flagsObj, flags, indexOfFirstArgument, printer)
+        } catch (t: Throwable) {
+            printer.println("An exception occurred. (Version: $VERSION)\n")
+            command.onThrowable(t, printer)
+        }
     }
 
 }

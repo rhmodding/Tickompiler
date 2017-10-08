@@ -17,6 +17,10 @@ abstract class Command(val aliases: List<String>) {
 
     abstract fun execute(args: List<String>, flagsObj: Commands.Flags, flags: List<String>, indexOfFirstArgument: Int, output: PrintStream)
 
+    open fun onThrowable(throwable: Throwable, output: PrintStream) {
+        throwable.printStackTrace(output)
+    }
+
 }
 
 class CommandInfo(val usage: String, val description: List<String>,
