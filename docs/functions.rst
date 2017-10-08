@@ -430,6 +430,53 @@ This operation enables or disables all user input. ::
 
 Disables input if ``flag`` is 0, enables it if it is 1.
 
+Zoom View (0x7E)
+----------------
+::
+
+    zoom n, x, y
+
+Instantaneously sets the X-axis zoom factor for the ``n`` th view to ``x/0x100``, and the Y-axis zoom factor to ``y/0x100``.
+It is currently unknown how to determine the correct view number to use, however, it is known to usually be 3 or 4 when
+it is used in-game. ::
+
+    zoom_gradual n, i, s, duration, x, y
+
+Changes the X-axis zoom factor to ``x/0x100`` and the Y-axis zoom factor to ``y/0x100`` over ``duration`` ticks. ``i``
+determines the interpolation method used, and ``s`` determines the intensity of said interpolation's variation. Values for
+``i`` are:
+
+- 1: Linear
+- 2: Faster at the start
+- 3: Faster at the end
+- 4: Faster in the middle (smooth)
+- 5: Slower in the middle
+
+Pan View (0x7F)
+---------------
+::
+
+    pan n, x, y
+
+Instantaneously pans the view to the position ``x`` units (pixels?) left and ``y`` units (pixels?) up from the origin. ``n`` is as above. ::
+
+    pan_gradual n, i, s, duration, x, y
+
+Pans the view to ``x`` units left and ``y`` units up from the origin over ``duration`` ticks. ``i`` and ``s`` are as above.
+
+Rotate View (0x80)
+------------------
+::
+
+    rotate n, angle
+
+Instantaneously rotates the view to ``angle`` degrees clockwise from the default. ``n`` is as above. ::
+
+    rotate_gradual n, i, s, duration, angle
+
+Rotates the view to ``angle`` degrees clockwise from the default over ``duration`` ticks. ``i`` and ``s`` are as above.
+
+
 Skill Star (0xAE)
 -----------------
 ::
