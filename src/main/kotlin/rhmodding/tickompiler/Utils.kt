@@ -1,8 +1,8 @@
 package rhmodding.tickompiler
 
-val VERSION: String = "v1.5.0"
-val GITHUB: String = "https://github.com/SneakySpook/Tickompiler"
-val INFO_TEXT: String = """Tickompiler: A RHM tickflow compiler/decompiler written by SneakySpook and chrislo27 in Kotlin
+const val VERSION: String = "v1.6.0-DEVELOPMENT"
+const val GITHUB: String = "https://github.com/SneakySpook/Tickompiler"
+const val INFO_TEXT: String = """Tickompiler: A RHM tickflow compiler/decompiler written by SneakySpook and chrislo27 in Kotlin
 $VERSION
 $GITHUB"""
 

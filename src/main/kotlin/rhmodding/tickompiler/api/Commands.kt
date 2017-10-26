@@ -14,7 +14,8 @@ object Commands {
                     DecompileCommand,
                     ExtractCommand,
                     PackCommand,
-                    VersionCommand
+                    VersionCommand,
+                    NotepadppLangCommand
                   )
     val commandMap: Map<String, Command> =
             commands.flatMap { cmd -> cmd.aliases.map { it to cmd } }.associate { it }
