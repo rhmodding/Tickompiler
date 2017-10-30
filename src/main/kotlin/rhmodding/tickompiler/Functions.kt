@@ -77,7 +77,12 @@ object MegamixFunctions : Functions() {
             SpecialOnlyFunction(0x1A, "case"),
             SpecialOnlyFunction(0xB8, "random"),
             SpecificSpecialFunction(0x1, 0, "get_async", 2..2),
-            SpecificSpecialFunction(0x1, 1, "set_async", 2..2),
+            SpecificSpecialFunction(0x1, 1, "set_func", 2..2),
+            OldSetFunction(),
+            SpecificSpecialFunction(0x3, 0, "kill_all", 0..0),
+            SpecificSpecialFunction(0x3, 1, "kill_cat", 1..1),
+            SpecificSpecialFunction(0x3, 2, "kill_loc", 1..1),
+            SpecificSpecialFunction(0x3, 3, "kill_sub", 1..1),
             SpecificSpecialFunction(0xF, 0, "getrest", 1..1),
             SpecificSpecialFunction(0xF, 1, "setrest", 2..2),
             SpecificSpecialFunction(0x16, 0, "if", 1..1, 1),
@@ -132,9 +137,11 @@ object MegamixFunctions : Functions() {
             OldMacroFunction(),
             OptionalArgumentsFunction(2, "async_call", 2, 0),
             alias(0x4, "sub", 1..1),
+            alias(0x5, "get_sync", 1..1),
             alias(0x6, "call", 1..1),
             alias(0x7, "return", 0..0),
             alias(0x8, "stop", 0..0),
+            alias(0x9, "set_cat", 1..1),
             alias(0xA, "set_condvar", 1..1),
             alias(0xB, "add_condvar", 1..1),
             alias(0xC, "push_condvar", 0..0),
@@ -268,6 +275,9 @@ open class OptionalArgumentsFunction(opcode: Long, alias: String, val numArgs: I
 
 @DeprecatedFunction("macro is deprecated, use async_sub instead")
 class OldMacroFunction: OptionalArgumentsFunction(0, "macro", 3, 0, 2000)
+
+@DeprecatedFunction("set_async is deprecated, use set_func instead")
+class OldSetFunction: SpecificSpecialFunction(0x1, 1, "set_async", 2..2)
 
 open class SpecialOnlyFunction(opcode: Long, alias: String) : Function(opcode, alias, 1..1) {
     override fun acceptOp(op: Long): Boolean {

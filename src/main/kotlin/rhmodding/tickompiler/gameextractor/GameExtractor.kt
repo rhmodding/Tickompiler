@@ -186,6 +186,10 @@ class GameExtractor(val allSubs: Boolean) {
                     annotations.add(0)
                     args[0] = map[args[0]] ?: 0
                 }
+                if (opcode == 3 && special == 2) {
+                    annotations.add(0)
+                    args[0] = map[args[0]] ?: 0
+                }
                 if (opcode == 1 && special == 1) {
                     annotations.add(0x100)
                     args[1] = map[args[1]] ?: 0
@@ -270,7 +274,7 @@ class GameExtractor(val allSubs: Boolean) {
                     }
                 }
 
-                if (!isRemix && (opcode == 0 || opcode == 4) && args[0] >= 0x56 && args[0] < 0x56 + LOCATIONS[engine].size) {
+                if (!isRemix && (opcode == 0 || opcode == 4 || (opcode == 3 && special == 3)) && args[0] >= 0x56 && args[0] < 0x56 + LOCATIONS[engine].size) {
                     // macro/sub detected.
                     val location = LOCATIONS[engine][args[0] - 0x56]
                     if (!q.contains(location) && !result.any { it.first == location }) {
@@ -280,8 +284,10 @@ class GameExtractor(val allSubs: Boolean) {
                     if (opcode == 0) {
                         opint = 2 or (2 shl 10)
                         args.removeAt(2)
-                    } else {
+                    } else if (opcode == 4) {
                         opint = 6 or (1 shl 10)
+                    } else {
+                        opint = 3 or (1 shl 10) or (2 shl 14)
                     }
                 }
 

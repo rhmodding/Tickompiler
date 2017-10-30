@@ -87,6 +87,7 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
         var counter = 0L
         // first pass is to construct a list of markers:
         while (input.available() > 0) {
+            val anns = mutableListOf<Long>()
             var opint: Long = readInt()
             if (opint == 0xFFFFFFFE) {
                 break
@@ -94,7 +95,7 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
             if (opint == 0xFFFFFFFF) {
                 val amount = readInt()
                 for (i in 1..amount) {
-                    readInt()
+                    anns.add(readInt())
                 }
                 opint = readInt()
             }
@@ -108,15 +109,17 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
                     args.add(readInt())
                 }
             }
-            if ((opcode == 2L && argCount == 2L) ||
-                    (opcode == 6L && argCount == 1L) ||
-                    (opcode == 1L && special == 1L && argCount == 2L)) {
 
-                val n = if (opcode == 1L) 1 else 0
-                if (args[n] < array.size && !markers.contains(args[n])) {
-                    markers[args[n]] = "loc${markerC++}"
+            anns.forEach {
+                val anncode = it and 0xFF
+                val annArg = (it ushr 8).toInt()
+                if (anncode == 0L) {
+                    if (!markers.contains(args[annArg])) {
+                        markers[args[annArg]] = "loc${markerC++}"
+                    }
                 }
             }
+
             counter += 4 * (1 + argCount)
         }
 
@@ -178,15 +181,6 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
                 }
                 if (anncode == 2L) {
                     specialArgStrings[annArg] = '"' + (strings[args[annArg]] ?: "") + '"'
-                }
-            }
-
-            if ((opcode == 2L && argCount == 2L) ||
-                    (opcode == 6L && argCount == 1L) ||
-                    (opcode == 1L && special == 1L && argCount == 2L)) {
-                val n = if (opcode == 1L) 1 else 0
-                if (markers.contains(args[n])) {
-                    specialArgStrings[n] = "${markers[args[n]]}"
                 }
             }
 

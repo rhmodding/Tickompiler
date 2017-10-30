@@ -12,12 +12,12 @@ The async_sub function finds a subroutine corresponding to an argument, then
 calls it asynchronously (i.e. the code runs simultaneously to the Tickflow code already running).
 Async_sub calls have the following form::
 
-    async_sub id, delay, ???
+    async_sub id, delay, cat
 
 The ``id`` argument is the ID number assigned to the subroutine. It is first taken from a lookup table of
 rhythm game-specific IDs, usually starting at ``0x56``, and then from a global list of subroutines, which starts at 0.
 ``delay`` represents the delay in ticks before the macro is executed.
-The third argument is unknown, but is very often ``0x7D0`` (2000) for unknown reasons.
+``cat`` is the category the new thread will belong to. This is often ``0x7D0`` (2000).
 The second and third arguments can be omitted, and default to 0 and ``0x7D0`` respectively.
 
 If the location called by the sub is within the Tickflow file it's called in, ``async_sub`` is replaced with a corresponding
@@ -25,21 +25,21 @@ If the location called by the sub is within the Tickflow file it's called in, ``
 
 .. _get_set_async:
 
-Get/Set Async (1)
------------------
+Get Async/Set Function (1)
+--------------------------
 
 These two operations share the same operation number, 1. They are differentiated by the special argument.
-``get_async`` corresponds to ``1<0>``, while ``set_async`` corresponds to ``1<1>``.
-``set_async`` stores the location of an asynchronous function into a slot, which can later be accessed and run using
-``get_async``. ``set_async`` is of the following form::
+``get_async`` corresponds to ``1<0>``, while ``set_func`` corresponds to ``1<1>``.
+``set_func`` stores the location of a function into a slot, which can later be accessed and run asynchronously using
+``get_async``, or synchronously using ``get_sync`` (5). ``set_func`` is of the following form::
 
-    set_async slot, loc
+    set_func slot, loc
 
 It stores the location ``loc`` into the slot ``slot``. ``get_async`` is of the following form::
 
-    get_async slot
+    get_async slot, delay
 
-It calls the location stored into slot ``slot`` as an asynchronous function.
+It calls the location stored into slot ``slot`` as an asynchronous function after ``delay`` ticks.
 
 .. _async_call:
 
@@ -53,6 +53,27 @@ as an asynchronous function. ::
 
 The asynchronous function at ``loc`` is called after a delay of ``delay`` ticks.
 
+Kill Threads (3)
+----------------
+
+Kills Tickflow threads according to several criteria. ::
+
+    kill_all
+
+Kills all Tickflow threads. ::
+
+    kill_cat c
+
+Kills all Tickflow threads in category ``c`` . ::
+
+    kill_loc location
+
+Kills all Tickflow threads currently running inside the function at ``location`` . ::
+
+    kill_sub id
+
+Kills all Tickflow threads currently running inside the subroutine ``id`` .
+
 Subroutine (4)
 --------------
 
@@ -61,6 +82,13 @@ Subroutine (4)
     sub id
 
 The ``id`` argument is identical to the one in :ref:`macro`.
+
+Get Sync (5)
+------------
+
+Gets a function set by ``set_func`` and calls it synchronously. ::
+
+    get_sync slot
 
 Call Location (6)
 -----------------
@@ -82,7 +110,13 @@ Stop (8)
 
 ``stop`` stops the current thread of execution.
 
-.. _rest:
+Set Category (9)
+----------------
+::
+
+    set_cat c
+
+Sets the current thread to category ``c`` .
 
 Set Conditional Variable (0xA)
 ------------------------------
@@ -116,6 +150,8 @@ Pop Conditional Variable (0xD)
 The conditional variable is popped from the previously mentioned stack. ::
 
     pop_condvar
+
+.. _rest:
 
 Rest (0xE)
 ----------
