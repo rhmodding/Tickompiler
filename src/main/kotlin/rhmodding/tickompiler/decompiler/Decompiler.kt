@@ -173,14 +173,10 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
             anns.forEach {
                 val anncode = it and 0b11111111
                 val annArg = (it ushr 8).toInt()
-                if (anncode == 0L) {
-                    specialArgStrings[annArg] = markers[args[annArg]] ?: args[annArg].toString()
-                }
-                if (anncode == 1L) {
-                    specialArgStrings[annArg] = "u\"" + (strings[args[annArg]] ?: "") + '"'
-                }
-                if (anncode == 2L) {
-                    specialArgStrings[annArg] = '"' + (strings[args[annArg]] ?: "") + '"'
+                when(anncode) {
+                    0L -> specialArgStrings[annArg] = markers[args[annArg]] ?: args[annArg].toString()
+                    1L -> specialArgStrings[annArg] = "u\"" + (strings[args[annArg]] ?: "") + '"'
+                    2L -> specialArgStrings[annArg] = '"' + (strings[args[annArg]] ?: "") + '"'
                 }
             }
 
@@ -195,10 +191,7 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
             builder.append(tickFlow)
             if (addComments == CommentType.BYTECODE) {
                 fun Int.toLittleEndianHex(): String {
-                    val str = this.toString(16).padStart(8, '0').toUpperCase(Locale.ROOT)
-
-                    return str
-//                    return str.substring(6, 8) + str.substring(4, 6) + str.substring(2, 4) + str.substring(0, 2)
+                    return toString(16).padStart(8, '0').toUpperCase(Locale.ROOT)
                 }
 
                 builder.append(" // bytecode: ${opint.toInt().toLittleEndianHex()} ${args.joinToString(" "){it.toInt().toLittleEndianHex()}}")
