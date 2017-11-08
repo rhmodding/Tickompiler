@@ -48,7 +48,7 @@ object CompileCommand : Command("compile", "c") {
 
                 try {
                     output.println("Compiling ${file.path}")
-                    val result = compiler.compile(ByteOrder.BIG_ENDIAN)
+                    val result = compiler.compile(ByteOrder.LITTLE_ENDIAN)
 
                     if (result.success) {
                         dirs.output[index].createNewFile()

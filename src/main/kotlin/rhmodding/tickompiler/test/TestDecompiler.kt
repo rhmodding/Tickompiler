@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
 
     println(byteArray.size)
 
-    val decompiler = Decompiler(byteArray, ByteOrder.BIG_ENDIAN,
+    val decompiler = Decompiler(byteArray, ByteOrder.LITTLE_ENDIAN,
                                 MegamixFunctions)
 
     val result = decompiler.decompile(addComments = CommentType.NORMAL, useMetadata = true)

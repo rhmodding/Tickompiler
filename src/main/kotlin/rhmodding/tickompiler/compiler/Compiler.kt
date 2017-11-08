@@ -31,9 +31,9 @@ class Compiler(val tickflow: String, val functions: Functions) {
         while (i <= str.length) {
             var int = 0
             if (i < str.length)
-                int += str[i].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 16 else 0)
+                int += str[i].toByte().toInt() shl (if (ordering == ByteOrder.BIG_ENDIAN) 16 else 0)
             if (i + 1 < str.length)
-                int += str[i + 1].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 0 else 16)
+                int += str[i + 1].toByte().toInt() shl (if (ordering == ByteOrder.BIG_ENDIAN) 0 else 16)
             i += 2
             result.add(int.toLong())
         }
@@ -46,13 +46,13 @@ class Compiler(val tickflow: String, val functions: Functions) {
         while (i <= str.length) {
             var int = 0
             if (i < str.length)
-                int += str[i].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 24 else 0)
+                int += str[i].toByte().toInt() shl (if (ordering == ByteOrder.BIG_ENDIAN) 24 else 0)
             if (i + 1 < str.length)
-                int += str[i + 1].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 16 else 8)
+                int += str[i + 1].toByte().toInt() shl (if (ordering == ByteOrder.BIG_ENDIAN) 16 else 8)
             if (i + 2 < str.length)
-                int += str[i + 2].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 8 else 16)
+                int += str[i + 2].toByte().toInt() shl (if (ordering == ByteOrder.BIG_ENDIAN) 8 else 16)
             if (i + 3 < str.length)
-                int += str[i + 3].toByte().toInt() shl (if (ordering == ByteOrder.LITTLE_ENDIAN) 0 else 24)
+                int += str[i + 3].toByte().toInt() shl (if (ordering == ByteOrder.BIG_ENDIAN) 0 else 24)
             i += 4
             result.add(int.toLong())
         }
@@ -77,7 +77,9 @@ class Compiler(val tickflow: String, val functions: Functions) {
                                                 }
                                                 it.getValue(variables)
                                             })
-
+                if (statement.func == "bytes") {
+                    argAnnotations.add(Pair(statement.args.size, 3))
+                }
                 if (argAnnotations.size > 0) {
                     longs.add(0xFFFFFFFF)
                     longs.add(argAnnotations.size.toLong())
@@ -196,8 +198,7 @@ class Compiler(val tickflow: String, val functions: Functions) {
             longs.addAll(stringToInts(it, endianness))
         }
         val buffer = ByteBuffer.allocate(longs.size * 4 + (if (hasMetadata) 12 else 0))
-        // invert because java is big endian or something like that
-        buffer.order(if (endianness == ByteOrder.BIG_ENDIAN) ByteOrder.LITTLE_ENDIAN else ByteOrder.BIG_ENDIAN)
+        buffer.order(endianness)
         if (hasMetadata) {
             startMetadata.forEach { buffer.putInt(it.toInt()) }
         }

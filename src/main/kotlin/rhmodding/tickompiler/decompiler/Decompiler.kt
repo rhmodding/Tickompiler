@@ -1,9 +1,7 @@
 package rhmodding.tickompiler.decompiler
 
+import rhmodding.tickompiler.*
 import rhmodding.tickompiler.Function
-import rhmodding.tickompiler.Functions
-import rhmodding.tickompiler.GITHUB
-import rhmodding.tickompiler.VERSION
 import rhmodding.tickompiler.util.escape
 import java.io.ByteArrayInputStream
 import java.nio.ByteOrder
@@ -20,10 +18,10 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
     }
 
     private fun readInt(): Long {
-        if (order == ByteOrder.BIG_ENDIAN) { // backwards b/c we're doing little-endian ops on big endian
-            return read() or (read() shl 8) or (read() shl 16) or (read() shl 24)
+        return if (order == ByteOrder.LITTLE_ENDIAN) {
+            read() or (read() shl 8) or (read() shl 16) or (read() shl 24)
         } else {
-            return (read() shl 24) or (read() shl 16) or (read() shl 8) or read()
+            (read() shl 24) or (read() shl 16) or (read() shl 8) or read()
         }
     }
 
@@ -152,6 +150,34 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
                 for (i in 1..amount) {
                     anns.add(readInt())
                 }
+            }
+
+            var bytes = 0
+            anns.forEach {
+                if ((it and 0xFF) == 3L) {
+                    bytes = (it ushr 8).toInt()
+                }
+            }
+            if (bytes > 0) {
+                val padding = 4 - (bytes % 4) - (if (bytes % 4 == 0) 4 else 0)
+                counter += bytes + padding
+                val byteList = mutableListOf<Long>()
+                for (i in 1..bytes) {
+                    byteList.add(read())
+                }
+                for (i in 1..padding) {
+                    read()
+                }
+                val function: Function = BytesFunction()
+                val tickflow = function.produceTickflow(state, 0, 0, byteList.toLongArray(), addComments, specialArgStrings)
+                for (i in 1..state.nextIndentLevel) {
+                    builder.append(indent)
+                }
+                builder.append(tickflow + "\n")
+                continue
+            }
+
+            if (opint == 0xFFFFFFFF) {
                 opint = readInt()
             }
             val opcode: Long = opint and 0b1111111111

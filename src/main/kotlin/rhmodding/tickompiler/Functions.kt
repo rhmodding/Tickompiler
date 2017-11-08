@@ -70,6 +70,7 @@ object MegamixFunctions : Functions() {
     override val allFunctions = mutableListOf(
             opcode,
             bytecode,
+            BytesFunction(),
             RestFunction(0xE),
             SpecialOnlyFunction(0x12, "unrest"),
             SpecialOnlyFunction(0x14, "label"),
@@ -229,6 +230,30 @@ class BytecodeFunction : Function(-1, "bytecode", 1..1) {
         return longArrayOf(funcCall.args.first())
     }
 
+}
+
+class BytesFunction : Function(-1, "bytes", 1..Int.MAX_VALUE) {
+    override fun produceBytecode(funcCall: FunctionCall): LongArray {
+        val list = mutableListOf<Long>()
+        var i = 0
+        while (i < funcCall.args.size) {
+            var n = 0L
+            n += funcCall.args[i]
+            if (i + 1 < funcCall.args.size)
+                n += funcCall.args[i+1] shl 8
+            if (i + 2 < funcCall.args.size)
+                n += funcCall.args[i+2] shl 16
+            if (i + 3 < funcCall.args.size)
+                n += funcCall.args[i+3] shl 24
+            i += 4
+            list.add(n)
+        }
+        return list.toLongArray()
+    }
+
+    override fun produceTickflow(state: DecompilerState, opcode: Long, specialArg: Long, args: LongArray, comments: CommentType, specialArgStrings: Map<Int, String>): String {
+        return this.name + " " + argsToTickflowArgs(args, specialArgStrings)
+    }
 }
 
 class OpcodeFunction : Function(-1, "opcode", 0..Integer.MAX_VALUE) {

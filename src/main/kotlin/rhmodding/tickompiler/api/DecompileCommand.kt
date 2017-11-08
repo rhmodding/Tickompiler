@@ -50,12 +50,15 @@ object DecompileCommand : Command("decompile", "d") {
         dirs.input.forEachIndexed { index, file ->
             coroutines += async(CommonPool) {
                 val decompiler = Decompiler(Files.readAllBytes(file.toPath()),
-                                            ByteOrder.BIG_ENDIAN, functions)
+                                            ByteOrder.LITTLE_ENDIAN, functions)
 
                 try {
                     output.println("Decompiling ${file.path}")
-                    val result = decompiler.decompile(if (flags.contains(
-                            "-nc")) CommentType.NONE else if ("-bytecode" in flags) CommentType.BYTECODE else CommentType.NORMAL,
+                    val result = decompiler.decompile(when {
+						"-nc" in flags       -> CommentType.NONE
+						"-bytecode" in flags -> CommentType.BYTECODE
+						else                 -> CommentType.NORMAL
+					},
                                                       !flags.contains("-nm") && functions == MegamixFunctions)
 
                     dirs.output[index].createNewFile()

@@ -63,7 +63,7 @@ object ExtractCommand : Command("extract", "e") {
             fos.write(arr)
             fos.close()
             if (flags.contains("-d")) {
-                val decompiler = Decompiler(arr, ByteOrder.BIG_ENDIAN, MegamixFunctions)
+                val decompiler = Decompiler(arr, ByteOrder.LITTLE_ENDIAN, MegamixFunctions)
                 output.println("Decompiling ${codeBuffer.getName(i)}")
                 val r = decompiler.decompile(CommentType.NORMAL, true, "    ", result.first)
                 val f = FileOutputStream(File(decompiledFolder, codeBuffer.getName(i) + ".tickflow"))
@@ -85,7 +85,7 @@ object ExtractCommand : Command("extract", "e") {
             fos.write(arr)
             fos.close()
             if (flags.contains("-d")) {
-                val decompiler = Decompiler(arr, ByteOrder.BIG_ENDIAN, MegamixFunctions)
+                val decompiler = Decompiler(arr, ByteOrder.LITTLE_ENDIAN, MegamixFunctions)
                 output.println("Decompiling ${codeBuffer.getGateName(i)}")
                 val r = decompiler.decompile(CommentType.NORMAL, true, "    ", result.first)
                 val f = FileOutputStream(File(decompiledFolder, codeBuffer.getGateName(i) + ".tickflow"))
