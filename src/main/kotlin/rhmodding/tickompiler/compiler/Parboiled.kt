@@ -14,6 +14,7 @@ import org.parboiled.trees.ImmutableTreeNode
 import org.parboiled.trees.MutableTreeNodeImpl
 import org.parboiled.trees.TreeNode
 import rhmodding.tickompiler.CompilerError
+import rhmodding.tickompiler.util.unescape
 
 abstract class StatementNode<T : TreeNode<T>>(val position: Position) : ImmutableTreeNode<T>()
 
@@ -236,7 +237,7 @@ open class TickflowParser : BaseParser<Any>() {
                 ZeroOrMore(NoneOf("\\\"")),
                 name.append(match()),
                 ZeroOrMore("\\", FirstOf("\"", "\\"), ZeroOrMore(NoneOf("\\\""))),
-                Action<Any> {name.append(match().replace("\\\\(.)".toRegex(), {it.groupValues[1]}))},
+                Action<Any> {name.append(match().unescape())},
                 push(name.get())
                 )
     }

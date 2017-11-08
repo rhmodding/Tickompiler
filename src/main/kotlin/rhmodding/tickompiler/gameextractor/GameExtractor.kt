@@ -24,14 +24,19 @@ class GameExtractor(val allSubs: Boolean) {
 	)
 
 	private val ASTRING_OPS = mutableMapOf(
+            0x3B to 0 to arrayOf(2),
 			0x67 to 1 to arrayOf(1),
             0x93 to 0 to arrayOf(2, 3),
             0x94 to 0 to arrayOf(1, 2, 3),
             0x95 to 0 to arrayOf(1),
             0xB0 to 4 to arrayOf(1),
             0xB0 to 5 to arrayOf(1),
+            0xB0 to 6 to arrayOf(1),
             0x66 to 0 to arrayOf(1),
-            0x65 to 1 to arrayOf(1)
+            0x65 to 1 to arrayOf(1),
+            0x68 to 1 to arrayOf(1),
+            0xAF to 2 to arrayOf(2),
+            0xB5 to 0 to arrayOf(0)
 	)
 
     companion object {

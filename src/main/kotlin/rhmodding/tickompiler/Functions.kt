@@ -162,6 +162,7 @@ object MegamixFunctions : Functions() {
             alias(0x5F, "remove_sfx", 1..1),
             alias(0x6A, "input", 1..1),
             alias(0xAE, "star", 1..1),
+            alias(0xB5, "debug", 1..1),
             0x7DL alias "fade"
                                              )
 }

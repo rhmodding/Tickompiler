@@ -4,6 +4,7 @@ import rhmodding.tickompiler.Function
 import rhmodding.tickompiler.Functions
 import rhmodding.tickompiler.GITHUB
 import rhmodding.tickompiler.VERSION
+import rhmodding.tickompiler.util.escape
 import java.io.ByteArrayInputStream
 import java.nio.ByteOrder
 import java.util.*
@@ -56,10 +57,6 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
             i++
         }
         return Pair(result, i)
-    }
-
-    private fun escapeString(str: String): String {
-        return str.replace("\\", "\\\\").replace("\"", "\\\"")
     }
 
     fun decompile(addComments: CommentType, useMetadata: Boolean, indent: String = "    ", macros: Map<Int, Int> = mapOf()): Pair<Double, String> {
@@ -126,7 +123,7 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
         // and also strings
         while (input.available() > 0) {
             val p = readStringAuto()
-            strings[counter] = escapeString(p.first)
+            strings[counter] = p.first.escape()
             counter += p.second
         }
 
