@@ -6466,7 +6466,7 @@ Blue Bear (0x34)
    0x100 type, long, ???
 
 Spawns a food to be eaten. If ``long`` is nonzero, a longer animation will be used for eating the food. The third
- argument is unknown, and is always zero. Values for ``type`` are:
+argument is unknown, and is always zero. Values for ``type`` are:
 
 - 0: Donut (right side, 2 beats)
 
