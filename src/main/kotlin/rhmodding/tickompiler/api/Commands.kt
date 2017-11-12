@@ -13,6 +13,7 @@ object Commands {
                     CompileCommand,
                     DecompileCommand,
                     ExtractCommand,
+                    GrabCommand,
                     PackCommand,
                     VersionCommand,
                     NotepadppLangCommand

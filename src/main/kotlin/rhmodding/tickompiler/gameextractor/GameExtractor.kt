@@ -175,6 +175,32 @@ class GameExtractor(val allSubs: Boolean) {
         return returnMap to (meta + secondPass(sorted.map { it.second }, map))
     }
 
+    fun extractArbitrary(buffer: ByteBuffer, index: Int): List<Int> {
+        isRemix = true
+        engine = -1
+        val funcs = firstPass(buffer, index, nongame=true)
+        val sorted = listOf(funcs[0]) + funcs.drop(1).sortedBy {it.first}
+        val map = mutableMapOf<Int, Int>()
+        var i = 0
+        for ((first, second) in sorted) {
+            map[first] = i
+            i += second.size * 4
+        }
+        for ((first, second) in ustrings) {
+            map[first] = i
+            i += unicodeStringToInts(second).size * 4
+        }
+        for ((first, second) in astrings) {
+            map[first] = i
+            i += stringToInts(second).size * 4
+        }
+        val meta = mutableListOf<Int>()
+        meta.add(-1)
+        meta.add(0)
+        meta.add(-1)
+        return meta + secondPass(sorted.map {it.second}, map)
+    }
+
     fun secondPass(funcs: List<List<Int>>, map: Map<Int, Int>): List<Int> {
         val result = mutableListOf<Int>()
         for (l in funcs) {
@@ -228,11 +254,11 @@ class GameExtractor(val allSubs: Boolean) {
         return result
     }
 
-    fun firstPass(buf: ByteBuffer, start: Int, assets: Int? = null): List<Pair<Int, List<Int>>> {
+    fun firstPass(buf: ByteBuffer, start: Int, assets: Int? = null, nongame: Boolean = false): List<Pair<Int, List<Int>>> {
         val result = mutableListOf<Pair<Int, List<Int>>>()
         ustrings = mutableListOf()
 
-        isRemix = buf.getIntAdj(start) and 0b1111111111 == 1
+        isRemix = buf.getIntAdj(start) and 0b1111111111 == 1 || nongame
         val q = ArrayDeque<Int>()
         q.add(start)
         if (assets != null) {
