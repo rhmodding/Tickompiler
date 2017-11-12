@@ -6552,3 +6552,98 @@ Does the ``wind`` animation from the cellanim.
    0x106
 
 Enables the epilogue background showing it was all a dream.
+
+Animal Acrobat (0x35)
+---------------------
+
+0x100 - Nothing
+~~~~~~~~~~~~~~~
+::
+
+    0x100
+
+Do nothing.
+
+0x101 - Intro Stuff
+~~~~~~~~~~~~~~~~~~~
+::
+
+    0x101
+
+Beat animation. ::
+
+    0x101<1> time
+
+Jump off the initial platform, to grab the first animal in ``time`` ticks.
+
+0x102 - Pattern Loading
+~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+    0x102 delay
+
+Start executing a loaded byte array pattern, with the first animal being grabbed in ``delay`` ticks. This makes the
+animals start swinging. ::
+
+    0x102<1> location, size
+
+Loads a byte array of ``size`` bytes, describing the game's patterns. Every byte is an animal. Byte arrays
+can be created in Tickflow using the ``bytes`` command. Values for bytes are:
+
+- 0: Single white monkey
+
+- 1: Elephant
+
+- 2: Multiple white monkeys
+
+- 3: Giraffe
+
+- 4: Final platform/end
+
+0x103 - Spotlight
+~~~~~~~~~~~~~~~~~
+::
+
+    0x103 f
+
+If ``f`` is nonzero, turns spotlights on, otherwise turns them off.
+
+0x104 - Ending Stuff
+~~~~~~~~~~~~~~~~~~~~
+::
+
+    0x104
+
+The monkey lands. ::
+
+    0x104<1>
+
+The balloon takes off. (used in Jungle Gymnast only)
+
+0x106 - Waterfall
+~~~~~~~~~~~~~~~~~
+::
+
+    0x106 ???
+
+A waterfall appears. The argument is presumably some sort of distance or time argument, and is ``0x21C`` in every instance.
+
+0x107 - Vine
+~~~~~~~~~~~~
+::
+
+    0x107 ???
+
+A vine appears in the foreground. The argument is like in 106, but is ``0x320``.
+
+0x108 - Particle Effects
+~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+    0x108
+
+Confetti appears. ::
+
+    0x108<1>
+
+Leaves appear. (at the end of Jungle Gymnast)
