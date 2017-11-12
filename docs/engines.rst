@@ -6455,3 +6455,100 @@ All the following are asynchronous.
 
 0x5C
    Monkeys stretch back their arms every 2 beats forever.
+
+Blue Bear (0x34)
+----------------
+
+0x100 - Input/Spawn Food
+~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x100 type, long, ???
+
+Spawns a food to be eaten. If ``long`` is nonzero, a longer animation will be used for eating the food. The third
+ argument is unknown, and is always zero. Values for ``type`` are:
+
+- 0: Donut (right side, 2 beats)
+
+- 1: Cake (left side, 3 beats)
+
+0x101 - Bear Animations
+~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x101
+
+The bear pushes on the left bag, ejecting a cake. (animation ``body_push_L`` in the cellanim) ::
+
+   0x101<1>
+
+The bear pushes on the right bag, ejecting a donut. (animation ``body_push_R`` in the cellanim) ::
+
+   0x101<2>
+
+The bear pushes on both bags. (animation ``body_push`` in the cellanim) ::
+
+   0x101<3>
+
+The bear opens its mouth to catch food. (animation ``face_ready`` in the cellanim)
+
+0x102 - Memory Animations
+~~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x102 slot, name
+
+Performs the animation with the name specified by ``name`` (as an ASCII string). It will fade in according to (hardcoded?) rules.
+A slot is also specified to allow two to run at the same time. Slot 0 is used for the right side, and 1 for the left.
+Animations used in the rhythm game with this operation are:
+
+- ``girl_in_R00``, ``girl_in_R01``
+
+- ``girl_in_L00``, ``girl_in_L01``
+
+- ``lostlove_inL``, ``lostlove_inR`` ::
+
+   0x102<1> slot
+
+The animation in ``slot`` fades out, according to the corresponding ``out`` animation (hardcoded?).
+
+0x103 - Misc. Bear Animations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x103 body, face
+
+Does the animation specified by ``body`` as an ASCII string for the bear's body (or all of the bear), and the animation
+specified by ``face`` (again as an ASCII string) for the bear's face. ::
+
+   0x103<1>
+
+Returns the body to the animation ``body_wait`` and the face to the animation ``face_wait`` (crying if necessary). ::
+
+   0x103<2> body, face
+
+Same as ``0x103`` but returns to ``wait`` animations after the animations are done.
+
+0x104 - Crying Flag
+~~~~~~~~~~~~~~~~~~~
+::
+
+   0x104 f
+
+If ``f`` is nonzero, the bear is now crying. Otherwise, it is not.
+
+0x105 - Wind Animation
+~~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x105
+
+Does the ``wind`` animation from the cellanim.
+
+0x106 - Dream Background Switch
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x106
+
+Enables the epilogue background showing it was all a dream.
