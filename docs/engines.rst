@@ -6647,3 +6647,192 @@ Confetti appears. ::
     0x108<1>
 
 Leaves appear. (at the end of Jungle Gymnast)
+
+Tongue Lashing (0x36)
+---------------------
+
+0x100 - Yellow bug control
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+    0x100
+
+Spawns a yellow bug. Other 0x100 operations (except ``0x100<1>``) crash if this is not executed beforehand. ::
+
+    0x100<1> distO, distP1, distP2, sound
+
+Sets the path for a yellow bug. ``distO`` determines the distance away from the tongue orthogonally that it starts at (in pixels?),
+``distP1`` is the distance to the chameleon, parallel to the tongue, at the start of its path, and ``distP2`` is the
+distance parallel to the tongue at the end of its path. Note that negative parallel distances are to the front of the
+chameleon. ``sound`` determines the sound effect produced when eaten by the chameleon: ``0x1001134`` is the regular
+gulp sound, while ``0x1001135`` is a shorter gulp sound. ::
+
+    0x100<2> time
+
+Sets the bug moving toward the chameleon, to be eaten after ``time`` ticks. ::
+
+    0x100<3>
+
+Beat animation. Also applies to red bugs. ::
+
+    0x100<5>
+
+Despawns the bug. Also applies to red bugs.
+
+0x101 - Red bug control
+~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+    0x101
+
+Spawns a red bug. ::
+
+    0x101<1> distO1, distP1, distO2, distP2, distP3, sound
+
+Sets the path for a red bug. ``distO1`` determines the orthogonal distance at the start, ``distP1`` the parallel distance
+at the start, ``distO2`` the orthogonal distance when it stops and starts to feint, ``distP2`` the parallel distance at that same
+point, and finally, ``distP3`` is the parallel distance when eaten. ``sound`` is like in ``0x100<1>``. ::
+
+    0x101<2> time
+
+Moves the bug to its stopping point over ``time`` ticks. ::
+
+    0x101<4> type
+
+Does a feint. The final feint before it's eaten has ``type`` of 1; maybe slightly more extreme feint? ::
+
+    0x101<5> time
+
+Moves the bug from its stopping point to the tongue, to be eaten after ``time`` ticks. ::
+
+    0x101<6>
+
+Stops the bug?
+
+0x102 - Zoom
+~~~~~~~~~~~~
+::
+
+   0x102<1> z
+
+Sets the zoom to a factor of ``z/0x100``
+
+0x103 - Chameleon Position
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x103 x, y, tx, ty
+
+Sets the position and target vector of the chameleon. (``x``, ``y``) is the position of the chameleon, and
+(``tx``, ``ty``) is the target position, which determines the direction the chameleon is facing. X values are in units
+to the right of the middle of the scene; Y values are in units down from the middle of the scene.
+
+0x104 - Chameleon Animations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x104
+
+Beat animation. ::
+
+   0x104<1> start, end, time
+
+The chameleon moves along its target axis. It starts at ``start`` away from its set position along the target axis,
+and ends at ``end``. The movement takes ``time`` ticks. ::
+
+   0x104<2> start, end, time, delay
+
+Identical to ``0x104<1>``, but only starts after ``delay`` ticks.
+
+0x105 - Zoom+Position
+~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x105 z, x, y, tx, ty, delay
+
+This is a combination of ``0x102<1>`` and ``0x103``. It takes place after ``delay`` ticks.
+
+0x106 - Chameleon Grin
+~~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x106
+
+Start recording player performance. ::
+
+   0x106<1>
+
+If the player hasn't missed, grin, else do a sad animation. ::
+
+   0x106<2>
+
+Stop recording player performance.
+
+0x107 - Perch
+~~~~~~~~~~~~~
+::
+
+   0x107<1> type, delay
+
+Changes what the chameleon is perched on after ``delay`` ticks. Values for ``type`` are:
+
+- 0: Hand
+
+- 1: Foot
+
+0x108 - Global Camera Control for whatever reason
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x108 x, y, zoom, delay
+
+Sets the global camera pan to (``x``, ``y``) and the global camera zoom to ``zoom`` after ``delay`` ticks.
+Note that this is distinct from the other zoom factor in 103/105.
+
+0x109 - Update Effects
+~~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x109
+
+Updates location and size of visual effects to line up with the camera's parameters. If not used, visual effects
+will retain the location and size they previously had after a camera change.
+
+0x10A - The two guys
+~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x10A i, flag
+
+Sets the specified guy visible if the flag is nonzero, and invisible otherwise. Values for ``i`` are:
+
+- 0: Nose guy
+
+- 1: Cool guy ::
+
+   0x10A<1> i, x, y
+
+Sets the position of guy ``i`` to (``x``, ``y``) ::
+
+   0x10A<2> i, x1, x2, time
+
+Moves guy ``i`` horizontally from ``x1`` to ``x2`` over ``time`` ticks. ::
+
+   0x10A<3>
+   0x10A<4>
+
+Parts of the animations after the bug is either eaten or missed. These should be placed 3/4 beats apart.
+
+List of subs
+~~~~~~~~~~~~
+Each is asynchronous.
+
+0x56
+   Spawns a yellow bug and does its animations. The "three" sound effect happens two beats after the start, and thus
+   the input is 4 beats after the start.
+
+0x57
+   Spawns a red bug and does its animations. It starts feinting after 3 beats; the input is after 6 beats.
+
+0x58
+   Identical to 0x57, but includes operations for the two guys' animations.
