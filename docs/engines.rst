@@ -1772,7 +1772,7 @@ All the following are asynchronous subroutines.
    Relevant animations for the "peck your beak" cue. (included in 0x57)
 
 0x5B
-   A full "stretch out your neck" cue, such that the first input is 4 beats after the start.
+   A full "stretch out your neck" cue, such that the first input is 4 and a half beats after the start.
 
 0x5C
    "Stretch out your neck" voice clip. (included in 0x5B and 0x5F)
@@ -3259,7 +3259,7 @@ Built to Scale (0x1C)
 0x101 - Paddle Control
 ~~~~~~~~~~~~~~~~~~~~~~
 Note that when a paddle number is an argument, it's the nth paddle from the left, starting at 0. -1 is off-screen to the left
-and 4 is off-screen to the right.
+and to the right.
 
 ::
 
