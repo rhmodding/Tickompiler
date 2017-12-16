@@ -4170,12 +4170,13 @@ Double Date (0x21)
 ~~~~~~~~~~~~~~~~~~
 ::
 
-   0x100<type> jump, catch, ???
+   0x100<type> jump, catch, time
 
 Spawns a ball to kick depending on ``type`` such that the first bounce is a beat later. Does not include sound effects.
 If ``jump`` is 1, the weasels will jump out of their hole.
-``catch`` determines who or what will jump up to catch the ball in the background. The last argument is always 0.
-Values for ``type`` are:
+``catch`` determines who or what will jump up to catch the ball in the background. The final argument advances
+the ball and input by ``time`` ticks, but it mantains the speed it would originally have. It normally stays
+at 0 and it's only used for transitions in remixes. Values for ``type`` are:
 
 - 0: Soccer ball. (can be omitted)
 
@@ -5137,11 +5138,12 @@ Working Dough (0x29)
 ~~~~~~~~~~~~~~~~~~~~~~~~
 ::
 
-   0x100 type, flash, time1, time2, ???
+   0x100 type, flash, time1, time2, time3
 
 Spawns a ball to be hit on the left in ``time1`` ticks, and on the right (by the player) in ``time2`` ticks.
-If ``flash`` is 1, hitting it causes the background to flash. The final argument is always 0.
-Values for ``type`` are:
+If ``flash`` is 1, hitting it causes the background to flash. The final argument advances the ball and input
+by ``time3`` ticks, but it mantains the speed it would originally have. It normally stays at 0 and it's only
+used for transitions in remixes. Values for ``type`` are:
 
 - 0: Small ball
 
