@@ -2521,6 +2521,10 @@ Beat animation for all monkeys. ::
 
 All monkeys put their hands up to clap. ::
 
+   0x102<2>
+
+All monkeys put their hands up to clap while shaking. ::
+
    0x103 pos
 
 One monkey claps depending on ``pos``. ::
@@ -2640,10 +2644,10 @@ All the following are asynchronous subroutines.
    A full 4-clap cue, including animations and inputs.
 
 0x58
-   Inputs for a 4-clap cue, starting one beat after the start of the sub.
+   A full "I suppose" cue, including animations and inputs.
 
 0x59
-   A full "I suppose" cue, including animations and inputs.
+   A full "I suppose" cue; different monkey voice clip.
 
 0x5A
    A full "I suppose" cue; different monkey voice clip.
@@ -2655,13 +2659,13 @@ All the following are asynchronous subroutines.
    A full "I suppose" cue; different monkey voice clip.
 
 0x5D
-   A full "I suppose" cue; different monkey voice clip.
+   A full "oh" cue, including animations, inputs, and voice clip.
 
 0x5E
-   Inputs for an "I suppose" cue.
+   Inputs for a 4-clap cue, starting one beat after the start of the sub.
 
 0x5F
-   A full "oh" cue, including animations, inputs, and voice clip.
+   Inputs for an "I suppose" cue.
 
 0x60
    Inputs for an "oh" cue.
