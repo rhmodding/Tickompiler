@@ -4612,7 +4612,7 @@ animation name at ``str2``, or none if 0.
 List of subs
 ~~~~~~~~~~~~
 
-All the following are asynchronous.
+All the following are asynchronous. All flipper roll subs have the first input after 4 beats.
 
 0x59
    Count-in, including cowbells and "Attention, company!"
@@ -4636,7 +4636,7 @@ All the following are asynchronous.
    Practice 2 flipper rolls.
 
 0x69
-   One flipper roll. (first input after 4 beats)
+   One flipper roll.
 
 0x6A
    One flipper roll without praise at the end.
@@ -4918,6 +4918,14 @@ Text appears in the background. Values for ``type`` are:
 - 5: "!!"
 
 - 0x63 (99): Clear text.
+
+0x109 - Freeze Animation
+~~~~~~~~~~~~
+::
+
+   0x109
+
+Karate Joe's combo animation freezes at the end. (Used in Karate Man Combos!)
 
 0x10B - Particle Effects
 ~~~~~~~~~~~~~~~~~~~~~~~~
