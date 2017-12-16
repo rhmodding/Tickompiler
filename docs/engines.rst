@@ -1760,7 +1760,7 @@ List of subs
 All the following are asynchronous subroutines.
 
 0x57
-   A full "peck your beak" cue, such that the first input is two and a half beats after the start.
+   A full "peck your beak" cue, such that the first input is two beats after the start.
 
 0x58
    "Peck your beak" voice clip. (included in 0x57 and 0x61)
