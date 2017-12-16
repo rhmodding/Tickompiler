@@ -5089,7 +5089,7 @@ All the following are asynchronous.
    Nothing.
 
 0x81
-   "Hit 3!" voice clip.
+   "Hit 3!" voice clip. Sounds after 0.5 beats.
 
 0x82
    "Hit 4!" voice clip. Note that this is identical to "Hit 3!" in the English version, but distinct in the Japanese version.
@@ -5107,7 +5107,7 @@ All the following are asynchronous.
    0x7A is called after a half beat.
 
 0x88
-   The "3!" text appears accompanied by the "Hit 3!" voice clip.
+   The "3!" text appears accompanied by the "Hit 3!" voice clip. Sounds after 1 beat.
 
 0x89
    Identical to 0x88, but the text appears for a shorter amount of time, and appears later.
@@ -5116,7 +5116,7 @@ All the following are asynchronous.
    Identical to 0x88, but the text appears later.
 
 0x8B
-   The "4!" text appears accompanied by the "Hit 4!" voice clip.
+   The "4!" text appears accompanied by the "Hit 4!" voice clip. Sounds after 1 beat.
 
 0x8C
    The text "Combo!" appears after a half beat.
