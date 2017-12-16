@@ -1415,6 +1415,34 @@ draw their bows. ::
 
 The ``pos`` th archer from the right, starting at 0, releases their bow and shoots an arrow.
 
+0x104 - Intro animations
+~~~~~~~~~~~~~~~~~~~~~~
+::
+
+    0x104
+
+The enemy arrow flies from one tower to another. ::
+
+    0x104<1>
+
+The enemy arrow lands on the player's wall. ::
+
+    0x104<2>
+
+The ninja falls into position. (Used in remixes for the ninja to appear during transition) ::
+
+    0x104<3>
+
+The ninja gets his sword ready. ::
+
+    0x104<4> time
+
+The sensei walks to the center of the wall in ``time`` ticks. ::
+
+    0x104<5>
+
+The sensei faces the other way in confusion.
+
 Airboarder (0xE)
 ----------------
 
