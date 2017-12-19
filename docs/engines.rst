@@ -1415,6 +1415,34 @@ draw their bows. ::
 
 The ``pos`` th archer from the right, starting at 0, releases their bow and shoots an arrow.
 
+0x104 - Intro animations
+~~~~~~~~~~~~~~~~~~~~~~
+::
+
+    0x104
+
+The enemy arrow flies from one tower to another. ::
+
+    0x104<1>
+
+The enemy arrow lands on the player's wall. ::
+
+    0x104<2>
+
+The ninja falls into position. (Used in remixes for the ninja to appear during transition) ::
+
+    0x104<3>
+
+The ninja gets his sword ready. ::
+
+    0x104<4> time
+
+The sensei walks to the center of the wall in ``time`` ticks. ::
+
+    0x104<5>
+
+The sensei faces the other way in confusion.
+
 Airboarder (0xE)
 ----------------
 
@@ -1760,7 +1788,7 @@ List of subs
 All the following are asynchronous subroutines.
 
 0x57
-   A full "peck your beak" cue, such that the first input is two and a half beats after the start.
+   A full "peck your beak" cue, such that the first input is two beats after the start.
 
 0x58
    "Peck your beak" voice clip. (included in 0x57 and 0x61)
@@ -1772,7 +1800,7 @@ All the following are asynchronous subroutines.
    Relevant animations for the "peck your beak" cue. (included in 0x57)
 
 0x5B
-   A full "stretch out your neck" cue, such that the first input is 4 beats after the start.
+   A full "stretch out your neck" cue, such that the first input is 4 and a half beats after the start.
 
 0x5C
    "Stretch out your neck" voice clip. (included in 0x5B and 0x5F)
@@ -2284,7 +2312,8 @@ Frog Hop has nearly 100 different useful subroutines. Some are synchronous, and 
    Spin part 2 for background frogs. (sync)
 
 0x5F
-   Unknown. (async)
+   The spotlights change to the background frogs after 1 beat. Then change back to foreground
+   frogs after 2 beats.   (async)
 
 0x60
    Hip shake SFX. (sync)
@@ -2347,7 +2376,7 @@ Frog Hop has nearly 100 different useful subroutines. Some are synchronous, and 
    Hip shake SFX four times in a row; uses sub 0x60. (async)
 
 0x74
-   Four full hip shake cues in a row; combines the previous four subs as well as 0x5F. (async)
+   Four full hip shake cues in a row; combines the previous four subs. (async)
 
 0x75
    Two hip shake animations in a row for foreground frogs; uses sub 0x57. (async)
@@ -2362,134 +2391,137 @@ Frog Hop has nearly 100 different useful subroutines. Some are synchronous, and 
    Hip shake SFX two times in a row; uses sub 0x60. (async)
 
 0x79
-   Two full hip shake cues in a row; combines the previous four subs as well as 0x5F. (async)
+   Two full hip shake cues in a row; combines the previous four subs. (async)
 
 0x7A
-   One hip shake animation, followed by a triple hip shake animation, for foreground frogs; uses subs 0x57 and 0x59. (async)
+   A triple hip shake animation, for foreground frogs; uses subs 0x57 and 0x59. (async)
 
 0x7B
-   Three hip shake animations, followed by a triple hip shake animation, for background frogs; uses subs 0x58 and 0x5A. (async)
+   Two hip shake animations, followed by a triple hip shake animation, for background frogs; uses subs 0x58 and 0x5A. (async)
 
 0x7C
-   Three A press inputs one beat apart, followed by three A press inputs a half-beat apart, starting one beat after the
+   Two A press inputs one beat apart, followed by three A press inputs a half-beat apart, starting one beat after the
    start of the sub. Also includes player's "yeah-yeah-yeah" voice clips. (async)
 
 0x7D
-   One hip shake SFX, followed by "yeah-yeah-yeah" voice clips for both the orange frog and background frogs; uses sub
+   "Yeah-yeah-yeah" voice clips for both the orange frog and background frogs; uses sub
    0x60, and subs 0x61 and 0x68. (async)
 
 0x7E
-   One hip shake SFX, followed by "yeah-yeah-yeah" voice clips for both the orange frog and background frogs; uses sub
-   0x60, and subs 0x65 and 0x6C. (async)
-
-0x7F
    A full "yeah-yeah-yeah" cue; combines subs 0x7A through 0x7D, as well as 0x5F. (async)
 
+0x7F
+   "Yeah-yeah-yeah" voice clips for both the orange frog and background frogs; mouths stay open throughout. (async)
+
 0x80
-   A full "yeah-yeah-yeah" cue; combines subs 0x7A, 0x7B, 0x7C, 0x7E, and 0x5F. (sync; unused)
+   A full "yeah-yeah-yeah" cue; combines subs 0x7A, 0x7B, 0x7C, 0x7F, and 0x5F (mouths stay open throughout). (sync; unused)
 
 0x81-0x84
-   Identical to 0x7A-0x7D, except there is no preceding hip shake. (async)
+   Identical to 0x7A-0x7D, except there is a preceding hip shake. (async)
 
 0x85
-   A full "yeah-yeah-yeah" cue; combines the previous four subs, as well as 0x5F.
+   A full "yeah-yeah-yeah" cue, with a preceding hip shake; combines the previous four subs, as well as 0x5F.
 
 0x86
-   Identical to 0x7E, except there is no preceding hip shake. (async)
+   Identical to 0x7F, except there is a preceding hip shake. (async)
 
 0x87
-   A full "yeah-yeah-yeah" cue; combines subs 0x81-0x83, 0x86 and 0x5F. (sync; unused)
+   Identical to 0x80, except there is a preceding hip shake. (async)
 
-0x88
+0x88-0x8E
+   Identical to 0x7A-0x80, except there is no preceding hip shake. (async)
+   
+0x8F
    One hip shake animation, followed by a "ya-hoo!" pattern animation, for foreground frogs; uses subs 0x57 and 0x59. (async)
-
-0x89
+   
+0x90
    Three hip shake animations, followed by a "ya-hoo!" pattern animation, for background frogs; uses subs 0x58 and 0x5A. (async)
-
-0x8A
+   
+0x91
    Three A press inputs one beat apart, followed by A press inputs in a "ya-hoo!" pattern (two a half-beat apart), starting
    one beat after the start of the sub. Also includes the player's "Ya-hoo!" voice clips. (async)
-
-0x8B
+   
+0x92
    One hip shake SFX, followed by "Ya-hoo!" voice clips for both the orange frog and background frogs; uses sub 0x60,
    and subs 0x62, 0x63, 0x69, and 0x6A. (async)
-
-0x8C
+   
+0x93
+   A full "Ya-hoo!" cue; combines sub 0x8F-0x92, as well as 0x5F. (async)
+   
+0x94
    One hip shake SFX, followed by "Ya-hoo!" voice clips for both the orange frog and background frogs. Mouths stay
    open longer; uses sub 0x60, and subs 0x62, 0x64, 0x69, and 0x6B. (async)
-
-0x8D
-   A full "Ya-hoo!" cue; combines sub 0x88-0x8B, as well as 0x5F. (async)
-
-0x8E
-   A full "Ya-hoo!" cue. Mouths stay open longer; combines subs 0x88-0x8A, 0x8C, and 0x5F. (async)
-
-0x8F-0x92
+   
+0x95
+   Identical to 0x7F, except there is a 1 beat delay. (async)
+   A full "Ya-hoo!" cue. Mouths stay open longer; combines subs 0x8F-0x91, 0x94, and 0x5F. (async)
+   
+0x96-0x99
    Identical to 0x88-0x8B, except there is no preceding hip shake. (async)
-
-0x93
+   
+0x9A
    A full "Ya-hoo!" cue without preceding hip shake; combines the previous four subs, as well as 0x5F. (async)
 
-0x94
+0x9B
    Identical to 0x8C, except there is no preceding hip shake. (async)
 
-0x95
+0x9C
    A full "Ya-hoo!" cue without preceding hip shake. Mouths stay open longer; combines subs 0x8F-0x91, 0x94, and 0x5F. (async)
 
-0x96
+0x9D
    Three hip shake animations in a row for foreground frogs, starting one beat after the start of the sub. Uses sub 0x57. (async)
 
-0x97
+0x9E
    Three hip shake animations in a row for background frogs, starting one beat after the start of the sub. Uses sub 0x58. (async)
 
-0x98
+0x9F
    Three A press inputs in a row one beat apart, starting two beats after the start of the sub. (async)
 
-0x99
+0xA0
    Three hip shake sound effects in a row, starting one beat after the start of the sub. Uses sub 0x60. (async)
 
-0x9A
+0xA1
    Three full hip shake cues, starting two beats after the start of the sub; combines the previous four subs. (async)
 
-0x9B-0x9F
+0xA2-0xA6
    Identical to 0x96-0x9A, except there is only one hip shake instead of three. (async)
 
-0xA0
+0xA7
    A full spin animation for foreground frogs. Uses subs 0x5B and 0x5D. (async)
 
-0xA1
+0xA8
    Two hip shake animations, followed by a full spin animation for background frogs. Uses subs 0x5C and 0x5E. (async)
 
-0xA2
+0xA9
    Two A press inputs one beat after the start of the sub, followed by a B hold-and-release. Also includes
    player's "Spin it, boys!" voice clips. (async)
 
-0xA3
+0xAA
    "Spin it, boys!" voice clips for both the orange frog and background frogs; uses subs 0x66, 0x67, 0x6D and 0x6F. (async)
 
-0xA4
+0xAB
    A full "Spin it, boys!" cue; combines the previous four subs, as well as 0x5F. (async)
 
-0xA5
+0xAC
    "Spin it, boys!" voice clips for both the orange frog and background frogs; alternate mouth movement for background frogs.
    Uses subs 0x66, 0x67, 0x6D and 0x6E. (async)
 
-0xA6
+0xAD
    A full "Spin it, boys!" cue; combines subs 0xA0-0xA3, 0xA5 and 0x5F. (sub; unused)
 
-0xA7-0xAA
+0xAE-0xB1
    Identical to 0xA0-0xA3, except there is only one preceding hip shake. (async)
 
-0xAB
+0xB2
    A full "Spin it, boys!" cue with only one preceding hip shake; combines the previous four subs, as well as 0x5F. (async)
 
-0xAC
+0xB3
    Identical to 0xA5. (async)
 
-0xAD
+0xB4
    Identical to 0xA6, but with only one preceding hip shake. Combines subs 0xA7-0xA9, 0xAC and 0x5F. (async)
 
-0xAE
+0xB5
    "One, two, three, four!" count-in with mouth movements for the orange frog. (async)
 
 Fan Club (0x15)
@@ -2520,6 +2552,10 @@ Beat animation for all monkeys. ::
    0x102<1>
 
 All monkeys put their hands up to clap. ::
+
+   0x102<2>
+
+All monkeys put their hands up to clap while shaking. ::
 
    0x103 pos
 
@@ -2640,10 +2676,10 @@ All the following are asynchronous subroutines.
    A full 4-clap cue, including animations and inputs.
 
 0x58
-   Inputs for a 4-clap cue, starting one beat after the start of the sub.
+   A full "I suppose" cue, including animations and inputs.
 
 0x59
-   A full "I suppose" cue, including animations and inputs.
+   A full "I suppose" cue; different monkey voice clip.
 
 0x5A
    A full "I suppose" cue; different monkey voice clip.
@@ -2655,13 +2691,13 @@ All the following are asynchronous subroutines.
    A full "I suppose" cue; different monkey voice clip.
 
 0x5D
-   A full "I suppose" cue; different monkey voice clip.
+   A full "oh" cue, including animations, inputs, and voice clip.
 
 0x5E
-   Inputs for an "I suppose" cue.
+   Inputs for a 4-clap cue, starting one beat after the start of the sub.
 
 0x5F
-   A full "oh" cue, including animations, inputs, and voice clip.
+   Inputs for an "I suppose" cue.
 
 0x60
    Inputs for an "oh" cue.
@@ -3259,7 +3295,7 @@ Built to Scale (0x1C)
 0x101 - Paddle Control
 ~~~~~~~~~~~~~~~~~~~~~~
 Note that when a paddle number is an argument, it's the nth paddle from the left, starting at 0. -1 is off-screen to the left
-and 4 is off-screen to the right.
+and to the right.
 
 ::
 
@@ -4170,12 +4206,13 @@ Double Date (0x21)
 ~~~~~~~~~~~~~~~~~~
 ::
 
-   0x100<type> jump, catch, ???
+   0x100<type> jump, catch, time
 
 Spawns a ball to kick depending on ``type`` such that the first bounce is a beat later. Does not include sound effects.
 If ``jump`` is 1, the weasels will jump out of their hole.
-``catch`` determines who or what will jump up to catch the ball in the background. The last argument is always 0.
-Values for ``type`` are:
+``catch`` determines who or what will jump up to catch the ball in the background. The final argument advances
+the ball and input by ``time`` ticks, but it mantains the speed it would originally have. It normally stays
+at 0 and it's only used for transitions in remixes. Values for ``type`` are:
 
 - 0: Soccer ball. (can be omitted)
 
@@ -4612,7 +4649,7 @@ animation name at ``str2``, or none if 0.
 List of subs
 ~~~~~~~~~~~~
 
-All the following are asynchronous.
+All the following are asynchronous. All flipper roll subs have the first input after 4 beats.
 
 0x59
    Count-in, including cowbells and "Attention, company!"
@@ -4636,7 +4673,7 @@ All the following are asynchronous.
    Practice 2 flipper rolls.
 
 0x69
-   One flipper roll. (first input after 4 beats)
+   One flipper roll.
 
 0x6A
    One flipper roll without praise at the end.
@@ -4919,6 +4956,14 @@ Text appears in the background. Values for ``type`` are:
 
 - 0x63 (99): Clear text.
 
+0x109 - Freeze Animation
+~~~~~~~~~~~~
+::
+
+   0x109
+
+Karate Joe's combo animation freezes at the end. (Used in Karate Man Combos!)
+
 0x10B - Particle Effects
 ~~~~~~~~~~~~~~~~~~~~~~~~
 ::
@@ -5081,7 +5126,7 @@ All the following are asynchronous.
    Nothing.
 
 0x81
-   "Hit 3!" voice clip.
+   "Hit 3!" voice clip. Sounds after 0.5 beats.
 
 0x82
    "Hit 4!" voice clip. Note that this is identical to "Hit 3!" in the English version, but distinct in the Japanese version.
@@ -5099,7 +5144,7 @@ All the following are asynchronous.
    0x7A is called after a half beat.
 
 0x88
-   The "3!" text appears accompanied by the "Hit 3!" voice clip.
+   The "3!" text appears accompanied by the "Hit 3!" voice clip. Sounds after 1 beat.
 
 0x89
    Identical to 0x88, but the text appears for a shorter amount of time, and appears later.
@@ -5108,7 +5153,7 @@ All the following are asynchronous.
    Identical to 0x88, but the text appears later.
 
 0x8B
-   The "4!" text appears accompanied by the "Hit 4!" voice clip.
+   The "4!" text appears accompanied by the "Hit 4!" voice clip. Sounds after 1 beat.
 
 0x8C
    The text "Combo!" appears after a half beat.
@@ -5129,11 +5174,12 @@ Working Dough (0x29)
 ~~~~~~~~~~~~~~~~~~~~~~~~
 ::
 
-   0x100 type, flash, time1, time2, ???
+   0x100 type, flash, time1, time2, time3
 
 Spawns a ball to be hit on the left in ``time1`` ticks, and on the right (by the player) in ``time2`` ticks.
-If ``flash`` is 1, hitting it causes the background to flash. The final argument is always 0.
-Values for ``type`` are:
+If ``flash`` is 1, hitting it causes the background to flash. The final argument advances the ball and input
+by ``time3`` ticks, but it mantains the speed it would originally have. It normally stays at 0 and it's only
+used for transitions in remixes. Values for ``type`` are:
 
 - 0: Small ball
 
