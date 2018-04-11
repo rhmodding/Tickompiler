@@ -75,7 +75,7 @@ object MegamixFunctions : Functions() {
             SpecialOnlyFunction(0x12, "unrest"),
             SpecialOnlyFunction(0x14, "label"),
             SpecialOnlyFunction(0x15, "goto"),
-            SpecialOnlyFunction(0x1A, "case"),
+            SpecialOnlyFunction(0x1A, "case", indentChange = 1),
             SpecialOnlyFunction(0xB8, "random"),
             SpecificSpecialFunction(0x1, 0, "get_async", 2..2),
             SpecificSpecialFunction(0x1, 1, "set_func", 2..2),
@@ -152,8 +152,8 @@ object MegamixFunctions : Functions() {
                   -1), // current adjust pushes the else back an indent
             alias(0x18, "endif", 0..0, -1, -1), // same here
             alias(0x19, "switch", 0..0, 1),
-            alias(0x1B, "break", 0..0),
-            alias(0x1C, "default", 0..0),
+            alias(0x1B, "break", 0..0, -1),
+            alias(0x1C, "default", 0..0, 1),
             alias(0x1D, "endswitch", 0..0, -1, -1),
             alias(0x24, "speed", 1..1),
             alias(0x25, "speed_relative", 3..3),
@@ -305,7 +305,9 @@ class OldMacroFunction: OptionalArgumentsFunction(0, "macro", 3, 0, 2000)
 @DeprecatedFunction("set_async is deprecated, use set_func instead")
 class OldSetFunction: SpecificSpecialFunction(0x1, 1, "set_async", 2..2)
 
-open class SpecialOnlyFunction(opcode: Long, alias: String) : Function(opcode, alias, 1..1) {
+open class SpecialOnlyFunction(opcode: Long, alias: String, val indentChange: Int = 0,
+                               val currentAdjust: Int = 0)
+    : Function(opcode, alias, 1..1) {
     override fun acceptOp(op: Long): Boolean {
         val opcode = op and 0x3FF
         val args = (op and 0x3C00) ushr 10
@@ -314,6 +316,8 @@ open class SpecialOnlyFunction(opcode: Long, alias: String) : Function(opcode, a
 
     override fun produceTickflow(state: DecompilerState, opcode: Long, specialArg: Long, args: LongArray,
                                  comments: CommentType, specialArgStrings: Map<Int, String>): String {
+        state.nextIndentLevel += indentChange
+        state.currentAdjust = currentAdjust
         return "${this.name} ${getHex(specialArg)}"
     }
 
