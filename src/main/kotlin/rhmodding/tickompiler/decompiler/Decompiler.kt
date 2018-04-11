@@ -57,13 +57,13 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
         return Pair(result, i)
     }
 
-    fun decompile(addComments: CommentType, useMetadata: Boolean, indent: String = "    ", macros: Map<Int, Int> = mapOf()): Pair<Double, String> {
+    fun decompile(addComments: CommentType, useMetadata: Boolean, indent: String = "\t", macros: Map<Int, Int> = mapOf()): Pair<Double, String> {
         val nanoTime = System.nanoTime()
         val builder = StringBuilder()
         val state = DecompilerState()
 
         run decompilerInfo@ {
-            builder.append("// Decompiled using Tickompiler ${VERSION}\n// ${GITHUB}\n")
+            builder.append("// Decompiled using Tickompiler $VERSION\n// $GITHUB\n")
         }
         val markers = mutableMapOf<Long, String>()
 

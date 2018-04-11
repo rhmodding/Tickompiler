@@ -17,21 +17,21 @@ object ExtractCommand : Command("extract", "e") {
 
     override val commandInfo: CommandInfo =
             CommandInfo("[flags] <code file> [output dir]",
-                        listOf("Extract binary files from a decrypted code.bin file and output them to the directory specified.",
-                               "File must be with the file's extension .bin (little-endian)",
-                               "Files will be overwritten without warning.",
-                               "If the output is not specified, the directory will have the same name as the file.",
-                               "A base.bin file will also be created in the output directory. This is a base C00.bin file."),
-                        listOf(
-                                FlagInfo(listOf("-a"),
-                                         listOf("Extract all subroutines of game engines, as opposed to only ones used by the games.",
-                                                "Note that this potentially includes sequels and prequels to the game.")),
-                                FlagInfo(listOf("-d"),
-                                         listOf("Immediately decompile all extracted games, with enhanced features such as meaningful marker names.",
-                                                "Will be extracted into a \"decompiled\" directory in the output directory.")),
-                                FlagInfo(listOf("-t"),
-                                         listOf("Extract tempo files. These will be written as .tempo files in a \"tempo\" folder in the output directory."))
-                              ))
+                    listOf("Extract binary files from a decrypted code.bin file and output them to the directory specified.",
+                            "File must be with the file's extension .bin (little-endian)",
+                            "Files will be overwritten without warning.",
+                            "If the output is not specified, the directory will have the same name as the file.",
+                            "A base.bin file will also be created in the output directory. This is a base C00.bin file."),
+                    listOf(
+                            FlagInfo(listOf("-a"),
+                                    listOf("Extract all subroutines of game engines, as opposed to only ones used by the games.",
+                                            "Note that this potentially includes sequels and prequels to the game.")),
+                            FlagInfo(listOf("-d"),
+                                    listOf("Immediately decompile all extracted games, with enhanced features such as meaningful marker names.",
+                                            "Will be extracted into a \"decompiled\" directory in the output directory.")),
+                            FlagInfo(listOf("-t"),
+                                    listOf("Extract tempo files. These will be written as .tempo files in a \"tempo\" folder in the output directory."))
+                    ))
 
     override fun execute(args: List<String>, flagsObj: Commands.Flags, flags: List<String>, indexOfFirstArgument: Int,
                          output: PrintStream) {
@@ -41,9 +41,9 @@ object ExtractCommand : Command("extract", "e") {
         val codebin = File(args[indexOfFirstArgument])
         val codeBuffer = ByteBuffer.wrap(Files.readAllBytes(codebin.toPath())).order(ByteOrder.LITTLE_ENDIAN)
         val folder = File(when {
-                              indexOfFirstArgument + 1 < args.size -> args[indexOfFirstArgument + 1]
-                              else -> codebin.nameWithoutExtension
-                          })
+            indexOfFirstArgument + 1 < args.size -> args[indexOfFirstArgument + 1]
+            else -> codebin.nameWithoutExtension
+        })
         folder.mkdirs()
         val decompiledFolder = File(folder, "decompiled")
         if (flags.contains("-d")) {
@@ -65,7 +65,7 @@ object ExtractCommand : Command("extract", "e") {
             if (flags.contains("-d")) {
                 val decompiler = Decompiler(arr, ByteOrder.LITTLE_ENDIAN, MegamixFunctions)
                 output.println("Decompiling ${codeBuffer.getName(i)}")
-                val r = decompiler.decompile(CommentType.NORMAL, true, "    ", result.first)
+                val r = decompiler.decompile(CommentType.NORMAL, true, macros = result.first)
                 val f = FileOutputStream(File(decompiledFolder, codeBuffer.getName(i) + ".tickflow"))
                 f.write(r.second.toByteArray(Charset.forName("UTF-8")))
                 f.close()
@@ -87,7 +87,7 @@ object ExtractCommand : Command("extract", "e") {
             if (flags.contains("-d")) {
                 val decompiler = Decompiler(arr, ByteOrder.LITTLE_ENDIAN, MegamixFunctions)
                 output.println("Decompiling ${codeBuffer.getGateName(i)}")
-                val r = decompiler.decompile(CommentType.NORMAL, true, "    ", result.first)
+                val r = decompiler.decompile(CommentType.NORMAL, true, macros = result.first)
                 val f = FileOutputStream(File(decompiledFolder, codeBuffer.getGateName(i) + ".tickflow"))
                 f.write(r.second.toByteArray(Charset.forName("UTF-8")))
                 f.close()

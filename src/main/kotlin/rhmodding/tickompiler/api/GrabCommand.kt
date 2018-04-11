@@ -4,7 +4,6 @@ import rhmodding.tickompiler.MegamixFunctions
 import rhmodding.tickompiler.decompiler.CommentType
 import rhmodding.tickompiler.decompiler.Decompiler
 import rhmodding.tickompiler.gameextractor.GameExtractor
-import rhmodding.tickompiler.gameextractor.getName
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
@@ -54,7 +53,7 @@ object GrabCommand: Command("grab", "g") {
 		if (flags.contains("-d")) {
 			val decompiler = Decompiler(arr, ByteOrder.LITTLE_ENDIAN, MegamixFunctions)
 			output.println("Decompiling ${o.nameWithoutExtension}")
-			val r = decompiler.decompile(CommentType.NORMAL, true, "    ")
+			val r = decompiler.decompile(CommentType.NORMAL, true)
 			val f = FileOutputStream(File(o.absolutePath.dropLastWhile { it != File.separatorChar } + o.nameWithoutExtension + ".tickflow"))
 			f.write(r.second.toByteArray(Charset.forName("UTF-8")))
 			f.close()
