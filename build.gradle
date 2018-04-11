@@ -24,7 +24,7 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.17"
+    compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.5"
     compile "org.parboiled:parboiled-java:1.1.8"
     compile "com.github.salomonbrys.kotson:kotson:2.5.0"
 }
