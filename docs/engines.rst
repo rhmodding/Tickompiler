@@ -6882,3 +6882,38 @@ Each is asynchronous.
 
 0x58
    Identical to 0x57, but includes operations for the two guys' animations.
+
+Super Samurai Slice (0x37)
+--------------------------
+
+0x100 - Input Cue
+~~~~~~~~~~~~~~~~~
+::
+
+   0x100 type, time
+
+Cues up an input for after ``time`` ticks. ``type`` determines both the type of input and the Samurai's attack animation.
+Values for ``type`` are:
+
+- 0: Regular slice (press A)
+
+- 1: 1st in sequence of slices (press A)
+
+- 2: 2nd in sequence of slices (press A)
+
+- 3: 3rd in sequence of slices (press A)
+
+- 4: 4th in sequence of slices (press A)
+
+- 5: Block large enemy (start holding B)
+
+- 6: Slice large enemy (release B)
+
+0x101 - Samurai Animations
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+   0x101
+
+Beat animation. ::
+
