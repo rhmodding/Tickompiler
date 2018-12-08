@@ -1,9 +1,9 @@
 package rhmodding.tickompiler.api
 
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import rhmodding.tickompiler.DSFunctions
 import rhmodding.tickompiler.MegamixFunctions
 import rhmodding.tickompiler.decompiler.CommentType
@@ -11,7 +11,6 @@ import rhmodding.tickompiler.decompiler.Decompiler
 import rhmodding.tickompiler.util.getDirectories
 import java.io.FileOutputStream
 import java.io.PrintStream
-import java.io.PrintWriter
 import java.nio.ByteOrder
 import java.nio.charset.Charset
 import java.nio.file.Files
@@ -48,7 +47,7 @@ object DecompileCommand : Command("decompile", "d") {
 
         output.println("Decompiling ${dirs.input.size} file(s)")
         dirs.input.forEachIndexed { index, file ->
-            coroutines += async(CommonPool) {
+            coroutines += GlobalScope.async {
                 val decompiler = Decompiler(Files.readAllBytes(file.toPath()),
                                             ByteOrder.LITTLE_ENDIAN, functions)
 
