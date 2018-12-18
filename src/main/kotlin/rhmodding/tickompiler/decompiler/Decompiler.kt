@@ -1,7 +1,10 @@
 package rhmodding.tickompiler.decompiler
 
-import rhmodding.tickompiler.*
+import rhmodding.tickompiler.BytesFunction
 import rhmodding.tickompiler.Function
+import rhmodding.tickompiler.Functions
+import rhmodding.tickompiler.Tickompiler.GITHUB
+import rhmodding.tickompiler.Tickompiler.VERSION
 import rhmodding.tickompiler.util.escape
 import java.io.ByteArrayInputStream
 import java.nio.ByteOrder
