@@ -6,7 +6,7 @@ import rhmodding.tickompiler.cli.*
 
 object Tickompiler {
 
-    const val VERSION: String = "v1.8.0-DEVELOPMENT"
+    const val VERSION: String = "v1.8.0"
     const val GITHUB: String = "https://github.com/SneakySpook/Tickompiler"
 
     fun createAndParseCommandLine(runnable: Runnable, vararg args: String): CommandLine {
