@@ -2,11 +2,12 @@ package rhmodding.tickompiler
 
 import picocli.CommandLine
 import rhmodding.tickompiler.cli.*
+import rhmodding.tickompiler.util.Version
 
 
 object Tickompiler {
 
-    const val VERSION: String = "v1.8.0"
+    val VERSION: Version = Version(1, 9, 0, "DEVELOPMENT")
     const val GITHUB: String = "https://github.com/SneakySpook/Tickompiler"
 
     fun createAndParseCommandLine(runnable: Runnable, vararg args: String): CommandLine {
@@ -27,12 +28,12 @@ object Tickompiler {
 @CommandLine.Command(mixinStandardHelpOptions = true, versionProvider = TickompilerVersionProvider::class,
         name = "tickompiler", description = ["A RHM tickflow compiler/decompiler"],
         subcommands = [CompileCommand::class, DecompileCommand::class, PackCommand::class, ExtractCommand::class, GrabCommand::class,
-            NotepadppLangCommand::class, DaemonCommand::class])
+            NotepadppLangCommand::class, DaemonCommand::class, UpdatesCheckCommand::class])
 class TickompilerCommand : Runnable {
     override fun run() {
     }
 }
 
 class TickompilerVersionProvider : CommandLine.IVersionProvider {
-    override fun getVersion(): Array<String> = arrayOf("Tickompiler: A RHM tickflow compiler/decompiler", Tickompiler.VERSION, Tickompiler.GITHUB, "Licensed under the MIT License")
+    override fun getVersion(): Array<String> = arrayOf("Tickompiler: A RHM tickflow compiler/decompiler", Tickompiler.VERSION.toString(), Tickompiler.GITHUB, "Licensed under the MIT License")
 }
