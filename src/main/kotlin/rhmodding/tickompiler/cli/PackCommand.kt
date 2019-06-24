@@ -11,7 +11,7 @@ import java.nio.ByteOrder
 import java.nio.charset.Charset
 import java.nio.file.Files
 
-@CommandLine.Command(name = "pack", aliases = ["p"], description = ["Pack binary, tempo, and/or tkflowobj files from a specified directory into the output file, using the specified base file.",
+@CommandLine.Command(name = "pack", aliases = ["p"], description = ["Pack binary, tempo, and/or tkflwobj files from a specified directory into the output file, using the specified base file.",
     "The base file can be obtained from extraction.",
     "Files must have the file extension .bin (little-endian), .tempo, or .tkflwobj",
     "The output file will be overwritten without warning.",
