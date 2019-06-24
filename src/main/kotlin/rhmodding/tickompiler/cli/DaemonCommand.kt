@@ -6,7 +6,7 @@ import rhmodding.tickompiler.TickompilerCommand
 import java.util.regex.Pattern
 
 @CommandLine.Command(name = "daemon", description = ["Runs Tickompiler in daemon mode.",
-    "This will provide a continuously running program which makes use of JIT (just-in-time compilation) to speed up future compilations/decompilations.",
+    "This will provide a continuously running program which makes use of JIT (just-in-time compilation) to speed up future operations.",
     "You can optionally provide the first command you want to run as arguments to this command.",
     "CTRL+C will kill the program. Typing 'stop' or 'exit' will work too."],
         mixinStandardHelpOptions = true)
