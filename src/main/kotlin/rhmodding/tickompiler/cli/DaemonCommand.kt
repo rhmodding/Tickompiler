@@ -16,7 +16,7 @@ class DaemonCommand : Runnable {
     var firstCommand: List<String> = listOf()
 
     override fun run() {
-        println("Running in daemon mode: CTRL+C or type 'stop' or 'exit' to terminate\n${Tickompiler.VERSION}\n${Tickompiler.GITHUB}\n")
+        println("Running in daemon mode: press CTRL+C or type 'stop' or 'exit' to terminate\nType '-h' for help\n${Tickompiler.VERSION}\n${Tickompiler.GITHUB}\n")
 
         var input: String = (if (firstCommand.isNotEmpty()) {
             // we have a first command to immediately execute
