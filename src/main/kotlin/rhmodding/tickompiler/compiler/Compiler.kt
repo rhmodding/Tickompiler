@@ -130,13 +130,12 @@ class Compiler(val tickflow: String, val functions: Functions) {
 
 //		println(ParseTreeUtils.printNodeTree(result))
 
-        // TODO optimize primitives?
         val longs: MutableList<Long> = mutableListOf()
         val variables: MutableMap<String, Pair<Long, VariableType>> = mutableMapOf()
 
 //		result.valueStack.reversed().forEach(::println)
         var counter = 0L
-        val startMetadata = MutableList<Long>(3, { 0 })
+        val startMetadata = MutableList<Long>(3) { 0 }
         var hasMetadata = false
         val ustrings = mutableListOf<String>()
         val strings = mutableListOf<String>()
