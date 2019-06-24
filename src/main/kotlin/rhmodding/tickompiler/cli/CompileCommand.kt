@@ -41,6 +41,7 @@ class CompileCommand : Runnable {
         val dirs = getDirectories(inputFile, outputFile, { s -> s.endsWith(".tickflow") }, "bin")
         val functions = when {
             dsFunctions -> DSFunctions
+            megamixFunctions -> MegamixFunctions
             else -> MegamixFunctions
         }
 
