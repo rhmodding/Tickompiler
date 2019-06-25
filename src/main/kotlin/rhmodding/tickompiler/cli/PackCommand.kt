@@ -58,7 +58,7 @@ class PackCommand : Runnable {
                 if (manifest.version <= 0) {
                     error("${f.path} - Manifest version is invalid (${manifest.version})")
                 } else if (manifest.version > TKFLWOBJ_PACKER_VERSION) {
-                    error("${f.path} - Manifest version is too high (${manifest.version}, max $TKFLWOBJ_PACKER_VERSION)")
+                    error("${f.path} - Manifest version is too high (${manifest.version}, max $TKFLWOBJ_PACKER_VERSION). Update Tickompiler by using the 'updates' command")
                 }
 
                 // Version 1 parsing
