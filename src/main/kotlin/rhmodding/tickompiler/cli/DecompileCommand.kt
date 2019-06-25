@@ -53,6 +53,7 @@ class DecompileCommand : Runnable {
         val dirs = getDirectories(inputFile, outputFile, { s -> s.endsWith(".bin") }, "tickflow")
         val functions = when {
             dsFunctions -> DSFunctions
+            megamixFunctions -> MegamixFunctions
             else -> MegamixFunctions
         }
 

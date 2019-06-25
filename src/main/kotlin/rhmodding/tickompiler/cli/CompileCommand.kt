@@ -32,7 +32,8 @@ class CompileCommand : Runnable {
     @CommandLine.Option(names = ["--ds"], description = ["Compile with RHDS functions."])
     var dsFunctions: Boolean = false
 
-    @CommandLine.Option(names = ["-o", "--objectify"], description = ["Compile as a tkflwobj file. Provide the directory where required .tempo files are located."])
+    @CommandLine.Option(names = ["-o", "--objectify"], paramLabel = "tempo files directory",
+            description = ["Compile as a tkflwobj file. Provide the directory where required .tempo files are located."])
     var objectify: File? = null
 
     @CommandLine.Parameters(index = "0", arity = "1", description = ["Input file or directory."])
@@ -46,8 +47,11 @@ class CompileCommand : Runnable {
         val tempoLoc = objectify
         if (tempoLoc != null && !tempoLoc.isDirectory) {
             throw IllegalArgumentException("--objectify was used but the path given was not a directory: ${tempoLoc.path}")
-        } else if (tempoLoc != null && outputFile?.isDirectory != true) {
-            throw IllegalArgumentException("--objectify was used but the output file was not specified or is not a directory. It must be specified and must be a file.")
+        } else if (tempoLoc != null) {
+            if (outputFile == null) {
+                throw IllegalArgumentException("--objectify was used but the output file was not specified or is not a file. It must be specified and must be a file.")
+            }
+            outputFile!!.createNewFile()
         }
         val objectifying = tempoLoc != null
         val dirs = getDirectories(inputFile, outputFile, { s -> s.endsWith(".tickflow") }, if (objectifying) "tkflwobj" else "bin")
@@ -102,7 +106,7 @@ class CompileCommand : Runnable {
             val numSuccessful = coroutines
                     .map { it.await() }
                     .count { it }
-            
+
             if (objectifying) {
                 if (numSuccessful != dirs.input.size) {
                     println("""
@@ -119,7 +123,8 @@ All must compile successfully to build a tkflwobj.""")
 +========================+
 All $numSuccessful targets were compiled successfully. (Took ${(System.nanoTime() - nanoStart) / 1_000_000.0} ms)
 Building object file ${objOut.name}...""")
-                    
+                    rhmodding.tickompiler.objectify.objectify(objOut, outputBinFiles.map { it.second }, tempoFiles)
+                    println("Succeeded.")
                 }
             } else {
                 println("""
