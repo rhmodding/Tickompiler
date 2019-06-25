@@ -17,7 +17,7 @@ import java.nio.ByteOrder
 @CommandLine.Command(name = "compile", aliases = ["c"], description = ["Compile tickflow file(s) and output them as a binary to the file/directory specified.",
     "Files must be with the file extension .tickflow",
     "Files will be overwritten without warning.",
-    "Use the --objectify/-o optional parameter to create a tkflwobj file, which contains the compiled data along with the tempo files required.",
+    "Use the --objectify/-o optional parameter to create a .tfobj (tickflow object) file, which contains the compiled data along with the tempo files required.",
     "If the output is not specified, the file will be a (little-endian) .bin file with the same name.",
     "If the output is not specified AND --objectify was used, the output file MUST be specified!"],
         mixinStandardHelpOptions = true)
@@ -33,7 +33,7 @@ class CompileCommand : Runnable {
     var dsFunctions: Boolean = false
 
     @CommandLine.Option(names = ["-o", "--objectify"], paramLabel = "tempo files directory",
-            description = ["Compile as a tkflwobj file. Provide the directory where required .tempo files are located."])
+            description = ["Compile as a .tfobj (tickflow object) file. Provide the directory where required .tempo files are located."])
     var objectify: File? = null
 
     @CommandLine.Parameters(index = "0", arity = "1", description = ["Input file or directory."])
@@ -54,7 +54,7 @@ class CompileCommand : Runnable {
             outputFile!!.createNewFile()
         }
         val objectifying = tempoLoc != null
-        val dirs = getDirectories(inputFile, outputFile, { s -> s.endsWith(".tickflow") }, if (objectifying) "tkflwobj" else "bin")
+        val dirs = getDirectories(inputFile, outputFile, { s -> s.endsWith(".tickflow") }, if (objectifying) "tfobj" else "bin")
         val functions = when {
             dsFunctions -> DSFunctions
             megamixFunctions -> MegamixFunctions
@@ -114,7 +114,7 @@ class CompileCommand : Runnable {
 | COMPILATION FAILED |
 +====================+
 Only $numSuccessful / ${dirs.input.size} were compiled successfully. (Took ${(System.nanoTime() - nanoStart) / 1_000_000.0} ms)
-All must compile successfully to build a tkflwobj.""")
+All must compile successfully to build a tickflow object.""")
                 } else {
                     val objOut = outputFile!!
                     println("""

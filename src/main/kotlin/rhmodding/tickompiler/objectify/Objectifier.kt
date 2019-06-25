@@ -7,13 +7,13 @@ import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-val TKFLWOBJ_PACKER_VERSION: Int = 1
+val TFOBJ_PACKER_VERSION: Int = 1
 
 fun objectify(outputFile: File, binFiles: List<File>, tempoFiles: List<File>) {
-    val packerVersion = TKFLWOBJ_PACKER_VERSION
+    val packerVersion = TFOBJ_PACKER_VERSION
     outputFile.createNewFile()
     val zipStream = ZipOutputStream(FileOutputStream(outputFile))
-    zipStream.setComment("Tickompiler tkflwobj (tickflow object) file - ${Tickompiler.VERSION} - packer version $packerVersion")
+    zipStream.setComment("Tickompiler tfobject (tickflow object) file - ${Tickompiler.VERSION} - packer version $packerVersion")
     
     val manifestObj = ManifestObj().apply {
         version = packerVersion

@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import picocli.CommandLine
 import rhmodding.tickompiler.gameputter.GamePutter
 import rhmodding.tickompiler.objectify.ManifestObj
-import rhmodding.tickompiler.objectify.TKFLWOBJ_PACKER_VERSION
+import rhmodding.tickompiler.objectify.TFOBJ_PACKER_VERSION
 import rhmodding.tickompiler.util.getDirectories
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -15,9 +15,9 @@ import java.nio.charset.Charset
 import java.nio.file.Files
 import java.util.zip.ZipFile
 
-@CommandLine.Command(name = "pack", aliases = ["p"], description = ["Pack binary, tempo, and/or tkflwobj files from a specified directory into the output file, using the specified base file.",
+@CommandLine.Command(name = "pack", aliases = ["p"], description = ["Pack binary, tempo, and/or tfobj files from a specified directory into the output file, using the specified base file.",
     "The base file can be obtained from extraction.",
-    "Files must have the file extension .bin (little-endian), .tempo, or .tkflwobj",
+    "Files must have the file extension .bin (little-endian), .tempo, or .tfobj.",
     "The output file will be overwritten without warning.",
     "If the output file name is not specified, it will default to \"C00.bin\"."],
         mixinStandardHelpOptions = true)
@@ -43,11 +43,11 @@ class PackCommand : Runnable {
         val lookIn = dirs.map { PackTarget(it, it.name) }.toMutableList()
         val tmpFiles = mutableListOf<File>()
 
-        val tkflwObjs: List<File> = inputFile.listFiles { _, name -> name.endsWith(".tkflwobj") }?.toList() ?: listOf()
-        if (tkflwObjs.isNotEmpty()) {
-            println("Detected ${tkflwObjs.size} .tkflwobj files, extracting those first...")
-            tkflwObjs.forEach { f ->
-                println("\tExtracting from tkflwobj ${f.name}...")
+        val tfObjs: List<File> = inputFile.listFiles { _, name -> name.endsWith(".tfobj") }?.toList() ?: listOf()
+        if (tfObjs.isNotEmpty()) {
+            println("Detected ${tfObjs.size} .tfobj files, extracting those first...")
+            tfObjs.forEach { f ->
+                println("\tExtracting from tfobj ${f.name}...")
                 val zipFile = ZipFile(f)
                 val manifestEntry = zipFile.getEntry("manifest.json")
                 val manifest = Gson().fromJson(zipFile.getInputStream(manifestEntry).let {
@@ -57,8 +57,8 @@ class PackCommand : Runnable {
                 }, ManifestObj::class.java)
                 if (manifest.version <= 0) {
                     error("${f.path} - Manifest version is invalid (${manifest.version})")
-                } else if (manifest.version > TKFLWOBJ_PACKER_VERSION) {
-                    error("${f.path} - Manifest version is too high (${manifest.version}, max $TKFLWOBJ_PACKER_VERSION). Update Tickompiler by using the 'updates' command")
+                } else if (manifest.version > TFOBJ_PACKER_VERSION) {
+                    error("${f.path} - Manifest version is too high (${manifest.version}, max $TFOBJ_PACKER_VERSION). Update Tickompiler by using the 'updates' command")
                 }
 
                 // Version 1 parsing
