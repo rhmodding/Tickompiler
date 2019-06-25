@@ -16,7 +16,7 @@ import java.nio.file.Files
     "File must be with the file's extension .bin (little-endian)",
     "Files will be overwritten without warning.",
     "If the output is not specified, the directory will have the same name as the file.",
-    "A base.bin file will also be created in the output directory. This is a base C00.bin file."],
+    "A base.bin file will also be created in the same directory as the executable. This is a base C00.bin file."],
         mixinStandardHelpOptions = true)
 class ExtractCommand : Runnable {
 
@@ -110,7 +110,7 @@ class ExtractCommand : Runnable {
         val gateList = ByteArray(16 * 36 + 16 * 4)
         codeBuffer.position(GATE_TABLE - 0x100000)
         codeBuffer.get(gateList, 0, 16 * 36 + 16 * 4)
-        val fos = FileOutputStream(File(folder, "base.bin"))
+        val fos = FileOutputStream(File("base.bin"))
         fos.write(tableList)
         fos.write(tempoList)
         fos.write(gateList)
