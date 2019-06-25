@@ -4,6 +4,8 @@ import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import java.nio.ByteBuffer
 import java.util.*
+import kotlin.math.pow
+import kotlin.math.roundToLong
 
 
 class GameExtractor(val allSubs: Boolean) {
@@ -53,7 +55,7 @@ class GameExtractor(val allSubs: Boolean) {
                 error("Places $places cannot be negative")
             if (places == 0)
                 return "$value"
-            val long: Long = Math.round(value * Math.pow(10.0, places.toDouble()))
+            val long: Long = (value * 10.0.pow(places.toDouble())).roundToLong()
             val longString = long.toString()
 
             val str = longString.substring(0, longString.length - places) + "." + longString.substring(longString.length - places).trimEnd('0')

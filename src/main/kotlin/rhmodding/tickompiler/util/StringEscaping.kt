@@ -7,5 +7,5 @@ fun String.escape(): String {
 }
 
 fun String.unescape(): String {
-	return replace("\\n", "\n").replace("\\\\(.)".toRegex(), {it.groupValues[1]})
+	return replace("\\n", "\n").replace("\\\\(.)".toRegex()) {it.groupValues[1]}
 }

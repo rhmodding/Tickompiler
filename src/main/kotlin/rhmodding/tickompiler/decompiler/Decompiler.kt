@@ -9,6 +9,7 @@ import rhmodding.tickompiler.util.escape
 import java.io.ByteArrayInputStream
 import java.nio.ByteOrder
 import java.util.*
+import kotlin.math.max
 
 class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Functions) {
     var input = ByteArrayInputStream(array)
@@ -224,7 +225,7 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
             }
             builder.append('\n')
             state.currentAdjust = 0
-            state.nextIndentLevel = Math.max(state.nextIndentLevel, 0)
+            state.nextIndentLevel = max(state.nextIndentLevel, 0)
             counter += 4 * (1 + argCount)
         }
 

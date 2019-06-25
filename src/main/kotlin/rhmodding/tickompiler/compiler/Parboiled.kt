@@ -59,7 +59,7 @@ class LoopNode(position: Position, val statements: List<ImmutableTreeNode<*>>, v
     override fun toString(): String {
         var str = "Loop $expr times {\n"
         statements.forEach {
-            str += it.toString().lines().map { "\t" + it }.joinToString("\n") + "\n"
+            str += it.toString().lines().joinToString("\n") { "\t" + it } + "\n"
         }
         str += "}"
         return str

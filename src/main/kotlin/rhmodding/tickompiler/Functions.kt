@@ -4,6 +4,7 @@ import rhmodding.tickompiler.compiler.FunctionCall
 import rhmodding.tickompiler.decompiler.CommentType
 import rhmodding.tickompiler.decompiler.DecompilerState
 import java.util.*
+import kotlin.math.abs
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
@@ -16,7 +17,7 @@ abstract class Functions {
     abstract val allFunctions: MutableList<Function>
 
     val byName: MutableMap<String, Function>
-        get() = allFunctions.associate { it.name to it }.toMutableMap()
+        get() = allFunctions.associateBy { it.name }.toMutableMap()
 
     operator fun get(op: Long): Function {
         allFunctions.forEach { if (it.acceptOp(op)) return@get it }
@@ -33,10 +34,10 @@ abstract class Functions {
     }
 
     operator fun get(key: String): Function {
-        if (key.startsWith("0x") or isNumeric(key)) {
-            return opcode
+        return if (key.startsWith("0x") or isNumeric(key)) {
+            opcode
         } else {
-            return byName[key] ?: throw MissingFunctionError("Failed to find function $key")
+            byName[key] ?: throw MissingFunctionError("Failed to find function $key")
         }
     }
 
@@ -199,7 +200,7 @@ abstract class Function(val opCode: Long, val name: String, val argsNeeded: IntR
                 specialArgStrings[index]
             } else {
                 if (radix == 16) getHex(it) else
-                    Integer.toString(it.toInt(), radix).toString()
+                    it.toInt().toString(radix).toString()
             }
         }.joinToString(separator = ", ")
     }
@@ -209,11 +210,10 @@ abstract class Function(val opCode: Long, val name: String, val argsNeeded: IntR
     }
 
     fun getHex(num: Long): String {
-        return if (Math.abs(num.toInt()) < 10)
-            Integer.toString(num.toInt(), 16).toString().toUpperCase(Locale.ROOT)
+        return if (abs(num.toInt()) < 10)
+            num.toInt().toString(16).toString().toUpperCase(Locale.ROOT)
         else
-            (if (num.toInt() < 0) "-" else "") + "0x" + Integer.toString(Math.abs(num.toInt()),
-                                                                         16).toString().toUpperCase(Locale.ROOT)
+            (if (num.toInt() < 0) "-" else "") + "0x" + abs(num.toInt()).toString(16).toString().toUpperCase(Locale.ROOT)
     }
 
 }
