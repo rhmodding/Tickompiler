@@ -38,6 +38,7 @@ dependencies {
 shadowJar {
     baseName = "tickompiler"
     classifier = null
+    version = null
     manifest {
         attributes "Main-Class": "rhmodding.tickompiler.Tickompiler"
     }
