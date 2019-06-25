@@ -46,7 +46,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Tickompiler'
-copyright = u'2017, chrislo27, SneakySpook'
+copyright = u'2017-2019, chrislo27, SneakySpook'
 author = u'chrislo27, SneakySpook'
 
 # The version info for the project you're documenting, acts as replacement for
