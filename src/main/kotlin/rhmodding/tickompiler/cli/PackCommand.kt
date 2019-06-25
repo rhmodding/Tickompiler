@@ -45,9 +45,9 @@ class PackCommand : Runnable {
 
         val tkflwObjs: List<File> = inputFile.listFiles { _, name -> name.endsWith(".tkflwobj") }?.toList() ?: listOf()
         if (tkflwObjs.isNotEmpty()) {
-            println("Detected ${tkflwObjs.size} .tkflwobj files, unpacking those first...")
+            println("Detected ${tkflwObjs.size} .tkflwobj files, extracting those first...")
             tkflwObjs.forEach { f ->
-                println("Unpacking tkflwobj ${f.name}...")
+                println("\tExtracting from tkflwobj ${f.name}...")
                 val zipFile = ZipFile(f)
                 val manifestEntry = zipFile.getEntry("manifest.json")
                 val manifest = Gson().fromJson(zipFile.getInputStream(manifestEntry).let {
