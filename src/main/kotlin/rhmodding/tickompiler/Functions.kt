@@ -79,7 +79,6 @@ object MegamixFunctions : Functions() {
             SpecialOnlyFunction(0xB8, "random"),
             SpecificSpecialFunction(0x1, 0, "get_async", 2..2),
             SpecificSpecialFunction(0x1, 1, "set_func", 2..2),
-            OldSetFunction(),
             SpecificSpecialFunction(0x3, 0, "kill_all", 0..0),
             SpecificSpecialFunction(0x3, 1, "kill_cat", 1..1),
             SpecificSpecialFunction(0x3, 2, "kill_loc", 1..1),
@@ -135,7 +134,6 @@ object MegamixFunctions : Functions() {
             SpecificSpecialFunction(0x80, 0, "rotate", 2..2),
             SpecificSpecialFunction(0x80, 1, "rotate_gradual", 5..5),
             OptionalArgumentsFunction(0, "async_sub", 3, 0, 2000),
-            OldMacroFunction(),
             OptionalArgumentsFunction(2, "async_call", 2, 0),
             alias(0x4, "sub", 1..1),
             alias(0x5, "get_sync", 1..1),
@@ -298,12 +296,6 @@ open class OptionalArgumentsFunction(opcode: Long, alias: String, val numArgs: I
         return super.produceBytecode(FunctionCall(funcCall.func, funcCall.specialArg, newArgs))
     }
 }
-
-@DeprecatedFunction("macro is deprecated, use async_sub instead")
-class OldMacroFunction: OptionalArgumentsFunction(0, "macro", 3, 0, 2000)
-
-@DeprecatedFunction("set_async is deprecated, use set_func instead")
-class OldSetFunction: SpecificSpecialFunction(0x1, 1, "set_async", 2..2)
 
 open class SpecialOnlyFunction(opcode: Long, alias: String, val indentChange: Int = 0,
                                val currentAdjust: Int = 0)
