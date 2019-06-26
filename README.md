@@ -7,6 +7,6 @@ Tickompiler is a compiler/decompiler for Tickflow, a language based on the bytec
 [![Downloads](https://img.shields.io/github/downloads/SneakySpook/Tickompiler/total.svg)](https://github.com/SneakySpook/Tickompiler/releases)
 [![License](https://img.shields.io/github/license/SneakySpook/Tickompiler.svg)](https://github.com/SneakySpook/Tickompiler/blob/master/LICENSE.txt)
 
-In-depth documentation for Tickflow can be found [here](http://tickompiler.readthedocs.io/en/latest/index.html).
+In-depth documentation for Tickflow can be found [here](https://tickompiler.readthedocs.io/en/latest/).
 
 Game files extracted and decompiled using this tool can be used in conjunction with [this patch](https://github.com/SneakySpook/RHMPatch).
