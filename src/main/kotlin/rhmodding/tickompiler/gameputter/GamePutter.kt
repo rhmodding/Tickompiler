@@ -1,7 +1,7 @@
 package rhmodding.tickompiler.gameputter
 
 import java.nio.ByteBuffer
-import kotlin.math.roundToLong
+import kotlin.math.roundToInt
 
 object GamePutter {
 
@@ -63,7 +63,7 @@ object GamePutter {
 			val bpm = list[0].toFloat()
 			val beats = list[1].toFloat()
 			val time = 60*beats/bpm
-			val timeInt = (time * 32000).roundToLong()
+			val timeInt = (time * 32000).roundToInt()
 			result.add(java.lang.Float.floatToIntBits(beats))
 			result.add(timeInt)
 			if (index == tempo.size - 2) {
