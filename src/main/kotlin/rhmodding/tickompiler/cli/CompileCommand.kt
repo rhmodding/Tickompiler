@@ -54,7 +54,7 @@ class CompileCommand : Runnable {
             outputFile!!.createNewFile()
         }
         val objectifying = tempoLoc != null
-        val dirs = getDirectories(inputFile, outputFile, { s -> s.endsWith(".tickflow") }, if (objectifying) "tfobj" else "bin")
+        val dirs = getDirectories(inputFile, outputFile, { s -> s.endsWith(".tickflow") }, if (objectifying) "tfobj" else "bin", objectifying)
         val functions = when {
             dsFunctions -> DSFunctions
             megamixFunctions -> MegamixFunctions
