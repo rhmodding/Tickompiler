@@ -14,7 +14,7 @@ class NotepadppLangCommand : Runnable {
     var overwrite: Boolean = false
 
     @CommandLine.Parameters(index = "0", arity = "0..1", description = ["output file or directory"])
-    var output: File = File("")
+    var output: File = File("./")
 
     override fun run() {
         output.mkdirs()
@@ -23,8 +23,9 @@ class NotepadppLangCommand : Runnable {
             println("Cannot output ${file.name}, already exists in the target directory (${file.parentFile.absolutePath}). Please move, rename, or delete the file first.")
         } else {
             val internal = NotepadppLangCommand::class.java.getResource("/notepadplusplustickflowlang.xml")
+            file.createNewFile()
             file.writeBytes(internal.readBytes())
-            println("Outputted ${file.name} to ${file.parentFile.absolutePath}. Import it into Notepad++ via: Language > Define your language... > Import")
+            println("Outputted ${file.name} to ${file.parentFile.canonicalPath}\nImport it into Notepad++ via: Language > Define your language... > Import")
         }
     }
 }
