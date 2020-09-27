@@ -1,6 +1,5 @@
 package rhmodding.tickompiler.cli
 
-import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import picocli.CommandLine
 import rhmodding.tickompiler.Tickompiler
@@ -32,7 +31,7 @@ class UpdatesCheckCommand : Runnable {
             val content = bufferedReader.readText()
             bufferedReader.close()
             con.disconnect()
-            val release = Gson().fromJson<Release>(content)
+            val release = Gson().fromJson(content, Release::class.java)
             val releaseVersion: Version? = Version.fromStringOrNull(release.tag_name ?: "")
             if (releaseVersion == null) {
                 println("Failed to get version info: release version is null? (${release.tag_name})")

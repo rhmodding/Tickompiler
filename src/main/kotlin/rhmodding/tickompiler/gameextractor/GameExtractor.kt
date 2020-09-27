@@ -1,7 +1,7 @@
 package rhmodding.tickompiler.gameextractor
 
-import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.nio.ByteBuffer
 import java.util.*
 import kotlin.math.pow
@@ -43,8 +43,7 @@ class GameExtractor(val allSubs: Boolean) {
 
     companion object {
         val LOCATIONS: List<List<Int>> by lazy {
-            Gson().fromJson<List<List<Int>>>(
-                    GameExtractor::class.java.getResource("/locations.json").readText())
+            Gson().fromJson(GameExtractor::class.java.getResource("/locations.json").readText(), object : TypeToken<List<List<Int>>>(){}.type)
         }
 
         private const val TEMPO_TABLE = 0x53EF54
