@@ -62,7 +62,17 @@ object GamePutter {
 		tempo.drop(1).forEachIndexed { index, list ->
 			val bpm = list[0].toFloat()
 			val beats = list[1].toFloat()
-			val loop = list[2].toInt()
+			val loop: Int?
+			if (2 >= list.size){  // Check for loop value
+				loop = list[2].toInt()
+			}
+			else {  // Special case for tempo files lacking loop value, behaves exactly as older Tickompiler versions
+				if (index == tempo.size - 2) {
+					loop = 0x8000
+				} else {
+					loop = 0
+				}
+			}
 			val time = 60*beats/bpm
 			val timeInt = (time * 32000).roundToInt()
 			result.add(java.lang.Float.floatToIntBits(beats))
