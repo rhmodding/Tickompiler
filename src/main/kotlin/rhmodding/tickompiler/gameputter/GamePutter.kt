@@ -62,15 +62,12 @@ object GamePutter {
 		tempo.drop(1).forEachIndexed { index, list ->
 			val bpm = list[0].toFloat()
 			val beats = list[1].toFloat()
+			val loop = list[2].toInt()
 			val time = 60*beats/bpm
 			val timeInt = (time * 32000).roundToInt()
 			result.add(java.lang.Float.floatToIntBits(beats))
 			result.add(timeInt)
-			if (index == tempo.size - 2) {
-				result.add(0x8000)
-			} else {
-				result.add(0)
-			}
+			result.add(loop)
 		}
 		for (i in 0 until 0x1DD) {
 			val one = base.getInt(16*i + 0x1588)
