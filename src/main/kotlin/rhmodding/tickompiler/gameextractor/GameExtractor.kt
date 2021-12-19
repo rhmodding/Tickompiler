@@ -74,7 +74,6 @@ class GameExtractor(val allSubs: Boolean) {
                 val seconds = buffer.getInt(addr - 0x100000 + 4) / 32000.0 // will not work with unsigned but not important
                 val bpm = 60 * beats / seconds
                 val loop = buffer.getInt(addr - 0x100000 + 8)
-                println("${loop}")
                 s += "${correctlyRoundDouble(bpm, DECIMALS)} ${correctlyRoundDouble(beats.toDouble(), DECIMALS)} ${loop}\n"
                 if (buffer.getIntAdj(addr + 8) != 0)
                     break
