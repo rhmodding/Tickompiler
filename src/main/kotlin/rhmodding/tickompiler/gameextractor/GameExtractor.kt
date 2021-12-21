@@ -43,7 +43,7 @@ class GameExtractor(val allSubs: Boolean) {
 
     companion object {
         val LOCATIONS: List<List<Int>> by lazy {
-            Gson().fromJson(GameExtractor::class.java.getResource("/locations.json").readText(), object : TypeToken<List<List<Int>>>(){}.type)
+            Gson().fromJson<List<List<Int>>>(GameExtractor::class.java.getResource("/locations.json").readText(), object : TypeToken<List<List<Int>>>(){}.type)
         }
 
         private const val TEMPO_TABLE = 0x53EF54
