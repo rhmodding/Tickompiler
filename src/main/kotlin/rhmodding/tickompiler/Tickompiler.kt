@@ -8,7 +8,7 @@ import rhmodding.tickompiler.util.Version
 object Tickompiler {
 
     val VERSION: Version = Version(1, 9, 2, "DEVELOPMENT")
-    const val GITHUB: String = "https://github.com/SneakySpook/Tickompiler"
+    const val GITHUB: String = "https://github.com/rhmodding/Tickompiler"
 
     fun createAndParseCommandLine(runnable: Runnable, vararg args: String): CommandLine {
         // This is equivalent to the static method CommandLine.run(...) but with the settings desired
