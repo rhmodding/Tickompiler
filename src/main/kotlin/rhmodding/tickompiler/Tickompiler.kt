@@ -7,7 +7,7 @@ import rhmodding.tickompiler.util.Version
 
 object Tickompiler {
 
-    val VERSION: Version = Version(1, 9, 2, "DEVELOPMENT")
+    val VERSION: Version = Version(1, 10, 0, "")
     const val GITHUB: String = "https://github.com/rhmodding/Tickompiler"
 
     fun createAndParseCommandLine(runnable: Runnable, vararg args: String): CommandLine {
