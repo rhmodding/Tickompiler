@@ -80,14 +80,20 @@ class Compiler(val tickflow: String, val functions: Functions) {
                 if (statement.func == "bytes") {
                     argAnnotations.add(Pair(statement.args.size, 3))
                 }
+                
+                val function: Function = functions[funcCall.func]
+
                 if (argAnnotations.size > 0) {
+                    if (function is SpecialOnlyFunction) {
+                        throw CompilerError("Argument annotations on SpecialOnlyFunction - are you using goto loc?")
+                    }
+
                     longs.add(0xFFFFFFFF)
                     longs.add(argAnnotations.size.toLong())
                     argAnnotations.forEach {
                         longs.add((it.second + (it.first shl 8)).toLong())
                     }
                 }
-                val function: Function = functions[funcCall.func]
 
                 if (function::class.java.isAnnotationPresent(DeprecatedFunction::class.java)) {
                     println("DEPRECATION WARNING at ${statement.position.line}:${statement.position.column} -> " +
