@@ -94,8 +94,23 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
             }
             if (opint == 0xFFFFFFFF) {
                 val amount = readInt()
+                var bytes = 0L
                 for (i in 1..amount) {
-                    anns.add(readInt())
+                    val ann = readInt()
+                    if (ann and 0xFF == 3L) {
+                        bytes = ann ushr 8
+                    }
+                    else {
+                        anns.add(ann)
+                    }
+                }
+                if (bytes != 0L) {
+                    val bytes_padded = bytes + if (bytes % 4 == 0L) 0 else (4 - bytes % 4)
+                    counter += bytes_padded
+                    for (i in 1..bytes_padded) {
+                        read()
+                    }
+                    continue
                 }
                 opint = readInt()
             }
