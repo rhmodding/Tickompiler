@@ -34,6 +34,11 @@ object GamePutter {
 					if (anncode == 0 || anncode == 1 || anncode == 2) {
 						adjArgs.add(annArg)
 					}
+					else if (anncode == 3) {
+						for (a in 1..(annArg/4 + if (annArg % 4 == 0) 0 else (4 - annArg % 4))) {
+							result.add(gameContents.int)
+						}
+					}
 				}
 				opint = gameContents.int
 			}
