@@ -250,16 +250,25 @@ class BytesFunction : Function(-1, "bytes", 1..Int.MAX_VALUE) {
     }
 
     override fun produceTickflow(state: DecompilerState, opcode: Long, specialArg: Long, args: LongArray, comments: CommentType, specialArgStrings: Map<Int, String>): String {
-        return this.name + " " + argsToTickflowArgs(args, specialArgStrings)
+        if (args.size == 0) {
+            return this.name
+        } else {
+            return this.name + " " + argsToTickflowArgs(args, specialArgStrings)
+        }
     }
 }
 
 class OpcodeFunction : Function(-1, "opcode", 0..Integer.MAX_VALUE) {
     override fun produceTickflow(state: DecompilerState, opcode: Long, specialArg: Long, args: LongArray,
                                  comments: CommentType, specialArgStrings: Map<Int, String>): String {
-        return getHex(opcode) +
+        if (args.size == 0) {
+            return getHex(opcode) + addSpecialArg(specialArg)
+        }
+        else {
+            return getHex(opcode) +
                 addSpecialArg(specialArg) +
                 " " + argsToTickflowArgs(args, specialArgStrings)
+        }
     }
 
     override fun produceBytecode(funcCall: FunctionCall): LongArray {
@@ -358,7 +367,12 @@ open class AliasedFunction(opcode: Long, alias: String, argsNeeded: IntRange, va
                                  comments: CommentType, specialArgStrings: Map<Int, String>): String {
         state.nextIndentLevel += indentChange
         state.currentAdjust = currentAdjust
-        return this.name + addSpecialArg(specialArg) + " " + argsToTickflowArgs(args, specialArgStrings)
+        if (args.size == 0) {
+            return this.name + addSpecialArg(specialArg)
+        }
+        else {
+            return this.name + addSpecialArg(specialArg) + " " + argsToTickflowArgs(args, specialArgStrings)
+        }
     }
 
     override fun produceBytecode(funcCall: FunctionCall): LongArray {
