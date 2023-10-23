@@ -73,8 +73,9 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
 
         if (useMetadata) {
             builder.append("#index 0x${readInt().toString(16).toUpperCase()}\n")
-            markers[readInt()] = "start"
+            val startPos = readInt()
             markers[readInt()] = "assets"
+            markers[startPos] = "start"
         }
 
         for ((key, value) in macros) {
