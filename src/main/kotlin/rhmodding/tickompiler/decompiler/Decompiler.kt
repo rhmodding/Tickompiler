@@ -105,7 +105,8 @@ class Decompiler(val array: ByteArray, val order: ByteOrder, val functions: Func
                     }
                 }
                 if (bytes != 0L) {
-                    val bytes_padded = bytes + if (bytes % 4 == 0L) 0 else (4 - bytes % 4)
+                    if (bytes % 4 == 0L)
+                        bytes += 4 - bytes % 4
                     counter += bytes_padded
                     for (i in 1..bytes_padded) {
                         read()
