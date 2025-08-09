@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 .. warning::
-   This documentation is severely outdated! Please check out Tox's docs `here <https://drive.google.com/drive/folders/1gfrX1GJZhQfz4vR8HyQBV56OqO_rYHGG>` instead.
+   This documentation is severely outdated! Please check out an archive of the docs `here <https://rhmodding.github.io/rhm-docs-archive/>` instead.
 
 Welcome to Tickompiler's documentation!
 =======================================
