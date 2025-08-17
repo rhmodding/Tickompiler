@@ -169,7 +169,25 @@ object MegamixFunctions : Functions() {
 
 object DSFunctions : Functions() {
     override val allFunctions = mutableListOf<Function>(
-            RestFunction(1)
+            OptionalArgumentsFunction(0, "async_call", 1, 0),
+            RestFunction(1),
+            SpecialOnlyFunction(3, "label"),
+            SpecialOnlyFunction(4, "goto"),
+            alias(0x1B, "music", 0..0),
+            SpecificSpecialFunction(0x9, 0, "if", 1..1, 1),
+            SpecificSpecialFunction(0x9, 2, "if<2>", 1..1, 1),
+            alias(0xB, "endif", 0..0, -1, -1), // same here
+            alias(0xC, "switch", 0..0, 1),
+            SpecialOnlyFunction(0xD, "case", indentChange = 1),
+            alias(0xF, "default", 0..0, 1),
+            alias(0x10, "endswitch", 0..0, -1, -1),
+            alias(0x11, "call", 1..1),
+            alias(0x12, "return", 0..0),
+            alias(0x13, "stop", 0..0),
+            alias(0x11D, "graphic", 0..0),
+            alias(0x12C, "play_sfx", 1..1),
+            alias(0x11A, "sfx_group", 2..2),
+            alias(0x100, "engine", 1..1)
                                                        )
 }
 
